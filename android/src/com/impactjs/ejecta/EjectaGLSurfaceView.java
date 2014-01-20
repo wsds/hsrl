@@ -12,20 +12,22 @@ public class EjectaGLSurfaceView extends GLSurfaceView {
 	
 	public EjectaGLSurfaceView(Context context) {
 		super(context);
+		setEGLContextClientVersion(2);
 	}
 	
 	public EjectaGLSurfaceView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		mRenderer = new EjectaRenderer(context, 600, 480 );
-        setRenderer(mRenderer);
-//        setEGLContextClientVersion(2);
+		setEGLContextClientVersion(2);
+
+//        
 	}
 	
 	EjectaRenderer mRenderer;
 	public EjectaGLSurfaceView(Context context, int width, int height) {
 		super(context);
-		mRenderer = new EjectaRenderer(context, width, height);
-        setRenderer(mRenderer);
+//		setEGLContextClientVersion(2);
+//		mRenderer = new EjectaRenderer(context, width, height);
+//        setRenderer(mRenderer);
 	}
 	
 	@Override

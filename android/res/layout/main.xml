@@ -366,7 +366,7 @@
 
 
                 <LinearLayout
-                    android:id="@+id/ll_bottom"
+                    android:id="@+id/testLayout"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -374,11 +374,7 @@
                     android:gravity="center_vertical|center_horizontal"
                     android:orientation="horizontal"
                     android:paddingBottom="10dp" >
-                        <com.impactjs.ejecta.EjectaGLSurfaceView
-    android:id="@+id/vp_content"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-/>
+                        
                 </LinearLayout>
             </RelativeLayout>
                  <RelativeLayout
