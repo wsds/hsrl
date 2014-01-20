@@ -27,3 +27,9 @@ proguard/
 *.ipr
 *.iws
 .idea/
+/android/obj/local/armeabi/objs/ejecta
+/android/obj/local/armeabi-v7a
+
+/android/obj/local/armeabi
+
+/android/.settings/*.prefs
