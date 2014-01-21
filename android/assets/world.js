@@ -1,0 +1,1 @@
+{"A":{properties:{size:"800*600*200",position:"200,100,0"},"a":{properties:{style:"a menu",transform:"transform_a",timer:"timer_a",action:"action_a"},"a1":{properties:{style:"a1 menu",transform:"transform_a1",timer:"timer_a1",action:"action_a1"},"a11":{}},"a2":{properties:{style:"a2 menu",transform:"transform_a2",timer:"timer_a2",action:"action_a2"},"a21":{}}}}}

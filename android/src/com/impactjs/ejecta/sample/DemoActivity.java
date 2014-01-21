@@ -50,7 +50,7 @@ public class DemoActivity extends Activity {
 				Intent entry = new Intent(Intent.ACTION_MAIN);
 				entry.addCategory(Intent.CATEGORY_SAMPLE_CODE);
 				// entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				entry.setClassName("com.impactjs.ejecta.sample", "com.test.view.TranslucentGLSurfaceViewActivity");
+				entry.setClassName("com.impactjs.ejecta.sample", "com.test.view.FrameBufferObjectActivity");
 				mContext.startActivity(entry);
 
 			}
