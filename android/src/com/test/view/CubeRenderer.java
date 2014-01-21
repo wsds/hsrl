@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.impactjs.ejecta;
+package com.test.view;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

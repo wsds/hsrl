@@ -28,13 +28,17 @@ public class EjectaRenderer implements Renderer {
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
+		
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+		
+		
 		IntBuffer coords = null;
 		// GLES20.glViewport(0, 0, 50, 50);
 		// GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-		GLES11Ext.glDrawTexivOES(coords);
+//		GLES11Ext.glDrawTexivOES(coords);
 		// nativeRender();
 
-		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+
 
 		/*
 		 * Now we're ready to draw some 3D objects
@@ -48,11 +52,6 @@ public class EjectaRenderer implements Renderer {
 
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
-
-		mCube.draw(gl);
-
-		gl.glRotatef(mAngle * 2.0f, 0, 1, 1);
-		gl.glTranslatef(0.5f, 0.5f, 0.5f);
 
 		mCube.draw(gl);
 
@@ -83,7 +82,7 @@ public class EjectaRenderer implements Renderer {
 		 */
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_FASTEST);
 
-		gl.glClearColor(1,1,1,1);
+		gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 		gl.glEnable(GL10.GL_CULL_FACE);
 		gl.glShadeModel(GL10.GL_SMOOTH);
 		gl.glEnable(GL10.GL_DEPTH_TEST);
