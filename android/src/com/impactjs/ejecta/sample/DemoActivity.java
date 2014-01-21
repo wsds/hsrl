@@ -13,45 +13,57 @@ import android.widget.LinearLayout;
 
 import com.impactjs.ejecta.EjectaGLSurfaceView;
 import com.impactjs.ejecta.EjectaRenderer;
+import com.open.hsrl.WorldHelper;
 
 public class DemoActivity extends Activity {
 	private GLSurfaceView mGLView;
 	EjectaRenderer mRenderer;
 	private LinearLayout linearLayout;
 	private Context mContext;
+	WorldHelper worldHelper = WorldHelper.getInstance();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mContext=this;
+		mContext = this;
+		worldHelper.context = mContext;
 		int width = getWindowManager().getDefaultDisplay().getWidth();
 		int height = getWindowManager().getDefaultDisplay().getHeight();
-		
+
 		setContentView(R.layout.main);
-		mGLView=new EjectaGLSurfaceView(this,width,height);
+		mGLView = new EjectaGLSurfaceView(this, width, height);
 		mRenderer = new EjectaRenderer(600, 480);
 		mGLView.setRenderer(mRenderer);
 
-        linearLayout = (LinearLayout) findViewById(R.id.testLayout);   
-        linearLayout.addView(mGLView);
-        
-		// setContentView(mGLView);
+		linearLayout = (LinearLayout) findViewById(R.id.testLayout);
+		linearLayout.addView(mGLView);
 
-		int i = 1;
-		i++;
-		
+		// setContentView(mGLView);
+		//
+		// int i = 1;
+		// i++;
+
 		Button button = (Button) findViewById(R.id.buttonTest);
 		button.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent entry = new Intent(Intent.ACTION_MAIN);
 				entry.addCategory(Intent.CATEGORY_SAMPLE_CODE);
-//				entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				// entry.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				entry.setClassName("com.impactjs.ejecta.sample", "com.test.view.TranslucentGLSurfaceViewActivity");
 				mContext.startActivity(entry);
-				
+
 			}
-		});  
+		});
+
+		Button button2 = (Button) findViewById(R.id.buttonTest2);
+		button2.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				worldHelper.initializeWorld();
+			}
+		});
+
 	}
 
 	@Override
