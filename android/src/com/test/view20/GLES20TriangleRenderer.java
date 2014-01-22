@@ -47,13 +47,57 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		mTriangleVertices.put(mTriangleVerticesData).position(0);
 	}
 
+	public SpaceHolder spaceHolder;
+
+	public class SpaceHolder {
+
+		public float width;
+		public float height;
+		public float ratio;
+		public float Pi;
+
+		public float screen_offset_x;
+
+		public float screen_offset_y;
+
+		public SpaceHolder(float ratio, float width, float height) {
+			this.width = width;
+			this.height = height;
+			this.ratio = ratio;
+			this.Pi = 2.0f / width;
+
+			this.screen_offset_x = -1.0f;
+			this.screen_offset_y = 1.0f / ratio;
+		}
+
+		void drawImage(Bitmap btmap, float left, float top, float width, float height) {
+			float angle = 0;
+
+			float offset_x = 0;
+			float offset_y = 0;
+
+			offset_x = this.screen_offset_x + left * this.Pi;
+			offset_y = this.screen_offset_y - top * this.Pi;
+
+			float offset_w = 0;
+			float offset_h = 0;
+
+			offset_w = 2 * width / this.width;
+			offset_h = 2 * height / this.width;
+
+			Matrix.setRotateM(mModelMatrix, 0, angle, 0, 0, 1.0f);
+			Matrix.translateM(mModelMatrix, 0, offset_x, offset_y, 0.0f);
+			Matrix.scaleM(mModelMatrix, 0, offset_w, offset_h, 1.0f);
+
+			GLES20.glUniformMatrix4fv(mModelMatrixHandle, 1, false, mModelMatrix, 0);
+			GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+		}
+	}
+
 	public void onDrawFrame(GL10 glUnused) {
-		// Ignore the passed-in GL10 interface, and use the GLES20
-		// class's static methods instead.
 		GLES20.glClearColor(0.0f, 0.6f, 0.804f, 1.0f);
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 		GLES20.glUseProgram(mProgram);
-		checkGlError("glUseProgram");
 
 		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID);
@@ -61,50 +105,39 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		mTriangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET);
 
 		GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
-		checkGlError("glVertexAttribPointer maPosition");
 
 		mTriangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET);
 
 		GLES20.glEnableVertexAttribArray(maPositionHandle);
-		checkGlError("glEnableVertexAttribArray maPositionHandle");
 
 		GLES20.glVertexAttribPointer(maTextureHandle, 2, GLES20.GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
-		checkGlError("glVertexAttribPointer maTextureHandle");
 
 		GLES20.glEnableVertexAttribArray(maTextureHandle);
-		checkGlError("glEnableVertexAttribArray maTextureHandle");
 
 		long time = SystemClock.uptimeMillis() % 4000L;
 		float angle = 0.090f * ((int) time);
 		angle = 0;
-		Matrix.setRotateM(mMMatrix, 0, angle, 0, 0, 1.0f);
-		Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mMMatrix, 0);
-		Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
-
-		GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 		GLES20.glEnable(GLES20.GL_BLEND);
+		GLES20.glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix, 0);
+
+		Matrix.setRotateM(mModelMatrix, 0, angle, 0, 0, 1.0f);
+		GLES20.glUniformMatrix4fv(mModelMatrixHandle, 1, false, mModelMatrix, 0);
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-		checkGlError("glDrawArrays");
+		spaceHolder.drawImage(null, 100, 100, 150, 200);
+		spaceHolder.drawImage(null, 0, 0, 50, 50);
+
 	}
 
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-		// Ignore the passed-in GL10 interface, and use the GLES20
-		// class's static methods instead.
 		GLES20.glViewport(0, 0, width, height);
 		float ratio = (float) width / height;
-		System.out.println("width:"+width+"height:"+height+"ratio:"+ratio);
-//		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-
-		// Matrix.frustumM(mProjMatrix, 0, -1, 1, -1, 1, 3, 7);
-		// Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -ratio, ratio, 3, 7);
-		
-//		Matrix.orthoM(mProjMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
-		Matrix.orthoM(mProjMatrix, 0, -1, 1, -1/ratio, 1/ratio, 3, 7);
+		System.out.println("width:" + width + "height:" + height + "ratio:" + ratio);
+		Matrix.orthoM(mProjectionMatrix, 0, -1, 1, -1 / ratio, 1 / ratio, 3, 7);// 正交投影
+		spaceHolder = new SpaceHolder(ratio, width, height);
+		setupProjectionView();
 	}
 
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-		// Ignore the passed-in GL10 interface, and use the GLES20
-		// class's static methods instead.
 		mVertexShader = getFromAssets("VertexShader.js");
 
 		mFragmentShader = getFromAssets("FragmentShader.js");
@@ -124,10 +157,16 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 			throw new RuntimeException("Could not get attrib location for aTextureCoord");
 		}
 
-		muMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-		checkGlError("glGetUniformLocation uMVPMatrix");
-		if (muMVPMatrixHandle == -1) {
-			throw new RuntimeException("Could not get attrib location for uMVPMatrix");
+		mProjectionViewMatrixHandle = GLES20.glGetUniformLocation(mProgram, "projectionView");
+		checkGlError("glGetUniformLocation projectionView");
+		if (mProjectionViewMatrixHandle == -1) {
+			throw new RuntimeException("Could not get attrib location for projectionView");
+		}
+
+		mModelMatrixHandle = GLES20.glGetUniformLocation(mProgram, "model");
+		checkGlError("glGetUniformLocation model");
+		if (mProjectionViewMatrixHandle == -1) {
+			throw new RuntimeException("Could not get attrib location for model");
 		}
 
 		/*
@@ -165,7 +204,12 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
 		bitmap.recycle();
 		GLES20.glDisable(GLES20.GL_BLEND);
-		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+		Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+	}
+
+	public void setupProjectionView() {
+		Matrix.multiplyMM(mProjectionViewMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);// mModelMatrix模型矩阵；mViewMatrix视图矩阵；mProjectionMatrix透视矩阵；
+		GLES20.glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix, 0);
 	}
 
 	private int loadShader(int shaderType, String source) {
@@ -230,13 +274,13 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 	private final float[] mTriangleVerticesData = {
 			// X, Y, Z, U, V
 			// 1
-			-1.0f, -1.0f, 0, 1.0f, 1.0f,
+			0.0f, -1.0f, 0, 0.0f, 1.0f,
 			// 2
-			1.0f, -1.0f, 0, 0.0f, 1.0f,
+			1.0f, -1.0f, 0, 1.0f, 1.0f,
 			// 3
-			-1.0f, 1.0f, 0, 1.0f, 0.0f,
+			0.0f, 0.0f, 0, 0.0f, 0.0f,
 			// 4
-			1.0f, 1.0f, 0, 0.0f, 0.0f
+			1.0f, 0.0f, 0, 1.0f, 0.0f
 
 	};
 
@@ -263,14 +307,16 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		return result;
 	}
 
-	private float[] mMVPMatrix = new float[16];
-	private float[] mProjMatrix = new float[16];
-	private float[] mMMatrix = new float[16];
-	private float[] mVMatrix = new float[16];
+	private float[] mProjectionViewMatrix = new float[16];
+
+	private float[] mProjectionMatrix = new float[16];
+	private float[] mModelMatrix = new float[16];
+	private float[] mViewMatrix = new float[16];
 
 	private int mProgram;
 	private int mTextureID;
-	private int muMVPMatrixHandle;
+	private int mProjectionViewMatrixHandle;
+	private int mModelMatrixHandle;
 	private int maPositionHandle;
 	private int maTextureHandle;
 
