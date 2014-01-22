@@ -102,13 +102,10 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		}
 	}
 	public long renderCount=0;
-	public long renderStep=0;
 
 	public void onDrawFrame(GL10 glUnused) {
-		renderStep=(renderStep+1)%60;
-		if(renderStep==1){
-			renderCount++;
-		}
+		renderCount++;
+		
 		GLES20.glClearColor(0.0f, 0.6f, 0.804f, 1.0f);
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 		GLES20.glUseProgram(mProgram);
@@ -277,18 +274,18 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 
 	};
 
-	private final float[] mTriangleVerticesDataCenter = {
-			// X, Y, Z, U, V
-			// 1
-			-0.5f, -0.5f, 0, 0.0f, 1.0f,
-			// 2
-			0.5f, -0.5f, 0, 1.0f, 1.0f,
-			// 3
-			-0.5f, 0.5f, 0, 0.0f, 0.0f,
-			// 4
-			0.5f, 0.5f, 0, 1.0f, 0.0f
-
-	};
+	// private final float[] mTriangleVerticesDataCenter = {
+	// // X, Y, Z, U, V
+	// // 1
+	// -0.5f, -0.5f, 0, 0.0f, 1.0f,
+	// // 2
+	// 0.5f, -0.5f, 0, 1.0f, 1.0f,
+	// // 3
+	// -0.5f, 0.5f, 0, 0.0f, 0.0f,
+	// // 4
+	// 0.5f, 0.5f, 0, 1.0f, 0.0f
+	//
+	// };
 
 	private FloatBuffer mTriangleVertices;
 

@@ -77,39 +77,22 @@ public class GLES20Activity extends Activity {
 	}
 
 	public long eventCount=0;
-	public long eventCount_DOWN=0;
-	public long eventCount_MOVE=0;
-
-	public long eventStep_DOWN=0;
-	public long eventStep_MOVE=0;
 
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		eventCount++;
 		super.onTouchEvent(event);
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			renderer.x_move = event.getX();
 			renderer.y_move = event.getY();
-			eventCount_DOWN++;
-			eventStep_DOWN=(eventStep_DOWN+1)%60;
-			if(eventStep_DOWN==1){
-				eventStep_DOWN++;
-				eventCount++;
-			}
 //			System.out.println("x_move:    " + renderer.x_move + "|||||||||||||||||y_move:    " + renderer.y_move);
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			eventCount_MOVE++;
-			eventStep_MOVE=(eventStep_MOVE+1)%60;
-			if(eventStep_MOVE==1){
-				eventStep_MOVE++;
-				eventCount++;
-			}
 			renderer.x_move = event.getX();
 			renderer.y_move = event.getY();
 		}
 		else if(event.getAction() == MotionEvent.ACTION_UP){
 			System.out.println("eventCount:    " + eventCount + "     ----renderCount:    " + renderer.renderCount);
-			System.out.println("eventCount_MOVE:    " + eventCount_MOVE + "     ----eventCount_DOWN:    " + eventCount_DOWN);
 		}
 		return true;
 	}
