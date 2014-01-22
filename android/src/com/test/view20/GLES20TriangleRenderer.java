@@ -17,8 +17,6 @@
 package com.test.view20;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -27,16 +25,10 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.impactjs.ejecta.sample.R;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.util.Log;
 
 class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
@@ -70,7 +62,11 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 			this.screen_offset_y = 1.0f / ratio;
 		}
 
-		void drawImage(Bitmap btmap, float left, float top, float width, float height) {
+		void drawImage(String key, float left, float top, float width, float height) {
+			int textureID = imagePool.getImage(key);
+			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID);
+
 			float angle = 0;
 
 			float offset_x = 0;
@@ -99,33 +95,24 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 		GLES20.glUseProgram(mProgram);
 
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID);
-
 		mTriangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET);
-
 		GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
-
 		mTriangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET);
-
 		GLES20.glEnableVertexAttribArray(maPositionHandle);
 
 		GLES20.glVertexAttribPointer(maTextureHandle, 2, GLES20.GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
-
 		GLES20.glEnableVertexAttribArray(maTextureHandle);
 
-		long time = SystemClock.uptimeMillis() % 4000L;
-		float angle = 0.090f * ((int) time);
-		angle = 0;
 		GLES20.glEnable(GLES20.GL_BLEND);
 		GLES20.glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix, 0);
 
-		Matrix.setRotateM(mModelMatrix, 0, angle, 0, 0, 1.0f);
-		GLES20.glUniformMatrix4fv(mModelMatrixHandle, 1, false, mModelMatrix, 0);
-		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
-		spaceHolder.drawImage(null, 100, 100, 150, 200);
-		spaceHolder.drawImage(null, 0, 0, 50, 50);
+		spaceHolder.drawImage("test1.png", 100, 100, 620, 500);
+		spaceHolder.drawImage("test2.png", 0, 0, 50, 50);
+		spaceHolder.drawImage("face_man.png", 100, 200, 250, 250);
 
+		for (int i = 1; i < 20; i++) {
+			spaceHolder.drawImage("test2.png", 0, i * 60, 50, 50);
+		}
 	}
 
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
@@ -136,6 +123,8 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		spaceHolder = new SpaceHolder(ratio, width, height);
 		setupProjectionView();
 	}
+
+	ImagePool imagePool = new ImagePool();
 
 	public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 		mVertexShader = getFromAssets("VertexShader.js");
@@ -169,41 +158,9 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 			throw new RuntimeException("Could not get attrib location for model");
 		}
 
-		/*
-		 * Create our texture. This has to be done each time the surface is
-		 * created.
-		 */
+		imagePool.initialize(mContext);
 
-		int[] textures = new int[1];
-
-		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-		GLES20.glEnable(GLES20.GL_BLEND);
-		GLES20.glGenTextures(1, textures, 0);
-
-		mTextureID = textures[0];
-		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureID);
-
-		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT);
-		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT);
-
-		InputStream is = mContext.getResources().openRawResource(R.raw.test3);
-		Bitmap bitmap;
-		try {
-			bitmap = BitmapFactory.decodeStream(is);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				// Ignore.
-			}
-		}
-
-		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-		bitmap.recycle();
-		GLES20.glDisable(GLES20.GL_BLEND);
+		// ioadTexture
 		Matrix.setLookAtM(mViewMatrix, 0, 0, 0, 5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 	}
 
@@ -314,7 +271,6 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 	private float[] mViewMatrix = new float[16];
 
 	private int mProgram;
-	private int mTextureID;
 	private int mProjectionViewMatrixHandle;
 	private int mModelMatrixHandle;
 	private int maPositionHandle;
