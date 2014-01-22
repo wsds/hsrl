@@ -31,12 +31,12 @@ public class DemoActivity extends Activity {
 		int height = getWindowManager().getDefaultDisplay().getHeight();
 
 		setContentView(R.layout.main);
-		mGLView = new EjectaGLSurfaceView(this, width, height);
-		mRenderer = new EjectaRenderer(600, 480);
-		mGLView.setRenderer(mRenderer);
-
-		linearLayout = (LinearLayout) findViewById(R.id.testLayout);
-		linearLayout.addView(mGLView);
+//		mGLView = new EjectaGLSurfaceView(this, width, height);
+//		mRenderer = new EjectaRenderer(600, 480);
+//		mGLView.setRenderer(mRenderer);
+//
+//		linearLayout = (LinearLayout) findViewById(R.id.testLayout);
+//		linearLayout.addView(mGLView);
 
 		// setContentView(mGLView);
 		//

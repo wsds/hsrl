@@ -41,6 +41,7 @@ public class ImagePool {
 		this.mContext = mContext;
 		Image image = loadImage("loading.png");
 		loadingTextureID = image.textureID;
+		images.clear();
 	}
 
 	public int getImage(String key) {

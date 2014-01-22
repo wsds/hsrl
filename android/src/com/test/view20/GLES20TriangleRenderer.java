@@ -63,6 +63,10 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		}
 
 		void drawImage(String key, float left, float top, float width, float height) {
+			drawImage(key, left, top, width, height, null);
+		}
+
+		void drawImage(String key, float left, float top, float width, float height, float[] mModelMatrixMove) {
 			int textureID = imagePool.getImage(key);
 			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 			GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID);
@@ -81,16 +85,30 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 			offset_w = 2 * width / this.width;
 			offset_h = 2 * height / this.width;
 
-			Matrix.setRotateM(mModelMatrix, 0, angle, 0, 0, 1.0f);
-			Matrix.translateM(mModelMatrix, 0, offset_x, offset_y, 0.0f);
-			Matrix.scaleM(mModelMatrix, 0, offset_w, offset_h, 1.0f);
+			float[] modelMatrix = null;
+			Matrix.setRotateM(mModelMatrixpreMove, 0, angle, 0, 0, 1.0f);
+			if (mModelMatrixMove != null) {
+				Matrix.multiplyMM(mModelMatrix, 0, mModelMatrixpreMove, 0, mModelMatrixMove, 0);
+				modelMatrix = mModelMatrix;
+			} else {
+				Matrix.translateM(mModelMatrixpreMove, 0, offset_x, offset_y, 0.0f);
+				modelMatrix = mModelMatrixpreMove;
+			}
 
-			GLES20.glUniformMatrix4fv(mModelMatrixHandle, 1, false, mModelMatrix, 0);
+			Matrix.scaleM(modelMatrix, 0, offset_w, offset_h, 1.0f);
+
+			GLES20.glUniformMatrix4fv(mModelMatrixHandle, 1, false, modelMatrix, 0);
 			GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 		}
 	}
+	public long renderCount=0;
+	public long renderStep=0;
 
 	public void onDrawFrame(GL10 glUnused) {
+		renderStep=(renderStep+1)%60;
+		if(renderStep==1){
+			renderCount++;
+		}
 		GLES20.glClearColor(0.0f, 0.6f, 0.804f, 1.0f);
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 		GLES20.glUseProgram(mProgram);
@@ -105,15 +123,33 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 
 		GLES20.glEnable(GLES20.GL_BLEND);
 		GLES20.glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix, 0);
+		spaceHolder.drawImage("snow_d_blur.jpg", 0, 0, spaceHolder.width, spaceHolder.height);
 
-		spaceHolder.drawImage("test1.png", 100, 100, 620, 500);
 		spaceHolder.drawImage("test2.png", 0, 0, 50, 50);
 		spaceHolder.drawImage("face_man.png", 100, 200, 250, 250);
-
 		for (int i = 1; i < 20; i++) {
 			spaceHolder.drawImage("test2.png", 0, i * 60, 50, 50);
 		}
+
+		Matrix.setIdentityM(mModelMatrixMove, 0);
+
+		float offset_x_move = 0;
+		float offset_y_move = 0;
+
+		offset_x_move = spaceHolder.screen_offset_x + (x_move - 48) * spaceHolder.Pi;
+		offset_y_move = spaceHolder.screen_offset_y - (y_move - 48)* spaceHolder.Pi;
+
+		// offset_x_move = x_move * spaceHolder.Pi;
+		//
+		// offset_y_move = -y_move * spaceHolder.Pi;
+
+		Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, 0.0f);
+
+		spaceHolder.drawImage("emoji_normal.png", 100, 600, 96, 96, mModelMatrixMove);
 	}
+
+	public float x_move = 230;
+	public float y_move = 200;
 
 	public void onSurfaceChanged(GL10 glUnused, int width, int height) {
 		GLES20.glViewport(0, 0, width, height);
@@ -241,6 +277,19 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 
 	};
 
+	private final float[] mTriangleVerticesDataCenter = {
+			// X, Y, Z, U, V
+			// 1
+			-0.5f, -0.5f, 0, 0.0f, 1.0f,
+			// 2
+			0.5f, -0.5f, 0, 1.0f, 1.0f,
+			// 3
+			-0.5f, 0.5f, 0, 0.0f, 0.0f,
+			// 4
+			0.5f, 0.5f, 0, 1.0f, 0.0f
+
+	};
+
 	private FloatBuffer mTriangleVertices;
 
 	private String mVertexShader;
@@ -263,6 +312,9 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		}
 		return result;
 	}
+
+	private float[] mModelMatrixMove = new float[16];
+	private float[] mModelMatrixpreMove = new float[16];
 
 	private float[] mProjectionViewMatrix = new float[16];
 
