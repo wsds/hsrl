@@ -1,9 +1,14 @@
 package com.test.view20;
 
-import com.open.hsrl.World;
+import java.util.Set;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+
+import com.open.hsrl.Node;
+import com.open.hsrl.Space;
+import com.open.hsrl.World;
+import com.open.hsrl.WorldHelper;
 
 public class SpaceHolder {
 
@@ -18,7 +23,7 @@ public class SpaceHolder {
 
 	public float screen_offset_y;
 
-	public SpaceHolder(float ratio, float width, float height, int mModelMatrixHandle, ImagePool imagePool) {
+	public void initialize(float ratio, float width, float height, int mModelMatrixHandle, ImagePool imagePool) {
 		this.width = width;
 		this.height = height;
 		this.ratio = ratio;
@@ -29,6 +34,10 @@ public class SpaceHolder {
 
 		this.mModelMatrixHandle = mModelMatrixHandle;
 		this.imagePool = imagePool;
+
+		worldHelper.context = this.imagePool.mContext;
+
+		worldHelper.initializeWorld();
 	}
 
 	void drawImage(String key, float left, float top, float width, float height) {
@@ -39,13 +48,14 @@ public class SpaceHolder {
 
 	private float[] mModelMatrix = new float[16];
 	private int mModelMatrixHandle;
-	
+
 	float angle = 0;
 	float offset_x = 0;
 	float offset_y = 0;
 	float offset_w = 0;
 	float offset_h = 0;
 	float[] modelMatrix = null;
+
 	void drawImage(String key, float left, float top, float width, float height, float[] modelMatrixMove) {
 		int textureID = imagePool.getImage(key);
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID);
@@ -70,10 +80,36 @@ public class SpaceHolder {
 		GLES20.glUniformMatrix4fv(mModelMatrixHandle, 1, false, modelMatrix, 0);
 		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 	}
-	
-	
-	World world=World.getInstance();
-	
-	
-	
+
+	World world;
+	WorldHelper worldHelper = WorldHelper.getInstance();
+
+	void renderWorld() {
+		world = World.getInstance();
+		Set<String> spaceKeys = world.spaces.keySet();
+		for (String spaceKey : spaceKeys) {
+			Space space = world.spaces.get(spaceKey);
+			renderSpace(space);
+		}
+	}
+
+	void renderSpace(Space space) {
+		Set<String> keys = space.children.keySet();
+		for (String key : keys) {
+			Node node = space.children.get(key);
+			renderNode(node, 0, 0);
+		}
+	}
+
+	void renderNode(Node node, int parent_x, int parent_y) {
+		// render this node
+		this.drawImage(node.image, parent_x + node.position.x, parent_y + node.position.y, node.size.w, node.size.h);
+		// render Children
+		Set<String> keys = node.children.keySet();
+		for (String key : keys) {
+			Node childNode = node.children.get(key);
+			renderNode(childNode, parent_x + node.position.x, parent_y + node.position.y);
+		}
+	}
+
 }

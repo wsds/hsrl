@@ -1,1 +1,57 @@
-{"A":{properties:{size:"800*600*200",position:"200,100,0"},"a":{properties:{style:"a menu",transform:"transform_a",timer:"timer_a",action:"action_a"},"a1":{properties:{style:"a1 menu",transform:"transform_a1",timer:"timer_a1",action:"action_a1"},"a11":{}},"a2":{properties:{style:"a2 menu",transform:"transform_a2",timer:"timer_a2",action:"action_a2"},"a21":{}}}}}
+
+{
+	"A" :
+	{
+		properties :
+		{
+			size : "800*600*200",
+			position : "200,100,0"
+		},
+		"a" :
+		{
+			properties :
+			{
+				image : "emoji_normal.png",
+				size : "96*96*0",
+				position : "100,600,0"
+			}
+		},
+		"b" :
+		{
+			properties :
+			{
+				image : "emoji_normal.png",
+				size : "96*96*0",
+				position : "100,200,0"
+			}
+		},
+		"c" :
+		{
+			properties :
+			{
+				image : "image1.jpg",
+				size : "400*300*0",
+				position : "300,400,0"
+			},
+			"c1" :
+			{
+				properties :
+				{
+					image : "emoji_normal.png",
+					size : "96*96*0",
+					position : "20,20,0"
+				},
+				"c11" :
+				{
+					properties :
+					{
+						image : "image2.jpg",
+						size : "400*300*0",
+						position : "20,100,0"
+					}
+
+				}
+			}
+		}
+	}
+}

@@ -45,9 +45,9 @@ public class ImagePool {
 	}
 
 	public int getImage(String key) {
-//		if (key.equals("loading.png")) {
-//			return loadingTextureID;
-//		}
+		// if (key.equals("loading.png")) {
+		// return loadingTextureID;
+		// }
 		int textureID = loadingTextureID;
 		Image image = images.get(key);
 		if (image == null) {
@@ -83,6 +83,9 @@ public class ImagePool {
 				// Ignore.
 			}
 		}
+		image.height = image.bitmap.getHeight();
+		image.width = image.bitmap.getWidth();
+
 		image.status = image.STATUS_ONRAM;
 
 		int[] textures = new int[1];
@@ -99,7 +102,7 @@ public class ImagePool {
 
 		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT);
 		GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT);
-		
+
 		image.status = image.STATUS_ONRAM;
 
 		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, image.bitmap, 0);

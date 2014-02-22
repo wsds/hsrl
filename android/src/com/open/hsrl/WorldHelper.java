@@ -96,7 +96,13 @@ public class WorldHelper {
 
 			while (keys.hasNext()) {
 				key = keys.next();
-				if (key.equals("properties")  || key.equals("keys")) {
+				if (key.equals("keys")) {
+					continue;
+				}
+				if (key.equals("properties") ) {
+					JSONObject jPropertiesNode;
+					jPropertiesNode = jNode.getJSONObject(key);
+					parseProperties(jPropertiesNode, node);
 					continue;
 				}
 				jChildNode = jNode.getJSONObject(key);
@@ -109,15 +115,34 @@ public class WorldHelper {
 
 		return node;
 	}
-
-	public Node generateUserFromNode(JSONObject jNode) {
-		Node node = new Node();
+	
+	void parseProperties(JSONObject jPropertiesNode, Node node){
 		try {
-			node.key = jNode.getString("key");
+			node.image = jPropertiesNode.getString("image");
 		} catch (JSONException e) {
 		}
-
-		return node;
+		try {
+			String size = jPropertiesNode.getString("size");
+			 String[ ] sizeSplit= new String[3];            
+			 sizeSplit=size.split("\\*");
+			 node.size.w=Integer.valueOf(sizeSplit[0]).intValue();
+			 node.size.h=Integer.valueOf(sizeSplit[1]).intValue();
+			 node.size.d=Integer.valueOf(sizeSplit[2]).intValue();
+		} catch (JSONException e) {
+		}
+		try {
+			String position = jPropertiesNode.getString("position");
+			 String[ ] positionSplit= new String[3];            
+			 positionSplit=position.split(",");
+			 node.position.x=Integer.valueOf(positionSplit[0]).intValue();
+			 node.position.y=Integer.valueOf(positionSplit[1]).intValue();
+			 node.position.z=Integer.valueOf(positionSplit[2]).intValue();
+		} catch (JSONException e) {
+		}
+		try {
+			node.mode = jPropertiesNode.getString("mode");
+		} catch (JSONException e) {
+		}
 	}
 
 	public String getFromAssets(String fileName) {

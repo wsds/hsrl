@@ -59,9 +59,9 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 
 			mTriangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET);
 			GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
-			mTriangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET);
 			GLES20.glEnableVertexAttribArray(maPositionHandle);
-
+			
+			mTriangleVertices.position(TRIANGLE_VERTICES_DATA_UV_OFFSET);
 			GLES20.glVertexAttribPointer(maTextureHandle, 2, GLES20.GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
 			GLES20.glEnableVertexAttribArray(maTextureHandle);
 
@@ -72,11 +72,11 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 
 		spaceHolder.drawImage("snow_d_blur.jpg", 0, 0, spaceHolder.width, spaceHolder.height);
 
-		spaceHolder.drawImage("test2.png", 0, 0, 50, 50);
-		spaceHolder.drawImage("face_man.png", 100, 200, 250, 250);
-		for (int i = 1; i < 20; i++) {
-			spaceHolder.drawImage("test2.png", 0, i * 60, 50, 50);
-		}
+//		spaceHolder.drawImage("test2.png", 0, 0, 50, 50);
+//		spaceHolder.drawImage("face_man.png", 100, 200, 250, 250);
+//		for (int i = 1; i < 20; i++) {
+//			spaceHolder.drawImage("test2.png", 0, i * 60, 50, 50);
+//		}
 
 		Matrix.setIdentityM(mModelMatrixMove, 0);
 
@@ -93,6 +93,8 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, 0.0f);
 
 		spaceHolder.drawImage("emoji_normal.png", 100, 600, 96, 96, mModelMatrixMove);
+		
+		spaceHolder.renderWorld();
 	}
 
 	public float x_move = 230;
@@ -103,7 +105,9 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		float ratio = (float) width / height;
 		System.out.println("width:" + width + "height:" + height + "ratio:" + ratio);
 		Matrix.orthoM(mProjectionMatrix, 0, -1, 1, -1 / ratio, 1 / ratio, 3, 7);// 正交投影
-		spaceHolder = new SpaceHolder(ratio, width, height, mModelMatrixHandle, imagePool);
+		spaceHolder = new SpaceHolder();
+		spaceHolder.initialize(ratio, width, height, mModelMatrixHandle, imagePool);
+
 		setupProjectionView();
 	}
 
