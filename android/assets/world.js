@@ -35,8 +35,8 @@
 				{
 					TouchEventMove :
 					{
-						active : "true",
-						factor : "2*0.5*1"
+						active : "false",
+						factor : "1.5*0.5*1"
 					}
 				}
 			}
@@ -47,7 +47,15 @@
 			{
 				image : "image1.jpg",
 				size : "400*300*0",
-				position : "300,400,0"
+				position : "300,400,0",
+				links :
+				{
+					TouchEventMove :
+					{
+						active : "true",
+						factor : "1*0.5*1"
+					}
+				}
 			},
 			"c1" :
 			{

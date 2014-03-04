@@ -23,11 +23,17 @@ public class SpaceHolder {
 	public float screen_offset_x;
 	public float screen_offset_y;
 
-	public float x0 = 0;
+	public float x0 = 0;// touch_down
 	public float y0 = 0;
 
-	public float x = 0;
+	public float x = 0;// touch_move
 	public float y = 0;
+
+	public float x1 = 0;// touch_up
+	public float y1 = 0;
+	
+	public float ax = 0;// Acceleration
+	public float ay = 0;
 
 	public float dx = 0;
 	public float dy = 0;
@@ -136,6 +142,55 @@ public class SpaceHolder {
 		for (String key : keys) {
 			Node childNode = node.children.get(key);
 			renderNode(childNode, x, y);
+		}
+	}
+
+	void resolveWorld() {
+		world = World.getInstance();
+		Set<String> spaceKeys = world.spaces.keySet();
+		for (String spaceKey : spaceKeys) {
+			Space space = world.spaces.get(spaceKey);
+			resolveSpace(space);
+		}
+		this.x = 0;
+		this.x0 = 0;
+		this.y = 0;
+		this.y0 = 0;
+	}
+
+	void resolveSpace(Space space) {
+		Set<String> keys = space.children.keySet();
+		for (String key : keys) {
+			Node node = space.children.get(key);
+			resolveNode(node, 0, 0);
+		}
+	}
+
+	void resolveNode(Node node, float parent_x, float parent_y) {
+		// resolve this node
+		float x_link = 0;
+		float y_link = 0;
+
+		Set<String> linkKeys = node.links.keySet();
+		for (String linkKey : linkKeys) {
+			Link link = node.links.get(linkKey);
+			if (link.active == false) {
+				continue;
+			}
+			if (link.type == "TouchEventMove") {
+				x_link = (this.x1 - this.x0) * link.factor.x;
+				y_link = (this.y1 - this.y0) * link.factor.y;
+			}
+		}
+
+		node.position.x = node.position.x + x_link;
+		node.position.y = node.position.y + y_link;
+
+		// resolve Children
+		Set<String> keys = node.children.keySet();
+		for (String key : keys) {
+			Node childNode = node.children.get(key);
+			resolveNode(childNode, x, y);
 		}
 	}
 

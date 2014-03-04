@@ -102,7 +102,17 @@ public class GLES20Activity extends Activity {
 			renderer.spaceHolder.x = x;
 			renderer.spaceHolder.y = y;
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
-			System.out.println("eventCount:    " + eventCount + "     ----renderCount:    " + renderer.renderCount);
+			renderer.spaceHolder.x1 = x;
+			renderer.spaceHolder.y1 = y;
+
+			renderer.spaceHolder.ax = x - renderer.spaceHolder.x;
+			renderer.spaceHolder.ay = y - renderer.spaceHolder.y;
+
+			renderer.spaceHolder.resolveWorld();
+			System.out.println("ax:    " + renderer.spaceHolder.ax + "     ----ay:    " + renderer.spaceHolder.ay);
+			// System.out.println("eventCount:    " + eventCount +
+			// "     ----renderCount:    " + renderer.renderCount);
+
 		}
 		return true;
 	}
