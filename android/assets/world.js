@@ -11,18 +11,34 @@
 		{
 			properties :
 			{
-				image : "emoji_normal.png",
+				image : "emoji_1.png",
 				size : "96*96*0",
-				position : "100,600,0"
+				position : "100,600,0",
+				links :
+				{
+					TouchEventMove :
+					{
+						active : "true",
+						factor : "1*1*1"
+					}
+				}
 			}
 		},
 		"b" :
 		{
 			properties :
 			{
-				image : "emoji_normal.png",
+				image : "emoji_click.png",
 				size : "96*96*0",
-				position : "100,200,0"
+				position : "100,200,0",
+				links :
+				{
+					TouchEventMove :
+					{
+						active : "true",
+						factor : "2*0.5*1"
+					}
+				}
 			}
 		},
 		"c" :

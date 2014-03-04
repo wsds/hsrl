@@ -39,7 +39,7 @@ public class WorldHelper {
 
 			while (keys.hasNext()) {
 				key = keys.next();
-				if (key.equals("properties")  || key.equals("keys")) {
+				if (key.equals("properties") || key.equals("keys")) {
 					continue;
 				}
 				jSpace = jWorld.getJSONObject(key);
@@ -67,7 +67,7 @@ public class WorldHelper {
 
 			while (keys.hasNext()) {
 				key = keys.next();
-				if (key.equals("properties")  || key.equals("keys") ) {
+				if (key.equals("properties") || key.equals("keys")) {
 					continue;
 				}
 				jNode = jSpace.getJSONObject(key);
@@ -99,7 +99,7 @@ public class WorldHelper {
 				if (key.equals("keys")) {
 					continue;
 				}
-				if (key.equals("properties") ) {
+				if (key.equals("properties")) {
 					JSONObject jPropertiesNode;
 					jPropertiesNode = jNode.getJSONObject(key);
 					parseProperties(jPropertiesNode, node);
@@ -115,32 +115,64 @@ public class WorldHelper {
 
 		return node;
 	}
-	
-	void parseProperties(JSONObject jPropertiesNode, Node node){
+
+	void parseProperties(JSONObject jPropertiesNode, Node node) {
 		try {
 			node.image = jPropertiesNode.getString("image");
 		} catch (JSONException e) {
 		}
 		try {
 			String size = jPropertiesNode.getString("size");
-			 String[ ] sizeSplit= new String[3];            
-			 sizeSplit=size.split("\\*");
-			 node.size.w=Integer.valueOf(sizeSplit[0]).intValue();
-			 node.size.h=Integer.valueOf(sizeSplit[1]).intValue();
-			 node.size.d=Integer.valueOf(sizeSplit[2]).intValue();
+			String[] sizeSplit = new String[3];
+			sizeSplit = size.split("\\*");
+			node.size.w = Integer.valueOf(sizeSplit[0]).intValue();
+			node.size.h = Integer.valueOf(sizeSplit[1]).intValue();
+			node.size.d = Integer.valueOf(sizeSplit[2]).intValue();
 		} catch (JSONException e) {
 		}
 		try {
 			String position = jPropertiesNode.getString("position");
-			 String[ ] positionSplit= new String[3];            
-			 positionSplit=position.split(",");
-			 node.position.x=Integer.valueOf(positionSplit[0]).intValue();
-			 node.position.y=Integer.valueOf(positionSplit[1]).intValue();
-			 node.position.z=Integer.valueOf(positionSplit[2]).intValue();
+			String[] positionSplit = new String[3];
+			positionSplit = position.split(",");
+			node.position.x = Integer.valueOf(positionSplit[0]).intValue();
+			node.position.y = Integer.valueOf(positionSplit[1]).intValue();
+			node.position.z = Integer.valueOf(positionSplit[2]).intValue();
 		} catch (JSONException e) {
 		}
 		try {
 			node.mode = jPropertiesNode.getString("mode");
+		} catch (JSONException e) {
+		}
+		try {
+			JSONObject jLinksNode;
+			jLinksNode = jPropertiesNode.getJSONObject("links");
+			parseLinks(jLinksNode, node);
+		} catch (JSONException e) {
+		}
+
+	}
+
+	void parseLinks(JSONObject jLinksNode, Node node) {
+		try {
+			JSONObject jLinkNode;
+			jLinkNode = jLinksNode.getJSONObject("TouchEventMove");
+			Link link = new Link();
+			link.type = "TouchEventMove";
+
+			String isActiveStr = jLinkNode.getString("active");
+			if (isActiveStr.equals("true")) {
+				link.active = true;
+			}
+
+			String factorStr = jLinkNode.getString("factor");
+			String[] factorSplit = new String[3];
+			factorSplit = factorStr.split("\\*");
+			link.factor.x = Float.valueOf(factorSplit[0]);
+			link.factor.y = Float.valueOf(factorSplit[1]);
+			link.factor.z = Float.valueOf(factorSplit[2]);
+
+			node.links.put("TouchEventMove", link);
+
 		} catch (JSONException e) {
 		}
 	}

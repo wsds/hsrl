@@ -97,6 +97,7 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		spaceHolder.renderWorld();
 	}
 
+	
 	public float x_move = 230;
 	public float y_move = 200;
 

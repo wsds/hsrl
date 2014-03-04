@@ -5,6 +5,7 @@ import java.util.Set;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import com.open.hsrl.Link;
 import com.open.hsrl.Node;
 import com.open.hsrl.Space;
 import com.open.hsrl.World;
@@ -20,8 +21,16 @@ public class SpaceHolder {
 	public float Pi;
 
 	public float screen_offset_x;
-
 	public float screen_offset_y;
+
+	public float x0 = 0;
+	public float y0 = 0;
+
+	public float x = 0;
+	public float y = 0;
+
+	public float dx = 0;
+	public float dy = 0;
 
 	public void initialize(float ratio, float width, float height, int mModelMatrixHandle, ImagePool imagePool) {
 		this.width = width;
@@ -101,14 +110,32 @@ public class SpaceHolder {
 		}
 	}
 
-	void renderNode(Node node, int parent_x, int parent_y) {
+	void renderNode(Node node, float parent_x, float parent_y) {
 		// render this node
-		this.drawImage(node.image, parent_x + node.position.x, parent_y + node.position.y, node.size.w, node.size.h);
+		float x_link = 0;
+		float y_link = 0;
+
+		Set<String> linkKeys = node.links.keySet();
+		for (String linkKey : linkKeys) {
+			Link link = node.links.get(linkKey);
+			if (link.active == false) {
+				continue;
+			}
+			if (link.type == "TouchEventMove") {
+				x_link = (this.x - this.x0) * link.factor.x;
+				y_link = (this.y - this.y0) * link.factor.y;
+			}
+		}
+
+		float x = parent_x + node.position.x + x_link;
+		float y = parent_y + node.position.y + y_link;
+
+		this.drawImage(node.image, x, y, node.size.w, node.size.h);
 		// render Children
 		Set<String> keys = node.children.keySet();
 		for (String key : keys) {
 			Node childNode = node.children.get(key);
-			renderNode(childNode, parent_x + node.position.x, parent_y + node.position.y);
+			renderNode(childNode, x, y);
 		}
 	}
 

@@ -76,22 +76,32 @@ public class GLES20Activity extends Activity {
 		renderer.imagePool.initialize(mContext);
 	}
 
-	public long eventCount=0;
-
+	public long eventCount = 0;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		eventCount++;
+		float x = event.getX();
+		float y = event.getY();
 		super.onTouchEvent(event);
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			renderer.x_move = event.getX();
-			renderer.y_move = event.getY();
-//			System.out.println("x_move:    " + renderer.x_move + "|||||||||||||||||y_move:    " + renderer.y_move);
+			renderer.x_move = x;
+			renderer.y_move = y;
+
+			renderer.spaceHolder.x = x;
+			renderer.spaceHolder.x0 = x;
+			renderer.spaceHolder.y = y;
+			renderer.spaceHolder.y0 = y;
+
+			// System.out.println("x_move:    " + renderer.x_move +
+			// "|||||||||||||||||y_move:    " + renderer.y_move);
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			renderer.x_move = event.getX();
-			renderer.y_move = event.getY();
-		}
-		else if(event.getAction() == MotionEvent.ACTION_UP){
+			renderer.x_move = x;
+			renderer.y_move = y;
+
+			renderer.spaceHolder.x = x;
+			renderer.spaceHolder.y = y;
+		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			System.out.println("eventCount:    " + eventCount + "     ----renderCount:    " + renderer.renderCount);
 		}
 		return true;

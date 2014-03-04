@@ -6,7 +6,7 @@ import java.util.Map;
 public class Node {
 	public String key;
 
-	public Map<String, String> perprotise = new Hashtable<String, String>();
+//	public Map<String, String> perprotise = new Hashtable<String, String>();
 	public Map<String, Node> children = new Hashtable<String, Node>();
 
 	public String image;
@@ -26,5 +26,7 @@ public class Node {
 	public Size size=new Size();
 	
 	String mode="NONE";//FIT || FILL || FIT_W || FIT_H
+	
+	public Map<String, Link> links = new Hashtable<String, Link>();
 
 }
