@@ -132,7 +132,7 @@ public class WorldHelper {
 		}
 		try {
 			String position = jPropertiesNode.getString("position");
-			String[] positionSplit = new String[3];
+			String[] positionSplit;
 			positionSplit = position.split(",");
 			node.position.x = Integer.valueOf(positionSplit[0]).intValue();
 			node.position.y = Integer.valueOf(positionSplit[1]).intValue();
@@ -165,13 +165,31 @@ public class WorldHelper {
 			}
 
 			String factorStr = jLinkNode.getString("factor");
-			String[] factorSplit = new String[3];
+			String[] factorSplit;
 			factorSplit = factorStr.split("\\*");
 			link.factor.x = Float.valueOf(factorSplit[0]);
 			link.factor.y = Float.valueOf(factorSplit[1]);
 			link.factor.z = Float.valueOf(factorSplit[2]);
 
 			node.links.put("TouchEventMove", link);
+
+		} catch (JSONException e) {
+		}
+	}
+
+	void parseInterpolators(JSONObject jInterpolatorsNode, Node node) {
+		try {
+			JSONObject jInterpolatorNode;
+			jInterpolatorNode = jInterpolatorsNode.getJSONObject("deceleration");
+			Interpolator interpolator = new Interpolator();
+			interpolator.type = "deceleration";
+
+			String isActiveStr = jInterpolatorNode.getString("active");
+			if (isActiveStr.equals("true")) {
+				interpolator.active = true;
+			}
+
+			node.interpolators.put("deceleration", interpolator);
 
 		} catch (JSONException e) {
 		}
@@ -203,6 +221,23 @@ public class WorldHelper {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+
+	Node $(String selector) {
+		Node node = null;
+		World world = World.getInstance();
+
+		String[] selectorSplit;
+		selectorSplit = selector.split(" ");
+		
+		Space space = world.spaces.get(selectorSplit[0]);
+		
+		for (int i=1;i< selectorSplit.length;i++) {
+
+		}
+
+		return node;
+
 	}
 
 }

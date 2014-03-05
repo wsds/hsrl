@@ -5,6 +5,7 @@ import java.util.Set;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import com.open.hsrl.Interpolator;
 import com.open.hsrl.Link;
 import com.open.hsrl.Node;
 import com.open.hsrl.Space;
@@ -31,7 +32,7 @@ public class SpaceHolder {
 
 	public float x1 = 0;// touch_up
 	public float y1 = 0;
-	
+
 	public float ax = 0;// Acceleration
 	public float ay = 0;
 
@@ -98,7 +99,9 @@ public class SpaceHolder {
 
 	World world;
 	WorldHelper worldHelper = WorldHelper.getInstance();
-
+	
+	WorldHelper w =worldHelper;
+	 
 	void renderWorld() {
 		world = World.getInstance();
 		Set<String> spaceKeys = world.spaces.keySet();
@@ -116,8 +119,11 @@ public class SpaceHolder {
 		}
 	}
 
+	long lastMillis = 0;
+
 	void renderNode(Node node, float parent_x, float parent_y) {
 		// render this node
+		// resolve links
 		float x_link = 0;
 		float y_link = 0;
 
@@ -135,7 +141,25 @@ public class SpaceHolder {
 
 		float x = parent_x + node.position.x + x_link;
 		float y = parent_y + node.position.y + y_link;
+		// resolve interpolators
 
+		long currentMillis = System.currentTimeMillis();
+		if (lastMillis != 0) {
+			long deltaMillis = currentMillis - lastMillis;
+
+			Set<String> interpolatorKeys = node.interpolators.keySet();
+			for (String interpolatorKey : interpolatorKeys) {
+				Interpolator interpolators = node.interpolators.get(interpolatorKey);
+				if (interpolators.active == false) {
+					continue;
+				}
+				if (interpolators.type == "deceleration") {
+					interpolators.deceleration(node.position, deltaMillis);
+				}
+			}
+		}
+
+		// draw the image
 		this.drawImage(node.image, x, y, node.size.w, node.size.h);
 		// render Children
 		Set<String> keys = node.children.keySet();
@@ -168,6 +192,7 @@ public class SpaceHolder {
 
 	void resolveNode(Node node, float parent_x, float parent_y) {
 		// resolve this node
+		// resolve links
 		float x_link = 0;
 		float y_link = 0;
 

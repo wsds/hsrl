@@ -78,12 +78,24 @@ public class GLES20Activity extends Activity {
 
 	public long eventCount = 0;
 
+	public int preTouchTimes = 5;
+	public float pre_x = 0;
+	public float pre_y = 0;
+	long lastMillis = 0;
+
+	public float pre_pre_x = 0;
+	public float pre_pre_y = 0;
+	long pre_lastMillis = 0;
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		eventCount++;
 		float x = event.getX();
 		float y = event.getY();
 		super.onTouchEvent(event);
+
+		long currentMillis = System.currentTimeMillis();
+
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
 			renderer.x_move = x;
 			renderer.y_move = y;
@@ -93,20 +105,48 @@ public class GLES20Activity extends Activity {
 			renderer.spaceHolder.y = y;
 			renderer.spaceHolder.y0 = y;
 
+			pre_x = x;
+			pre_y = y;
+
 			// System.out.println("x_move:    " + renderer.x_move +
 			// "|||||||||||||||||y_move:    " + renderer.y_move);
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			if (lastMillis == 0) {
+				lastMillis = currentMillis;
+				return true;
+			}
+
 			renderer.x_move = x;
 			renderer.y_move = y;
+			if (preTouchTimes < 0) {
+				preTouchTimes = 2;
+				pre_pre_x = pre_x;
+				pre_pre_y = pre_y;
+				pre_lastMillis = lastMillis;
+
+				pre_x = x;
+				pre_y = y;
+
+				lastMillis = currentMillis;
+			}
+			preTouchTimes--;
 
 			renderer.spaceHolder.x = x;
 			renderer.spaceHolder.y = y;
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			long delta = currentMillis - lastMillis;
+
+			if (delta == 0 || x == pre_x || y == -pre_y) {
+				delta = currentMillis - pre_lastMillis;
+				pre_x = pre_pre_x;
+				pre_y = pre_pre_y;
+			}
+
 			renderer.spaceHolder.x1 = x;
 			renderer.spaceHolder.y1 = y;
 
-			renderer.spaceHolder.ax = x - renderer.spaceHolder.x;
-			renderer.spaceHolder.ay = y - renderer.spaceHolder.y;
+			renderer.spaceHolder.ax = (x - pre_x) / delta;
+			renderer.spaceHolder.ay = (y - pre_y) / delta;
 
 			renderer.spaceHolder.resolveWorld();
 			System.out.println("ax:    " + renderer.spaceHolder.ax + "     ----ay:    " + renderer.spaceHolder.ay);

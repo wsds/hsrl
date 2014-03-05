@@ -21,6 +21,13 @@
 						active : "true",
 						factor : "1*1*1"
 					}
+				},
+				interpolators :
+				{
+					deceleration :
+					{
+						active : "false"
+					}
 				}
 			}
 		},
@@ -74,6 +81,38 @@
 						position : "20,100,0"
 					}
 
+				}
+			}
+		}
+	},
+	"B" :
+	{
+		properties :
+		{
+			size : "800*600*200",
+			position : "200,100,0"
+		},
+		"a" :
+		{
+			properties :
+			{
+				image : "emoji_1.png",
+				size : "96*96*0",
+				position : "200,200,0",
+				links :
+				{
+					TouchEventMove :
+					{
+						active : "true",
+						factor : "1*1*1"
+					}
+				},
+				interpolators :
+				{
+					deceleration :
+					{
+						active : "false"
+					}
 				}
 			}
 		}
