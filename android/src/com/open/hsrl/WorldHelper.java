@@ -28,38 +28,11 @@ public class WorldHelper {
 
 	World parseWorld(JSONObject jWorld) {
 		World world = new World();
+
 		try {
 
 			@SuppressWarnings("unchecked")
 			Iterator<String> keys = jWorld.keys();
-
-			String key;
-			JSONObject jSpace;
-			Space space;
-
-			while (keys.hasNext()) {
-				key = keys.next();
-				if (key.equals("properties") || key.equals("keys")) {
-					continue;
-				}
-				jSpace = jWorld.getJSONObject(key);
-				space = parseSpace(key, jSpace);
-				world.spaces.put(key, space);
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return world;
-	}
-
-	Space parseSpace(String selfKey, JSONObject jSpace) {
-		Space space = new Space();
-		space.key = selfKey;
-
-		try {
-
-			@SuppressWarnings("unchecked")
-			Iterator<String> keys = jSpace.keys();
 
 			String key;
 			JSONObject jNode;
@@ -70,15 +43,15 @@ public class WorldHelper {
 				if (key.equals("properties") || key.equals("keys")) {
 					continue;
 				}
-				jNode = jSpace.getJSONObject(key);
+				jNode = jWorld.getJSONObject(key);
 				node = parseNode(key, jNode);
-				space.children.put(key, node);
+				world.children.put(key, node);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
-		return space;
+		return world;
 	}
 
 	Node parseNode(String selfKey, JSONObject jNode) {
@@ -230,7 +203,7 @@ public class WorldHelper {
 		String[] selectorSplit;
 		selectorSplit = selector.split(" ");
 		
-		Space space = world.spaces.get(selectorSplit[0]);
+//		Space space = world.spaces.get(selectorSplit[0]);
 		
 		for (int i=1;i< selectorSplit.length;i++) {
 

@@ -8,7 +8,6 @@ import android.opengl.Matrix;
 import com.open.hsrl.Interpolator;
 import com.open.hsrl.Link;
 import com.open.hsrl.Node;
-import com.open.hsrl.Space;
 import com.open.hsrl.World;
 import com.open.hsrl.WorldHelper;
 
@@ -99,22 +98,14 @@ public class SpaceHolder {
 
 	World world;
 	WorldHelper worldHelper = WorldHelper.getInstance();
-	
-	WorldHelper w =worldHelper;
-	 
+
+	WorldHelper w = worldHelper;
+
 	void renderWorld() {
 		world = World.getInstance();
-		Set<String> spaceKeys = world.spaces.keySet();
-		for (String spaceKey : spaceKeys) {
-			Space space = world.spaces.get(spaceKey);
-			renderSpace(space);
-		}
-	}
-
-	void renderSpace(Space space) {
-		Set<String> keys = space.children.keySet();
+		Set<String> keys = world.children.keySet();
 		for (String key : keys) {
-			Node node = space.children.get(key);
+			Node node = world.children.get(key);
 			renderNode(node, 0, 0);
 		}
 	}
@@ -160,7 +151,9 @@ public class SpaceHolder {
 		}
 
 		// draw the image
-		this.drawImage(node.image, x, y, node.size.w, node.size.h);
+		if (node.image != null && !node.image.equals("")) {
+			this.drawImage(node.image, x, y, node.size.w, node.size.h);
+		}
 		// render Children
 		Set<String> keys = node.children.keySet();
 		for (String key : keys) {
@@ -171,23 +164,15 @@ public class SpaceHolder {
 
 	void resolveWorld() {
 		world = World.getInstance();
-		Set<String> spaceKeys = world.spaces.keySet();
-		for (String spaceKey : spaceKeys) {
-			Space space = world.spaces.get(spaceKey);
-			resolveSpace(space);
+		Set<String> keys = world.children.keySet();
+		for (String key : keys) {
+			Node node = world.children.get(key);
+			resolveNode(node, 0, 0);
 		}
 		this.x = 0;
 		this.x0 = 0;
 		this.y = 0;
 		this.y0 = 0;
-	}
-
-	void resolveSpace(Space space) {
-		Set<String> keys = space.children.keySet();
-		for (String key : keys) {
-			Node node = space.children.get(key);
-			resolveNode(node, 0, 0);
-		}
 	}
 
 	void resolveNode(Node node, float parent_x, float parent_y) {

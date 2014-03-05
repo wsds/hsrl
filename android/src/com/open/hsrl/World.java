@@ -14,5 +14,5 @@ public class World {
 		return world;
 	}
 
-	public Map<String, Space>spaces=new Hashtable<String, Space>();
+	public Map<String, Node>children=new Hashtable<String, Node>();
 }
