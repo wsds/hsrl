@@ -122,6 +122,12 @@ public class WorldHelper {
 			parseLinks(jLinksNode, node);
 		} catch (JSONException e) {
 		}
+		try {
+			JSONObject jInterpolatorsNode;
+			jInterpolatorsNode = jPropertiesNode.getJSONObject("interpolators");
+			parseInterpolators(jInterpolatorsNode, node);
+		} catch (JSONException e) {
+		}
 
 	}
 
@@ -161,6 +167,13 @@ public class WorldHelper {
 			if (isActiveStr.equals("true")) {
 				interpolator.active = true;
 			}
+			
+			String factorStr = jInterpolatorNode.getString("factor");
+			String[] factorSplit;
+			factorSplit = factorStr.split("\\*");
+			interpolator.factor.x = Float.valueOf(factorSplit[0]);
+			interpolator.factor.y = Float.valueOf(factorSplit[1]);
+			interpolator.factor.z = Float.valueOf(factorSplit[2]);
 
 			node.interpolators.put("deceleration", interpolator);
 
@@ -196,21 +209,20 @@ public class WorldHelper {
 		}
 	}
 
-	Node $(String selector) {
+	public Node $(String selector) {
 		Node node = null;
 		World world = World.getInstance();
 
 		String[] selectorSplit;
 		selectorSplit = selector.split(" ");
 		
-//		Space space = world.spaces.get(selectorSplit[0]);
+		node = world.children.get(selectorSplit[0]);
 		
 		for (int i=1;i< selectorSplit.length;i++) {
-
+			node=node.children.get(selectorSplit[i]);
 		}
 
 		return node;
-
 	}
 
 }

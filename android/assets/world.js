@@ -21,13 +21,6 @@
 						active : "true",
 						factor : "1*1*1"
 					}
-				},
-				interpolators :
-				{
-					deceleration :
-					{
-						active : "false"
-					}
 				}
 			}
 		},
@@ -54,15 +47,8 @@
 			{
 				image : "image1.jpg",
 				size : "400*300*0",
-				position : "300,400,0",
-				links :
-				{
-					TouchEventMove :
-					{
-						active : "true",
-						factor : "1*0.5*1"
-					}
-				}
+				position : "300,400,0"
+
 			},
 			"c1" :
 			{
@@ -70,14 +56,30 @@
 				{
 					image : "emoji_normal.png",
 					size : "96*96*0",
-					position : "20,20,0"
+					position : "20,180,0",
+					links :
+					{
+						TouchEventMove :
+						{
+							active : "true",
+							factor : "1*0.0*1"
+						}
+					},
+					interpolators :
+					{
+						deceleration :
+						{
+							active : "false",
+							factor : "0.6*0.0*1"
+						}
+					}
 				},
 				"c11" :
 				{
 					properties :
 					{
 						image : "image2.jpg",
-						size : "400*300*0",
+						size : "6000*450*0",
 						position : "20,100,0"
 					}
 

@@ -102,15 +102,20 @@ public class SpaceHolder {
 	WorldHelper w = worldHelper;
 
 	void renderWorld() {
+		currentMillis = System.currentTimeMillis();
+
 		world = World.getInstance();
 		Set<String> keys = world.children.keySet();
 		for (String key : keys) {
 			Node node = world.children.get(key);
 			renderNode(node, 0, 0);
 		}
+		
+		lastMillis = currentMillis;
 	}
 
 	long lastMillis = 0;
+	long currentMillis=0;
 
 	void renderNode(Node node, float parent_x, float parent_y) {
 		// render this node
@@ -132,9 +137,8 @@ public class SpaceHolder {
 
 		float x = parent_x + node.position.x + x_link;
 		float y = parent_y + node.position.y + y_link;
-		// resolve interpolators
 
-		long currentMillis = System.currentTimeMillis();
+		// resolve interpolators
 		if (lastMillis != 0) {
 			long deltaMillis = currentMillis - lastMillis;
 
@@ -149,6 +153,7 @@ public class SpaceHolder {
 				}
 			}
 		}
+
 
 		// draw the image
 		if (node.image != null && !node.image.equals("")) {

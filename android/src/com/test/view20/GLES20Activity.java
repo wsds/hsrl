@@ -16,6 +16,9 @@
 
 package com.test.view20;
 
+import com.open.hsrl.Interpolator;
+import com.open.hsrl.Node;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -108,6 +111,11 @@ public class GLES20Activity extends Activity {
 			pre_x = x;
 			pre_y = y;
 
+			Node node = renderer.spaceHolder.w.$("A c c1");
+			Interpolator interpolator = node.interpolators.get("deceleration");
+
+			interpolator.active = false;
+
 			// System.out.println("x_move:    " + renderer.x_move +
 			// "|||||||||||||||||y_move:    " + renderer.y_move);
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -149,6 +157,14 @@ public class GLES20Activity extends Activity {
 			renderer.spaceHolder.ay = (y - pre_y) / delta;
 
 			renderer.spaceHolder.resolveWorld();
+
+			Node node = renderer.spaceHolder.w.$("A c c1");
+			Interpolator interpolator = node.interpolators.get("deceleration");
+
+			interpolator.active = true;
+			interpolator.dxSpeed = renderer.spaceHolder.ax;
+			interpolator.dySpeed = renderer.spaceHolder.ay;
+
 			System.out.println("ax:    " + renderer.spaceHolder.ax + "     ----ay:    " + renderer.spaceHolder.ay);
 			// System.out.println("eventCount:    " + eventCount +
 			// "     ----renderCount:    " + renderer.renderCount);

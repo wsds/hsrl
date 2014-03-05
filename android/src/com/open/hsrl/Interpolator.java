@@ -8,13 +8,21 @@ public class Interpolator {
 	public float dxSpeed = 0.0f;
 	public float dySpeed = 0.0f;
 
+	public class Factor {
+		public float x = 1.0f;// left
+		public float y = 1.0f;// top
+		public float z = 1.0f;
+	}
+
+	public Factor factor = new Factor();
+
 	public void deceleration(Position position, long deltaMillis) {
 
-		position.x += dxSpeed * deltaMillis;
-		position.y += dySpeed * deltaMillis;
+		position.x += dxSpeed * deltaMillis * factor.x;
+		position.y += dySpeed * deltaMillis * factor.y;
 
-		dxSpeed *= (1.0f - 0.001f * deltaMillis);
-		dySpeed *= (1.0f - 0.001f * deltaMillis);
+		dxSpeed *= (1.0f - 0.005f * deltaMillis);
+		dySpeed *= (1.0f - 0.005f * deltaMillis);
 
 		if (Math.abs(dxSpeed) < 0.001f) {
 			dxSpeed = 0.0f;
