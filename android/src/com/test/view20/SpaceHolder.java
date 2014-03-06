@@ -78,7 +78,7 @@ public class SpaceHolder {
 
 		offset_x = this.screen_offset_x + left * this.Pi;
 		offset_y = this.screen_offset_y - top * this.Pi;
-		offset_z = -z / 10.0f;
+		offset_z = -10.0f + z / 10.0f;
 
 		offset_w = 2 * width / this.width;
 		offset_h = 2 * height / this.width;

@@ -206,7 +206,7 @@ public class WorldHelper {
 
 	public void initializeWorld() {
 		// String worldStr = getFromAssets("world.js");
-		String worldStr = getFromAssets("test1.js");
+		String worldStr = getFromAssets("hot.js");
 		try {
 			JSONObject jWorld = new JSONObject(worldStr);
 			World world = this.parseWorld(jWorld);

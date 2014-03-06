@@ -121,7 +121,7 @@
 				{
 					properties :
 					{
-						image : "rain_n.jpg",
+						image : "clear_d.jpg",
 						size : "720*1280*0",
 						position : "0,0,0"
 					},
@@ -147,12 +147,12 @@
 							properties :
 							{
 								size : "720*560*0",
-								position : "0,2,10",
+								position : "0,4,10",
 								links :
 								{
 									TouchEventMove :
 									{
-										active : "true",
+										active : "false",
 										factor : "1.2*0*1"
 									}
 								},
@@ -180,7 +180,7 @@
 								{
 									image : "rain_n.jpg",
 									size : "320*560*0",
-									position : "322,0,0"
+									position : "324,0,0"
 								}
 							},
 							"page3" :
@@ -189,7 +189,23 @@
 								{
 									image : "snow_d.jpg",
 									size : "320*560*0",
-									position : "644,0,0"
+									position : "648,0,0",
+									links :
+									{
+										TouchEventMove :
+										{
+											active : "true",
+											factor : "0*-1.2*1"
+										}
+									},
+									interpolators :
+									{
+										deceleration :
+										{
+											active : "false",
+											factor : "0*1.5*0*1"
+										}
+									}
 								}
 							},
 							"page4" :
@@ -198,7 +214,7 @@
 								{
 									image : "snow_n.jpg",
 									size : "320*560*0",
-									position : "966,0,0"
+									position : "972,0,0"
 								}
 							},
 							"page5" :
@@ -207,7 +223,7 @@
 								{
 									image : "rain_d.jpg",
 									size : "320*560*0",
-									position : "1288,0,0"
+									position : "1296,0,70"
 								}
 							}
 						}
