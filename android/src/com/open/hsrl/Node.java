@@ -31,4 +31,6 @@ public class Node {
 
 	public Map<String, Link> links = new Hashtable<String, Link>();
 	public Map<String, Interpolator> interpolators = new Hashtable<String, Interpolator>();
+	
+	public Boolean shown = true;
 }

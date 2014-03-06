@@ -21,8 +21,8 @@ public class Interpolator {
 		position.x += dxSpeed * deltaMillis * factor.x;
 		position.y += dySpeed * deltaMillis * factor.y;
 
-		dxSpeed *= (1.0f - 0.005f * deltaMillis);
-		dySpeed *= (1.0f - 0.005f * deltaMillis);
+		dxSpeed *= (1.0f - 0.003f * deltaMillis);
+		dySpeed *= (1.0f - 0.003f * deltaMillis);
 
 		if (Math.abs(dxSpeed) < 0.001f) {
 			dxSpeed = 0.0f;

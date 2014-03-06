@@ -55,8 +55,8 @@ public class SpaceHolder {
 		worldHelper.initializeWorld();
 	}
 
-	void drawImage(String key, float left, float top, float width, float height) {
-		drawImage(key, left, top, width, height, null);
+	void drawImage(String key, float left, float top, float z, float width, float height) {
+		drawImage(key, left, top, z, width, height, null);
 	}
 
 	private float[] mModelMatrixpreMove = new float[16];
@@ -67,16 +67,18 @@ public class SpaceHolder {
 	float angle = 0;
 	float offset_x = 0;
 	float offset_y = 0;
+	float offset_z = 0;
 	float offset_w = 0;
 	float offset_h = 0;
 	float[] modelMatrix = null;
 
-	void drawImage(String key, float left, float top, float width, float height, float[] modelMatrixMove) {
+	void drawImage(String key, float left, float top, float z, float width, float height, float[] modelMatrixMove) {
 		int textureID = imagePool.getImage(key);
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureID);
 
 		offset_x = this.screen_offset_x + left * this.Pi;
 		offset_y = this.screen_offset_y - top * this.Pi;
+		offset_z = -z / 10.0f;
 
 		offset_w = 2 * width / this.width;
 		offset_h = 2 * height / this.width;
@@ -86,7 +88,7 @@ public class SpaceHolder {
 			Matrix.multiplyMM(mModelMatrix, 0, mModelMatrixpreMove, 0, modelMatrixMove, 0);
 			modelMatrix = mModelMatrix;
 		} else {
-			Matrix.translateM(mModelMatrixpreMove, 0, offset_x, offset_y, 0.0f);
+			Matrix.translateM(mModelMatrixpreMove, 0, offset_x, offset_y, offset_z);
 			modelMatrix = mModelMatrixpreMove;
 		}
 
@@ -108,16 +110,16 @@ public class SpaceHolder {
 		Set<String> keys = world.children.keySet();
 		for (String key : keys) {
 			Node node = world.children.get(key);
-			renderNode(node, 0, 0);
+			renderNode(node, 0, 0, 0);
 		}
-		
+
 		lastMillis = currentMillis;
 	}
 
 	long lastMillis = 0;
-	long currentMillis=0;
+	long currentMillis = 0;
 
-	void renderNode(Node node, float parent_x, float parent_y) {
+	void renderNode(Node node, float parent_x, float parent_y, float parent_z) {
 		// render this node
 		// resolve links
 		float x_link = 0;
@@ -137,6 +139,7 @@ public class SpaceHolder {
 
 		float x = parent_x + node.position.x + x_link;
 		float y = parent_y + node.position.y + y_link;
+		float z = parent_z + node.position.z;
 
 		// resolve interpolators
 		if (lastMillis != 0) {
@@ -154,16 +157,19 @@ public class SpaceHolder {
 			}
 		}
 
-
+		// check if the node is shown
+		if (node.shown == false) {
+			return;
+		}
 		// draw the image
 		if (node.image != null && !node.image.equals("")) {
-			this.drawImage(node.image, x, y, node.size.w, node.size.h);
+			this.drawImage(node.image, x, y, z, node.size.w, node.size.h);
 		}
 		// render Children
 		Set<String> keys = node.children.keySet();
 		for (String key : keys) {
 			Node childNode = node.children.get(key);
-			renderNode(childNode, x, y);
+			renderNode(childNode, x, y, z);
 		}
 	}
 

@@ -111,10 +111,14 @@ public class GLES20Activity extends Activity {
 			pre_x = x;
 			pre_y = y;
 
-			Node node = renderer.spaceHolder.w.$("A c c1");
-			Interpolator interpolator = node.interpolators.get("deceleration");
-
-			interpolator.active = false;
+//			Node node = renderer.spaceHolder.w.$("space hot main_list");
+//			Node node = renderer.spaceHolder.w.$("space hot main_list this_page mini_page_list list");
+//			Interpolator interpolator = node.interpolators.get("deceleration");
+//			interpolator.active = false;
+//			
+//			Node node1 = renderer.spaceHolder.w.$("A a");
+//			Interpolator interpolator1 = node1.interpolators.get("deceleration");
+//			interpolator1.active = false;
 
 			// System.out.println("x_move:    " + renderer.x_move +
 			// "|||||||||||||||||y_move:    " + renderer.y_move);
@@ -158,12 +162,20 @@ public class GLES20Activity extends Activity {
 
 			renderer.spaceHolder.resolveWorld();
 
-			Node node = renderer.spaceHolder.w.$("A c c1");
-			Interpolator interpolator = node.interpolators.get("deceleration");
-
-			interpolator.active = true;
-			interpolator.dxSpeed = renderer.spaceHolder.ax;
-			interpolator.dySpeed = renderer.spaceHolder.ay;
+			// Node node =
+			// renderer.spaceHolder.w.$("space hot main_list this_page mini_page_list list");
+			// Interpolator interpolator =
+			// node.interpolators.get("deceleration");
+			// interpolator.active = true;
+			// interpolator.dxSpeed = renderer.spaceHolder.ax;
+			// interpolator.dySpeed = renderer.spaceHolder.ay;
+			//
+			// Node node1 = renderer.spaceHolder.w.$("A a");
+			// Interpolator interpolator1 =
+			// node1.interpolators.get("deceleration");
+			// interpolator1.active = true;
+			// interpolator1.dxSpeed = renderer.spaceHolder.ax;
+			// interpolator1.dySpeed = renderer.spaceHolder.ay;
 
 			System.out.println("ax:    " + renderer.spaceHolder.ax + "     ----ay:    " + renderer.spaceHolder.ay);
 			// System.out.println("eventCount:    " + eventCount +

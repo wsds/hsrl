@@ -128,7 +128,13 @@ public class WorldHelper {
 			parseInterpolators(jInterpolatorsNode, node);
 		} catch (JSONException e) {
 		}
-
+		try {
+			String isShownStr = jPropertiesNode.getString("shown");
+			if (isShownStr.equals("false")) {
+				node.shown = false;
+			}
+		} catch (JSONException e) {
+		}
 	}
 
 	void parseLinks(JSONObject jLinksNode, Node node) {
@@ -167,7 +173,7 @@ public class WorldHelper {
 			if (isActiveStr.equals("true")) {
 				interpolator.active = true;
 			}
-			
+
 			String factorStr = jInterpolatorNode.getString("factor");
 			String[] factorSplit;
 			factorSplit = factorStr.split("\\*");
@@ -199,7 +205,8 @@ public class WorldHelper {
 	}
 
 	public void initializeWorld() {
-		String worldStr = getFromAssets("world.js");
+		// String worldStr = getFromAssets("world.js");
+		String worldStr = getFromAssets("test1.js");
 		try {
 			JSONObject jWorld = new JSONObject(worldStr);
 			World world = this.parseWorld(jWorld);
@@ -215,11 +222,11 @@ public class WorldHelper {
 
 		String[] selectorSplit;
 		selectorSplit = selector.split(" ");
-		
+
 		node = world.children.get(selectorSplit[0]);
-		
-		for (int i=1;i< selectorSplit.length;i++) {
-			node=node.children.get(selectorSplit[i]);
+
+		for (int i = 1; i < selectorSplit.length; i++) {
+			node = node.children.get(selectorSplit[i]);
 		}
 
 		return node;

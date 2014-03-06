@@ -11,15 +11,23 @@
 		{
 			properties :
 			{
-				image : "emoji_1.png",
-				size : "96*96*0",
-				position : "100,600,0",
+				image : "image1.jpg",
+				size : "300*6000*0",
+				position : "100,100,0",
 				links :
 				{
 					TouchEventMove :
 					{
 						active : "true",
-						factor : "1*1*1"
+						factor : "0*1*1"
+					}
+				},
+				interpolators :
+				{
+					deceleration :
+					{
+						active : "false",
+						factor : "0*1.5*1"
 					}
 				}
 			}
@@ -70,7 +78,7 @@
 						deceleration :
 						{
 							active : "false",
-							factor : "0.6*0.0*1"
+							factor : "1.5*0.0*1"
 						}
 					}
 				},
@@ -105,7 +113,7 @@
 				{
 					TouchEventMove :
 					{
-						active : "true",
+						active : "false",
 						factor : "1*1*1"
 					}
 				},
