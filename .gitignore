@@ -38,3 +38,4 @@ proguard/
 /native-activity/libs/armeabi
 
 /native-activity/.cproject
+/native-activity/.settings

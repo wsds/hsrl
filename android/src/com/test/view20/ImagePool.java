@@ -107,7 +107,7 @@ public class ImagePool {
 
 		GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, image.bitmap, 0);
 
-		GLES20.glDisable(GLES20.GL_BLEND);
+//		GLES20.glDisable(GLES20.GL_BLEND);
 		image.bitmap.recycle();
 		image.status = image.STATUS_ONGPU;
 

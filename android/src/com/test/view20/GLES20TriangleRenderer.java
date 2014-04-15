@@ -53,14 +53,15 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 
 		GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
-		GLES20.glEnable(GLES20.GL_BLEND);
-		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA , GLES20.GL_ONE_MINUS_SRC_ALPHA);
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-
-		GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-		GLES20.glDepthFunc(GLES20.GL_LEQUAL);
-
 		if (isInitailized == false) {
+			
+			GLES20.glEnable(GLES20.GL_BLEND);
+			GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA , GLES20.GL_ONE_MINUS_SRC_ALPHA);
+			GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+
+			GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+			GLES20.glDepthFunc(GLES20.GL_LEQUAL);
+			
 			GLES20.glUseProgram(mProgram);
 
 			mTriangleVertices.position(TRIANGLE_VERTICES_DATA_POS_OFFSET);

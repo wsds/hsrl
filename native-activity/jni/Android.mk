@@ -17,10 +17,19 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := native-activity
-LOCAL_SRC_FILES := main.c
+
+LOCAL_C_INCLUDES := \
+                    $(LOCAL_PATH) \
+                    $(LOCAL_PATH)/hsrl \
+                    
+LOCAL_SRC_FILES := \
+		                    main.c \
+		                   	hsrl/tools.c\
+
+
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
-
 include $(BUILD_SHARED_LIBRARY)
+#include $(LOCAL_PATH)/hsrl
 
 $(call import-module,android/native_app_glue)
