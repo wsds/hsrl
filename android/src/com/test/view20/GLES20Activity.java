@@ -157,7 +157,7 @@ public class GLES20Activity extends Activity {
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			long delta = currentMillis - lastMillis;
 
-			if (delta == 0 || x == pre_x || y == -pre_y) {
+			if (delta == 0 || x == pre_x || y == pre_y) {
 				delta = currentMillis - pre_lastMillis;
 				pre_x = pre_pre_x;
 				pre_y = pre_pre_y;
