@@ -171,7 +171,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 		engine->state.x = AMotionEvent_getX(event, 0);
 		engine->state.y = AMotionEvent_getY(event, 0);
 
-		log_information( "touchCount: 【touchCount=%d】", touchCount++);
+		hsrl::log_information( "touchCount: 【touchCount=%d】", touchCount++);
 		return 1;
 	}
 	return 0;
@@ -229,7 +229,9 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
  * android_native_app_glue.  It runs in its own thread, with its own
  * event loop for receiving input events and doing other things.
  */
-void android_main(struct android_app* state) {
+void android_main(android_app* state) {
+	hsrl::log_information( "app is starting", 0);
+
 	struct engine engine;
 
 	// Make sure glue isn't stripped.

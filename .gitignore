@@ -39,3 +39,5 @@ proguard/
 
 /native-activity/.cproject
 /native-activity/.settings
+/native-activity/libs
+/native-activity/obj

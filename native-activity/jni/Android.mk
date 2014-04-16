@@ -21,10 +21,13 @@ LOCAL_MODULE    := native-activity
 LOCAL_C_INCLUDES := \
                     $(LOCAL_PATH) \
                     $(LOCAL_PATH)/hsrl \
+
+LOCAL_SHARED_LIBRARIES += libstlport
                     
 LOCAL_SRC_FILES := \
-		                    main.c \
-		                   	hsrl/tools.c\
+		                    main.cpp \
+		                   	hsrl/tools.cpp\
+		                   	hsrl/spaceHolder.cpp\
 
 
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
