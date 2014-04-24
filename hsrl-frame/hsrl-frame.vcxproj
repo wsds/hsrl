@@ -11,8 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8D284FFF-6B35-4F6A-ADCE-CFCF759D6BC3}</ProjectGuid>
+    <ProjectGuid>{464A05EF-4FFA-4797-B313-1656EEA93623}</ProjectGuid>
     <RootNamespace>bitmapplasma</RootNamespace>
+    <ProjectName>hsrl-frame</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -46,11 +47,14 @@
     <None Include="AndroidApk\res\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.cpp" />
+    <ClCompile Include="..\hello-gl2\CppSource\hsrl\tools.cpp" />
     <ClCompile Include="CppSource\main.c" />
-    <ClCompile Include="CppSource\NativeActivity.cpp" />
     <ClCompile Include="CppSource\native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.hpp" />
+    <ClInclude Include="..\hello-gl2\CppSource\hsrl\tools.h" />
     <ClInclude Include="CppSource\native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
