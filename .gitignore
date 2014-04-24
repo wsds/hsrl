@@ -37,7 +37,13 @@ proguard/
 
 /native-activity/libs/armeabi
 
-/native-activity/.cproject
+
 /native-activity/.settings
 /native-activity/libs
 /native-activity/obj
+/native-frame/libs
+/native-frame/obj
+/native-frame/.settings
+libs
+obj
+.settings

@@ -397,29 +397,29 @@ void Engine::TransformPosition( ndk_helper::Vec2& vec )
 
 void Engine::ShowUI()
 {
-    JNIEnv *jni;
-    app_->activity->vm->AttachCurrentThread( &jni, NULL );
-
-    //Default class retrieval
-    jclass clazz = jni->GetObjectClass( app_->activity->clazz );
-    jmethodID methodID = jni->GetMethodID( clazz, "showUI", "()V" );
-    jni->CallVoidMethod( app_->activity->clazz, methodID );
-
-    app_->activity->vm->DetachCurrentThread();
-    return;
+//    JNIEnv *jni;
+//    app_->activity->vm->AttachCurrentThread( &jni, NULL );
+//
+//    //Default class retrieval
+//    jclass clazz = jni->GetObjectClass( app_->activity->clazz );
+//    jmethodID methodID = jni->GetMethodID( clazz, "showUI", "()V" );
+//    jni->CallVoidMethod( app_->activity->clazz, methodID );
+//
+//    app_->activity->vm->DetachCurrentThread();
+//    return;
 }
 
 void Engine::UpdateFPS( float fFPS )
 {
-    JNIEnv *jni;
-    app_->activity->vm->AttachCurrentThread( &jni, NULL );
-
-    //Default class retrieval
-    jclass clazz = jni->GetObjectClass( app_->activity->clazz );
-    jmethodID methodID = jni->GetMethodID( clazz, "updateFPS", "(F)V" );
-    jni->CallVoidMethod( app_->activity->clazz, methodID, fFPS );
-
-    app_->activity->vm->DetachCurrentThread();
+//    JNIEnv *jni;
+//    app_->activity->vm->AttachCurrentThread( &jni, NULL );
+//
+//    //Default class retrieval
+//    jclass clazz = jni->GetObjectClass( app_->activity->clazz );
+//    jmethodID methodID = jni->GetMethodID( clazz, "updateFPS", "(F)V" );
+//    jni->CallVoidMethod( app_->activity->clazz, methodID, fFPS );
+//
+//    app_->activity->vm->DetachCurrentThread();
     return;
 }
 
