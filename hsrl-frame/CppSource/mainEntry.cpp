@@ -20,6 +20,9 @@
 #include <jni.h>
 #include <errno.h>
 
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+
 #include <android/sensor.h>
 #include <android/log.h>
 #include "libs/native_app_glue/android_native_app_glue.h"
@@ -27,8 +30,12 @@
 #include <android/native_window_jni.h>
 #include "libs/cpufeatures/cpu-features.h"
 
+#define  LOG_TAG    "mainEntry"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
 //#include "TeapotRenderer.h"
-#include "libs/ndk_helper/NDKHelper.h"
+//#include "libs/ndk_helper/NDKHelper.h"
 
 //-------------------------------------------------------------------------
 //Preprocessor
@@ -42,17 +49,17 @@ class Engine
 {
     //TeapotRenderer renderer_;
 
-    ndk_helper::GLContext* gl_context_;
+    //ndk_helper::GLContext* gl_context_;
 
     bool initialized_resources_;
     bool has_focus_;
 
-    ndk_helper::DoubletapDetector doubletap_detector_;
-    ndk_helper::PinchDetector pinch_detector_;
-    ndk_helper::DragDetector drag_detector_;
-    ndk_helper::PerfMonitor monitor_;
+    //ndk_helper::DoubletapDetector doubletap_detector_;
+    //ndk_helper::PinchDetector pinch_detector_;
+    //ndk_helper::DragDetector drag_detector_;
+    //ndk_helper::PerfMonitor monitor_;
 
-    ndk_helper::TapCamera tap_camera_;
+    //ndk_helper::TapCamera tap_camera_;
 
     android_app* app_;
 
@@ -62,7 +69,7 @@ class Engine
 
     void UpdateFPS( float fFPS );
     void ShowUI();
-    void TransformPosition( ndk_helper::Vec2& vec );
+    //void TransformPosition( ndk_helper::Vec2& vec );
 
 public:
     static void HandleCmd( struct android_app* app,
@@ -103,7 +110,7 @@ Engine::Engine() :
                 accelerometer_sensor_( NULL ),
                 sensor_event_queue_( NULL )
 {
-    gl_context_ = ndk_helper::GLContext::GetInstance();
+    //gl_context_ = ndk_helper::GLContext::GetInstance();
 }
 
 //-------------------------------------------------------------------------
@@ -135,37 +142,7 @@ void Engine::UnloadResources()
  */
 int Engine::InitDisplay()
 {
-    if( !initialized_resources_ )
-    {
-        gl_context_->Init( app_->window );
-        LoadResources();
-        initialized_resources_ = true;
-    }
-    else
-    {
-        // initialize OpenGL ES and EGL
-        if( EGL_SUCCESS != gl_context_->Resume( app_->window ) )
-        {
-            UnloadResources();
-            LoadResources();
-        }
-    }
 
-    ShowUI();
-
-    // Initialize GL state.
-    glEnable( GL_CULL_FACE );
-    glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
-
-    //Note that screen size might have been changed
-    glViewport( 0, 0, gl_context_->GetScreenWidth(), gl_context_->GetScreenHeight() );
-    //renderer_.UpdateViewport();
-
-    tap_camera_.SetFlip( 1.f, -1.f, -1.f );
-    tap_camera_.SetPinchTransformFactor( 2.f, 2.f, 8.f );
-
-    return 0;
 }
 
 /**
@@ -173,24 +150,7 @@ int Engine::InitDisplay()
  */
 void Engine::DrawFrame()
 {
-    float fFPS;
-    if( monitor_.Update( fFPS ) )
-    {
-        UpdateFPS( fFPS );
-    }
-    //renderer_.Update( monitor_.GetCurrentTime() );
 
-    // Just fill the screen with a color.
-    glClearColor( 0.5f, 0.5f, 0.5f, 1.f );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    //renderer_.Render();
-
-    // Swap
-    if( EGL_SUCCESS != gl_context_->Swap() )
-    {
-        UnloadResources();
-        LoadResources();
-    }
 }
 
 /**
@@ -198,14 +158,14 @@ void Engine::DrawFrame()
  */
 void Engine::TermDisplay()
 {
-    gl_context_->Suspend();
+    //gl_context_->Suspend();
 
 }
 
 void Engine::TrimMemory()
 {
     LOGI( "Trimming memory" );
-    gl_context_->Invalidate();
+    //gl_context_->Invalidate();
 }
 /**
  * Process the next input event.
@@ -213,67 +173,7 @@ void Engine::TrimMemory()
 int32_t Engine::HandleInput( android_app* app,
         AInputEvent* event )
 {
-    Engine* eng = (Engine*) app->userData;
-    if( AInputEvent_getType( event ) == AINPUT_EVENT_TYPE_MOTION )
-    {
-        ndk_helper::GESTURE_STATE doubleTapState = eng->doubletap_detector_.Detect( event );
-        ndk_helper::GESTURE_STATE dragState = eng->drag_detector_.Detect( event );
-        ndk_helper::GESTURE_STATE pinchState = eng->pinch_detector_.Detect( event );
-
-        //Double tap detector has a priority over other detectors
-        if( doubleTapState == ndk_helper::GESTURE_STATE_ACTION )
-        {
-            //Detect double tap
-            eng->tap_camera_.Reset( true );
-        }
-        else
-        {
-            //Handle drag state
-            if( dragState & ndk_helper::GESTURE_STATE_START )
-            {
-                //Otherwise, start dragging
-                ndk_helper::Vec2 v;
-                eng->drag_detector_.GetPointer( v );
-                eng->TransformPosition( v );
-                eng->tap_camera_.BeginDrag( v );
-            }
-            else if( dragState & ndk_helper::GESTURE_STATE_MOVE )
-            {
-                ndk_helper::Vec2 v;
-                eng->drag_detector_.GetPointer( v );
-                eng->TransformPosition( v );
-                eng->tap_camera_.Drag( v );
-            }
-            else if( dragState & ndk_helper::GESTURE_STATE_END )
-            {
-                eng->tap_camera_.EndDrag();
-            }
-
-            //Handle pinch state
-            if( pinchState & ndk_helper::GESTURE_STATE_START )
-            {
-                //Start new pinch
-                ndk_helper::Vec2 v1;
-                ndk_helper::Vec2 v2;
-                eng->pinch_detector_.GetPointers( v1, v2 );
-                eng->TransformPosition( v1 );
-                eng->TransformPosition( v2 );
-                eng->tap_camera_.BeginPinch( v1, v2 );
-            }
-            else if( pinchState & ndk_helper::GESTURE_STATE_MOVE )
-            {
-                //Multi touch
-                //Start new pinch
-                ndk_helper::Vec2 v1;
-                ndk_helper::Vec2 v2;
-                eng->pinch_detector_.GetPointers( v1, v2 );
-                eng->TransformPosition( v1 );
-                eng->TransformPosition( v2 );
-                eng->tap_camera_.Pinch( v1, v2 );
-            }
-        }
-        return 1;
-    }
+   
     return 0;
 }
 
@@ -376,9 +276,6 @@ void Engine::SuspendSensors()
 void Engine::SetState( android_app* state )
 {
     app_ = state;
-    doubletap_detector_.SetConfiguration( app_->config );
-    drag_detector_.SetConfiguration( app_->config );
-    pinch_detector_.SetConfiguration( app_->config );
 }
 
 bool Engine::IsReady()
@@ -389,12 +286,6 @@ bool Engine::IsReady()
     return false;
 }
 
-void Engine::TransformPosition( ndk_helper::Vec2& vec )
-{
-    vec = ndk_helper::Vec2( 2.0f, 2.0f ) * vec
-            / ndk_helper::Vec2( gl_context_->GetScreenWidth(), gl_context_->GetScreenHeight() )
-            - ndk_helper::Vec2( 1.f, 1.f );
-}
 
 void Engine::ShowUI()
 {
@@ -438,7 +329,7 @@ void android_main( android_app* state )
     g_engine.SetState( state );
 
     //Init helper functions
-    ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );
+    //ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );
 
     state->userData = &g_engine;
     state->onAppCmd = Engine::HandleCmd;
