@@ -74,6 +74,9 @@
     <ClCompile Include="CppSource\libs\ndk_helper\vecmath.cpp">
       <Filter>CppSource\libs</Filter>
     </ClCompile>
+    <ClCompile Include="CppSource\mainOpenGL.cpp">
+      <Filter>CppSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.hpp">
@@ -117,6 +120,9 @@
     </ClInclude>
     <ClInclude Include="CppSource\libs\ndk_helper\vecmath.h">
       <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\mainOpenGL.h">
+      <Filter>CppSource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

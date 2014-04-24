@@ -31,6 +31,7 @@
 #include "libs/cpufeatures/cpu-features.h"
 
 #include "hsrl/tools.h"
+#include "mainOpenGL.h"
 
 #define  LOG_TAG    "mainEntry"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -74,7 +75,7 @@ class Engine
 	//void TransformPosition( ndk_helper::Vec2& vec );
 
 public:
-	static void HandleCmd(struct android_app* app,
+	static void HandleCommand(struct android_app* app,
 		int32_t cmd);
 	static int32_t HandleInput(android_app* app,
 		AInputEvent* event);
@@ -144,6 +145,7 @@ void Engine::UnloadResources()
  */
 int Engine::InitDisplay()
 {
+	hsrl::setupGraphics(720,1100);
 
 }
 
@@ -152,7 +154,7 @@ int Engine::InitDisplay()
  */
 void Engine::DrawFrame()
 {
-
+	hsrl::renderFrame();
 }
 
 /**
@@ -193,7 +195,7 @@ int32_t Engine::HandleInput(android_app* app, AInputEvent* event)
 /**
  * Process the next main command.
  */
-void Engine::HandleCmd(struct android_app* app,
+void Engine::HandleCommand(struct android_app* app,
 	int32_t cmd)
 {
 	Engine* eng = (Engine*)app->userData;
@@ -345,7 +347,7 @@ void android_main(android_app* state)
 	//ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );
 
 	state->userData = &g_engine;
-	state->onAppCmd = Engine::HandleCmd;
+	state->onAppCmd = Engine::HandleCommand;
 	state->onInputEvent = Engine::HandleInput;
 
 #ifdef USE_NDK_PROFILER

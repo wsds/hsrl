@@ -3,8 +3,8 @@
 
 #include "SpaceHolder.hpp"
 namespace hsrl {
-void log_information(const char *text_format,  int param);
+	void log_information(const char *text_format, int param);
 
-void test();
+	void test();
 }
 #endif // HSRL_TOOLS
