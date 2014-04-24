@@ -10,11 +10,11 @@
     <Filter Include="AndroidApk\JavaSource">
       <UniqueIdentifier>{942f2517-60a1-4e35-be41-ab03c5da1860}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CppSource\native_app_glue">
-      <UniqueIdentifier>{9680a94e-b661-4595-b256-e39e40c7d11e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="CppSource\hsrl">
       <UniqueIdentifier>{b60de722-658a-49c6-98bb-b2beb4add677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CppSource\libs">
+      <UniqueIdentifier>{f3cac59b-5bea-4e06-96cf-b0d6c6521433}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -32,28 +32,91 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CppSource\main.c">
-      <Filter>CppSource</Filter>
-    </ClCompile>
-    <ClCompile Include="CppSource\native_app_glue\android_native_app_glue.c">
-      <Filter>CppSource\native_app_glue</Filter>
-    </ClCompile>
     <ClCompile Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.cpp">
       <Filter>CppSource\hsrl</Filter>
     </ClCompile>
     <ClCompile Include="..\hello-gl2\CppSource\hsrl\tools.cpp">
       <Filter>CppSource\hsrl</Filter>
     </ClCompile>
+    <ClCompile Include="CppSource\mainEntry.cpp">
+      <Filter>CppSource</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\cpufeatures\cpu-features.c">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\native_app_glue\android_native_app_glue.c">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\gestureDetector.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\gl3stub.c">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\GLContext.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\interpolator.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\JNIHelper.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\perfMonitor.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\shader.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\tapCamera.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\libs\ndk_helper\vecmath.cpp">
+      <Filter>CppSource\libs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CppSource\native_app_glue\android_native_app_glue.h">
-      <Filter>CppSource\native_app_glue</Filter>
-    </ClInclude>
     <ClInclude Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.hpp">
       <Filter>CppSource\hsrl</Filter>
     </ClInclude>
     <ClInclude Include="..\hello-gl2\CppSource\hsrl\tools.h">
       <Filter>CppSource\hsrl</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\cpufeatures\cpu-features.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\native_app_glue\android_native_app_glue.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\gestureDetector.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\gl3stub.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\GLContext.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\interpolator.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\JNIHelper.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\NDKHelper.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\perfMonitor.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\shader.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\tapCamera.h">
+      <Filter>CppSource\libs</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\libs\ndk_helper\vecmath.h">
+      <Filter>CppSource\libs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
