@@ -47,3 +47,5 @@ proguard/
 libs
 obj
 .settings
+*.sdf
+*.opensdf

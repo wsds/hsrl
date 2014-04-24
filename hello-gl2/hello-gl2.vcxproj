@@ -38,6 +38,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CppSource\gl_code.cpp" />
+    <ClCompile Include="CppSource\hsrl\SpaceHolder.cpp" />
+    <ClCompile Include="CppSource\hsrl\tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidApk\AndroidManifest.xml" />
@@ -47,6 +49,10 @@
     <None Include="AndroidApk\src\com\android\gl2jni\GL2JNIActivity.java" />
     <None Include="AndroidApk\src\com\android\gl2jni\GL2JNILib.java" />
     <None Include="AndroidApk\src\com\android\gl2jni\GL2JNIView.java" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CppSource\hsrl\SpaceHolder.hpp" />
+    <ClInclude Include="CppSource\hsrl\tools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,10 +10,19 @@
     <Filter Include="AndroidApk\JavaSource">
       <UniqueIdentifier>{ab0536cf-ea92-4e84-b130-25292ade30e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CppSource\hsrl">
+      <UniqueIdentifier>{eae71d60-eac7-479f-b9fe-66f0b5ceea46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CppSource\gl_code.cpp">
       <Filter>CppSource</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\hsrl\tools.cpp">
+      <Filter>CppSource\hsrl</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\hsrl\SpaceHolder.cpp">
+      <Filter>CppSource\hsrl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,5 +47,13 @@
     <None Include="AndroidApk\project.properties">
       <Filter>AndroidApk</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CppSource\hsrl\tools.h">
+      <Filter>CppSource\hsrl</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\hsrl\SpaceHolder.hpp">
+      <Filter>CppSource\hsrl</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

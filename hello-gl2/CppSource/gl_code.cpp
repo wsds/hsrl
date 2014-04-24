@@ -26,6 +26,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "hsrl/tools.h"
+
+
 #define  LOG_TAG    "libgl2jni"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -151,8 +154,8 @@ int testFlag = 600;
 void test(){
 	testFlag--;
 	if (testFlag < 0){
-		testFlag = 600;
-
+		testFlag = 60;
+		hsrl::log_information("hello", 10);
 	}
 }
 
