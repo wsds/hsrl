@@ -21,7 +21,7 @@ package com.android.gl2jni;
 public class GL2JNILib {
 
      static {
-         System.loadLibrary("hello-gl2");
+         System.loadLibrary("hsrl-frame");
      }
 
     /**

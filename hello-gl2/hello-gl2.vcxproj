@@ -13,19 +13,27 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{158CCAFB-7A8D-4532-91DF-99284FCDABEA}</ProjectGuid>
     <RootNamespace>hellogl2</RootNamespace>
+    <ProjectName>hsrl-frame</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <AndroidAPILevel>android-19</AndroidAPILevel>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
+    <IncludePath>E:\codespace\android\hsrl\hello-gl2\CppSource\libs;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Android'">
     <AntBuild>
       <AntBuildPath>$(ProjectDir)\AndroidApk</AntBuildPath>
     </AntBuild>
     <Link>
-      <AdditionalOptions>-lGLESv2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-lGLESv2 -shared -llog -landroid -lEGL -lGLESv2 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>E:\android-ndk-r9d-windows-x86\android-ndk-r9d\sources\android\compiler-rt\libs\armeabi;E:\android-ndk-r9d-windows-x86\android-ndk-r9d\platforms\android-19\arch-arm\usr\lib\rs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EchoCommandLines>true</EchoCommandLines>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
@@ -40,19 +48,40 @@
     <ClCompile Include="CppSource\gl_code.cpp" />
     <ClCompile Include="CppSource\hsrl\SpaceHolder.cpp" />
     <ClCompile Include="CppSource\hsrl\tools.cpp" />
+    <ClCompile Include="CppSource\libs\cpufeatures\cpu-features.c" />
+    <ClCompile Include="CppSource\libs\native_app_glue\android_native_app_glue.c" />
+    <ClCompile Include="CppSource\libs\ndk_helper\gestureDetector.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\gl3stub.c" />
+    <ClCompile Include="CppSource\libs\ndk_helper\GLContext.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\interpolator.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\JNIHelper.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\perfMonitor.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\shader.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\tapCamera.cpp" />
+    <ClCompile Include="CppSource\libs\ndk_helper\vecmath.cpp" />
+    <ClCompile Include="CppSource\TeapotNativeActivity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidApk\AndroidManifest.xml" />
     <None Include="AndroidApk\build.xml" />
     <None Include="AndroidApk\project.properties" />
     <None Include="AndroidApk\res\values\strings.xml" />
-    <None Include="AndroidApk\src\com\android\gl2jni\GL2JNIActivity.java" />
-    <None Include="AndroidApk\src\com\android\gl2jni\GL2JNILib.java" />
-    <None Include="AndroidApk\src\com\android\gl2jni\GL2JNIView.java" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CppSource\hsrl\SpaceHolder.hpp" />
     <ClInclude Include="CppSource\hsrl\tools.h" />
+    <ClInclude Include="CppSource\libs\cpufeatures\cpu-features.h" />
+    <ClInclude Include="CppSource\libs\native_app_glue\android_native_app_glue.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\gestureDetector.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\gl3stub.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\GLContext.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\interpolator.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\JNIHelper.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\NDKHelper.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\perfMonitor.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\shader.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\tapCamera.h" />
+    <ClInclude Include="CppSource\libs\ndk_helper\vecmath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
