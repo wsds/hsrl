@@ -51,3 +51,6 @@ obj
 *.opensdf
 *.sdf
 VisualGDBCache
+*.vgdbsettings
+*.suo
+*.user

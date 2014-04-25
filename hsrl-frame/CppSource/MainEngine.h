@@ -21,6 +21,7 @@ namespace hsrl {
 		}
 
 		struct android_app* app;
+		bool isReady;
 
 		//ASensorManager* sensorManager;
 		//const ASensor* accelerometerSensor;

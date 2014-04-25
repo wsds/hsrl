@@ -62,6 +62,7 @@ namespace hsrl {
 				}
 			}
 		}
+		LOGE("shader loadeed.");
 		return shader;
 	}
 
@@ -100,6 +101,8 @@ namespace hsrl {
 				program = 0;
 			}
 		}
+
+		LOGE("program created.");
 		return program;
 	}
 
@@ -125,6 +128,8 @@ namespace hsrl {
 
 		glViewport(0, 0, w, h);
 		checkGlError("glViewport");
+
+		LOGE("setupGraphics done.");
 		return true;
 	}
 
@@ -133,15 +138,22 @@ namespace hsrl {
 
 
 	int testFlag = 600;
+	int count = 0;
 	void test1(){
 		testFlag--;
 		if (testFlag < 0){
 			testFlag = 60;
-			hsrl::log_information("hello", 10);
+			LOGI("renderFrame : %d", count++);
 		}
 	}
 
 	void renderFrame() {
+		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+		if (mMainEngine->display == NULL) {
+			// No display.
+			return;
+		}
+
 		static float grey;
 		grey += 0.01f;
 		if (grey > 1.0f) {
@@ -161,6 +173,8 @@ namespace hsrl {
 		checkGlError("glEnableVertexAttribArray");
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		checkGlError("glDrawArrays");
+
+		eglSwapBuffers(mMainEngine->display, mMainEngine->surface);
 		test1();
 	}
 
@@ -170,83 +184,97 @@ namespace hsrl {
 	* Initialize an EGL context for the current display.
 	*/
 	int engine_init_display() {
-		//hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
-		// initialize OpenGL ES and EGL
+		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+		//	 initialize OpenGL ES and EGL
 
 		/*
 		* Here specify the attributes of the desired configuration.
 		* Below, we select an EGLConfig with at least 8 bits per color
 		* component compatible with on-screen windows
 		*/
-	//	const EGLint attribs[] = { EGL_SURFACE_TYPE, EGL_WINDOW_BIT, EGL_BLUE_SIZE,
-	//		8, EGL_GREEN_SIZE, 8, EGL_RED_SIZE, 8, EGL_NONE };
-	//	EGLint w, h, dummy, format;
-	//	EGLint numConfigs;
-	//	EGLConfig config;
-	//	EGLSurface surface;
-	//	EGLContext context;
+		const EGLint attribs[] = { EGL_SURFACE_TYPE, EGL_WINDOW_BIT, EGL_BLUE_SIZE,
+			8, EGL_GREEN_SIZE, 8, EGL_RED_SIZE, 8, EGL_NONE };
+		EGLint w, h, dummy, format;
+		EGLint numConfigs;
+		EGLConfig config;
+		EGLSurface surface;
+		EGLContext context;
 
-	//	EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 
-	//	eglInitialize(display, 0, 0);
+		eglInitialize(display, 0, 0);
 
-	//	/* Here, the application chooses the configuration it desires. In this
-	//	* sample, we have a very simplified selection process, where we pick
-	//	* the first EGLConfig that matches our criteria */
-	//	eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+		/* Here, the application chooses the configuration it desires. In this
+		* sample, we have a very simplified selection process, where we pick
+		* the first EGLConfig that matches our criteria */
+		eglChooseConfig(display, attribs, &config, 1, &numConfigs);
 
-	//	/* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
-	//	* guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
-	//	* As soon as we picked a EGLConfig, we can safely reconfigure the
-	//	* ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
-	//	eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+		/* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
+		* guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
+		* As soon as we picked a EGLConfig, we can safely reconfigure the
+		* ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
+		eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
 
-	//	ANativeWindow_setBuffersGeometry(mMainEngine->app->window, 0, 0, format);
+		ANativeWindow_setBuffersGeometry(mMainEngine->app->window, 0, 0, format);
 
-	//	surface = eglCreateWindowSurface(display, config, mMainEngine->app->window,
-	//		NULL);
-	//	context = eglCreateContext(display, config, NULL, NULL);
+		surface = eglCreateWindowSurface(display, config, mMainEngine->app->window,
+			NULL);
 
-	//	if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-	//		LOGI("Unable to eglMakeCurrent");
-	//		return -1;
-	//	}
 
-	//	eglQuerySurface(display, surface, EGL_WIDTH, &w);
-	//	eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+		EGLint contextAtt[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
+		context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAtt);
 
-	//	mMainEngine->display = display;
-	//	mMainEngine->context = context;
-	//	mMainEngine->surface = surface;
-	//	mMainEngine->width = w;
-	//	mMainEngine->height = h;
+		if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+			LOGI("Unable to eglMakeCurrent");
+			return -1;
+		}
 
-	//	 Initialize GL state.
-	///*	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-	//	glEnable(GL_CULL_FACE);
-	//	glShadeModel(GL_SMOOTH);
-	//	glDisable(GL_DEPTH_TEST);*/
+		eglQuerySurface(display, surface, EGL_WIDTH, &w);
+		eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+
+		mMainEngine->display = display;
+		mMainEngine->context = context;
+		mMainEngine->surface = surface;
+		mMainEngine->width = w;
+		mMainEngine->height = h;
+		mMainEngine->isReady = true;
+
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+
+		//Initialize GL state.
+		/*	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+			glEnable(GL_CULL_FACE);
+			glShadeModel(GL_SMOOTH);
+			glDisable(GL_DEPTH_TEST);*/
+		LOGE("engine_init_display done.");
+
+		hsrl::setupGraphics(w, h);
+		hsrl::renderFrame();
 
 		return 0;
 	}
 
 	void engine_term_display() {
-		//hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
 
-		//if (mMainEngine->display != EGL_NO_DISPLAY) {
-		//	eglMakeCurrent(mMainEngine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-		//	if (mMainEngine->context != EGL_NO_CONTEXT) {
-		//		eglDestroyContext(mMainEngine->display, mMainEngine->context);
-		//	}
-		//	if (mMainEngine->surface != EGL_NO_SURFACE) {
-		//		eglDestroySurface(mMainEngine->display, mMainEngine->surface);
-		//	}
-		//	eglTerminate(mMainEngine->display);
-		//}
-		//mMainEngine->animating = 0;
-		//mMainEngine->display = EGL_NO_DISPLAY;
-		//mMainEngine->context = EGL_NO_CONTEXT;
-		//mMainEngine->surface = EGL_NO_SURFACE;
+		if (mMainEngine->display != EGL_NO_DISPLAY) {
+			eglMakeCurrent(mMainEngine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+			if (mMainEngine->context != EGL_NO_CONTEXT) {
+				eglDestroyContext(mMainEngine->display, mMainEngine->context);
+			}
+			if (mMainEngine->surface != EGL_NO_SURFACE) {
+				eglDestroySurface(mMainEngine->display, mMainEngine->surface);
+			}
+			eglTerminate(mMainEngine->display);
+		}
+		mMainEngine->animating = 0;
+		mMainEngine->display = EGL_NO_DISPLAY;
+		mMainEngine->context = EGL_NO_CONTEXT;
+		mMainEngine->surface = EGL_NO_SURFACE;
+		mMainEngine->isReady = false;
+
+		LOGE("engine_term_displays.");
 	}
 
 }

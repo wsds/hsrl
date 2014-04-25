@@ -148,7 +148,6 @@ int Engine::InitDisplay()
 {
 	hsrl::engine_init_display();
 
-	hsrl::setupGraphics(720, 1100);
 
 }
 
@@ -351,8 +350,8 @@ void android_main(android_app* state)
 
 	g_engine.SetState(state);
 
-	//hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
-	//mMainEngine->app = state;
+	hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+	mMainEngine->app = state;
 
 	//Init helper functions
 	//ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );
@@ -361,12 +360,9 @@ void android_main(android_app* state)
 	state->onAppCmd = Engine::HandleCommand;
 	state->onInputEvent = Engine::HandleInput;
 
-#ifdef USE_NDK_PROFILER
-	monstartup("libTeapotNativeActivity.so");
-#endif
 
 	// Prepare to monitor accelerometer
-	g_engine.InitSensors();
+	//g_engine.InitSensors();
 
 	// loop waiting for stuff to do.
 	while (1)
@@ -396,7 +392,7 @@ void android_main(android_app* state)
 			}
 		}
 
-		if (g_engine.IsReady())
+		if (mMainEngine->isReady)
 		{
 			// Drawing is throttled to the screen update rate, so there
 			// is no need to do timing here.

@@ -5,6 +5,7 @@ namespace hsrl {
 
 	MainEngine::MainEngine()
 	{
+		isReady = false;
 	}
 
 
