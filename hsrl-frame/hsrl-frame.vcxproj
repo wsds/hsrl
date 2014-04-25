@@ -34,6 +34,7 @@
       <AdditionalOptions>-ljnigraphics -lGLESv1_CM -shared -llog -landroid -lEGL -lGLESv2 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalLibraryDirectories>E:\codespace\android\test\bitmap-plasma\CppSource\static;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Android'">
     <Link>

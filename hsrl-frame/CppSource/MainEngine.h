@@ -8,11 +8,38 @@ namespace hsrl {
 
 	class MainEngine
 	{
+
 	public:
-		static MainEngine * mMainEngine;
-		static MainEngine * getInstance();
+		MainEngine()   //构造函数是私有的  
+		{
+		}
+		static MainEngine *m_pInstance;
+		static int test;
+	public:
+		static int test1;
+		static MainEngine * getInstance()
+		{
 
+			//test = test + 1;
+			//m_pInstance++;
 
+			if (m_pInstance == NULL) { //判断是否第一次调用  
+				//test = test + 1;
+				m_pInstance = new MainEngine();
+			}
+			//return m_pInstance;
+
+			//if (m_pInstance == NULL)  //判断是否第一次调用  
+			//	m_pInstance = new MainEngine();
+			//return m_pInstance;
+			return m_pInstance;
+		}
+		static MainEngine * getInstance1(){
+			//return GetInstance();
+			return NULL;
+		}
+
+	public:
 		struct android_app* app;
 
 		//ASensorManager* sensorManager;
@@ -26,7 +53,7 @@ namespace hsrl {
 		int32_t width;
 		int32_t height;
 
-		MainEngine();
+		//MainEngine();
 		~MainEngine();
 	};
 
