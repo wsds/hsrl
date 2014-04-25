@@ -50,8 +50,8 @@
     <None Include="AndroidApk\res\values\strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.cpp" />
-    <ClCompile Include="..\hello-gl2\CppSource\hsrl\tools.cpp" />
+    <ClCompile Include="CppSource\hsrl\SpaceHolder.cpp" />
+    <ClCompile Include="CppSource\hsrl\tools.cpp" />
     <ClCompile Include="CppSource\libs\cpufeatures\cpu-features.c" />
     <ClCompile Include="CppSource\libs\native_app_glue\android_native_app_glue.c" />
     <ClCompile Include="CppSource\libs\ndk_helper\gestureDetector.cpp" />
@@ -63,12 +63,13 @@
     <ClCompile Include="CppSource\libs\ndk_helper\shader.cpp" />
     <ClCompile Include="CppSource\libs\ndk_helper\tapCamera.cpp" />
     <ClCompile Include="CppSource\libs\ndk_helper\vecmath.cpp" />
+    <ClCompile Include="CppSource\MainEngine.cpp" />
     <ClCompile Include="CppSource\mainEntry.cpp" />
     <ClCompile Include="CppSource\mainOpenGL.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.hpp" />
-    <ClInclude Include="..\hello-gl2\CppSource\hsrl\tools.h" />
+    <ClInclude Include="CppSource\hsrl\SpaceHolder.hpp" />
+    <ClInclude Include="CppSource\hsrl\tools.h" />
     <ClInclude Include="CppSource\libs\cpufeatures\cpu-features.h" />
     <ClInclude Include="CppSource\libs\native_app_glue\android_native_app_glue.h" />
     <ClInclude Include="CppSource\libs\ndk_helper\gestureDetector.h" />
@@ -81,6 +82,7 @@
     <ClInclude Include="CppSource\libs\ndk_helper\shader.h" />
     <ClInclude Include="CppSource\libs\ndk_helper\tapCamera.h" />
     <ClInclude Include="CppSource\libs\ndk_helper\vecmath.h" />
+    <ClInclude Include="CppSource\MainEngine.h" />
     <ClInclude Include="CppSource\mainOpenGL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

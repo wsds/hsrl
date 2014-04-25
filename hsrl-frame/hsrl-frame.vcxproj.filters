@@ -32,12 +32,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.cpp">
-      <Filter>CppSource\hsrl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\hello-gl2\CppSource\hsrl\tools.cpp">
-      <Filter>CppSource\hsrl</Filter>
-    </ClCompile>
     <ClCompile Include="CppSource\mainEntry.cpp">
       <Filter>CppSource</Filter>
     </ClCompile>
@@ -77,14 +71,17 @@
     <ClCompile Include="CppSource\mainOpenGL.cpp">
       <Filter>CppSource</Filter>
     </ClCompile>
+    <ClCompile Include="CppSource\hsrl\SpaceHolder.cpp">
+      <Filter>CppSource\hsrl</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\hsrl\tools.cpp">
+      <Filter>CppSource\hsrl</Filter>
+    </ClCompile>
+    <ClCompile Include="CppSource\MainEngine.cpp">
+      <Filter>CppSource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\hello-gl2\CppSource\hsrl\SpaceHolder.hpp">
-      <Filter>CppSource\hsrl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\hello-gl2\CppSource\hsrl\tools.h">
-      <Filter>CppSource\hsrl</Filter>
-    </ClInclude>
     <ClInclude Include="CppSource\libs\cpufeatures\cpu-features.h">
       <Filter>CppSource\libs</Filter>
     </ClInclude>
@@ -122,6 +119,15 @@
       <Filter>CppSource\libs</Filter>
     </ClInclude>
     <ClInclude Include="CppSource\mainOpenGL.h">
+      <Filter>CppSource</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\hsrl\tools.h">
+      <Filter>CppSource\hsrl</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\hsrl\SpaceHolder.hpp">
+      <Filter>CppSource\hsrl</Filter>
+    </ClInclude>
+    <ClInclude Include="CppSource\MainEngine.h">
       <Filter>CppSource</Filter>
     </ClInclude>
   </ItemGroup>

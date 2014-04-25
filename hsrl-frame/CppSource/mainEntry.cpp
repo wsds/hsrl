@@ -32,6 +32,7 @@
 
 #include "hsrl/tools.h"
 #include "mainOpenGL.h"
+#include "MainEngine.h"
 
 #define  LOG_TAG    "mainEntry"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -145,7 +146,9 @@ void Engine::UnloadResources()
  */
 int Engine::InitDisplay()
 {
-	hsrl::setupGraphics(720,1100);
+	hsrl::engine_init_display();
+
+	hsrl::setupGraphics(720, 1100);
 
 }
 
@@ -163,6 +166,7 @@ void Engine::DrawFrame()
 void Engine::TermDisplay()
 {
 	//gl_context_->Suspend();
+	hsrl::engine_term_display();
 
 }
 
@@ -332,6 +336,8 @@ void Engine::UpdateFPS(float fFPS)
 
 Engine g_engine;
 
+//hsrl::MainEngine * mMainEngine;
+
 /**
  * This is the main entry point of a native application that is using
  * android_native_app_glue.  It runs in its own thread, with its own
@@ -339,9 +345,12 @@ Engine g_engine;
  */
 void android_main(android_app* state)
 {
+	hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+
 	app_dummy();
 
 	g_engine.SetState(state);
+	mMainEngine->app = state;
 
 	//Init helper functions
 	//ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );
