@@ -20,20 +20,20 @@
     <Filter Include="Java Source Files\com">
       <UniqueIdentifier>{e3850b85-1fef-4920-a882-26f0665ae6be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source files\libs">
-      <UniqueIdentifier>{18582c34-bdb6-4180-8472-a723009200d3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source files\hsrl">
       <UniqueIdentifier>{acfdf4ea-3497-44a1-8f2f-d1dd4b1712cf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source files\libs\native_app_glue">
-      <UniqueIdentifier>{40d48788-1bc9-4240-a633-b994bdc15a24}</UniqueIdentifier>
     </Filter>
     <Filter Include="Java Source Files\com\open">
       <UniqueIdentifier>{49d1582e-8608-4b5d-bc15-b0384b797d34}</UniqueIdentifier>
     </Filter>
     <Filter Include="Java Source Files\com\open\hsrl">
       <UniqueIdentifier>{3ccd79d3-702f-4f6b-a654-95ee8aa361b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\prelibs">
+      <UniqueIdentifier>{736de99a-f34b-4a73-a44b-8b70b7711f79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\prelibs\native_app_glue">
+      <UniqueIdentifier>{4ecc7d4e-698e-46d7-83d5-61fa83e36b99}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,8 +62,8 @@
     <ClCompile Include="jni\mainOpenGL.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="jni\libs\native_app_glue\android_native_app_glue.c">
-      <Filter>Source files\libs\native_app_glue</Filter>
+    <ClCompile Include="jni\prelibs\native_app_glue\android_native_app_glue.c">
+      <Filter>Source files\prelibs\native_app_glue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,8 +79,8 @@
     <ClInclude Include="jni\mainOpenGL.h">
       <Filter>Source files</Filter>
     </ClInclude>
-    <ClInclude Include="jni\libs\native_app_glue\android_native_app_glue.h">
-      <Filter>Source files\libs\native_app_glue</Filter>
+    <ClInclude Include="jni\prelibs\native_app_glue\android_native_app_glue.h">
+      <Filter>Source files\prelibs\native_app_glue</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

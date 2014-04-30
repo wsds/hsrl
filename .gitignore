@@ -54,3 +54,4 @@ VisualGDBCache
 *.vgdbsettings
 *.suo
 *.user
+*.log

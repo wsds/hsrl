@@ -5,7 +5,7 @@
 #include <GLES2/gl2ext.h>
 
 #include <EGL/egl.h>
-#include "libs/native_app_glue/android_native_app_glue.h"
+#include "prelibs/native_app_glue/android_native_app_glue.h"
 
 namespace hsrl {
 	static void printGLString(const char *name, GLenum s);

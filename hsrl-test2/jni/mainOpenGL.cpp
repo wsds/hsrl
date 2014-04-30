@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "libs/native_app_glue/android_native_app_glue.h"
+#include "prelibs/native_app_glue/android_native_app_glue.h"
 
 #include "hsrl/tools.h"
 #include "MainEngine.h"

@@ -25,10 +25,10 @@
 
 #include <android/sensor.h>
 #include <android/log.h>
-#include "libs/native_app_glue/android_native_app_glue.h"
+#include "prelibs/native_app_glue/android_native_app_glue.h"
 
 #include <android/native_window_jni.h>
-#include "libs/cpufeatures/cpu-features.h"
+#include "prelibs/cpufeatures/cpu-features.h"
 
 #include "hsrl/tools.h"
 #include "mainOpenGL.h"

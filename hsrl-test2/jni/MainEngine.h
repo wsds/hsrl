@@ -2,7 +2,7 @@
 #ifndef MAIN_ENGINE
 #define MAIN_ENGINE
 #include <EGL/egl.h>
-#include "libs/native_app_glue/android_native_app_glue.h"
+#include "prelibs\native_app_glue\android_native_app_glue.h"
 
 namespace hsrl {
 

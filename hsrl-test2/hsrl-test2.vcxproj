@@ -73,17 +73,17 @@
   <ItemGroup>
     <ClCompile Include="jni\hsrl\SpaceHolder.cpp" />
     <ClCompile Include="jni\hsrl\tools.cpp" />
-    <ClCompile Include="jni\libs\native_app_glue\android_native_app_glue.c" />
     <ClCompile Include="jni\MainEngine.cpp" />
     <ClCompile Include="jni\mainEntry.cpp" />
     <ClCompile Include="jni\mainOpenGL.cpp" />
+    <ClCompile Include="jni\prelibs\native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\hsrl\SpaceHolder.hpp" />
     <ClInclude Include="jni\hsrl\tools.h" />
-    <ClInclude Include="jni\libs\native_app_glue\android_native_app_glue.h" />
     <ClInclude Include="jni\MainEngine.h" />
     <ClInclude Include="jni\mainOpenGL.h" />
+    <ClInclude Include="jni\prelibs\native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

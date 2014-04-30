@@ -22,7 +22,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libhsrl-frame
 LOCAL_CFLAGS    := -Werror
-LOCAL_SRC_FILES := hsrl/SpaceHolder.cpp hsrl/tools.cpp libs/native_app_glue/android_native_app_glue.c MainEngine.cpp mainEntry.cpp mainOpenGL.cpp
+LOCAL_SRC_FILES := hsrl/SpaceHolder.cpp hsrl/tools.cpp prelibs/native_app_glue/android_native_app_glue.c MainEngine.cpp mainEntry.cpp mainOpenGL.cpp
 LOCAL_SHARED_LIBRARIES := sooo1
 LOCAL_STATIC_LIBRARIES := add
 LOCAL_LDLIBS    := -llog -lGLESv2 -landroid -lEGL
