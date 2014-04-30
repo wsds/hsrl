@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{701e0553-1883-423d-9c32-aeae62af0767}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{182ba24c-a601-4573-a229-e83229b01f0c}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{3a8d8ad4-8c02-4a5c-8112-1a3eaa428333}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Java Source Files">
+      <UniqueIdentifier>{ad82430c-a752-4849-9e2c-4e63b0d445cb}</UniqueIdentifier>
+      <Extensions>*.java</Extensions>
+    </Filter>
+    <Filter Include="Java Source Files\com">
+      <UniqueIdentifier>{e3850b85-1fef-4920-a882-26f0665ae6be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\libs">
+      <UniqueIdentifier>{18582c34-bdb6-4180-8472-a723009200d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\hsrl">
+      <UniqueIdentifier>{acfdf4ea-3497-44a1-8f2f-d1dd4b1712cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\libs\native_app_glue">
+      <UniqueIdentifier>{40d48788-1bc9-4240-a633-b994bdc15a24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Java Source Files\com\open">
+      <UniqueIdentifier>{49d1582e-8608-4b5d-bc15-b0384b797d34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Java Source Files\com\open\hsrl">
+      <UniqueIdentifier>{3ccd79d3-702f-4f6b-a654-95ee8aa361b5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="jni\Android.mk" />
+    <None Include="jni\Application.mk" />
+    <None Include="src\com\open\hsrl\MyNativeActivity.java">
+      <Filter>Java Source Files\com\open\hsrl</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="jni\hsrl\tools.cpp">
+      <Filter>Source files\hsrl</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\hsrl\SpaceHolder.cpp">
+      <Filter>Source files\hsrl</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\MainEngine.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\mainEntry.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\mainOpenGL.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\libs\native_app_glue\android_native_app_glue.c">
+      <Filter>Source files\libs\native_app_glue</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="jni\hsrl\tools.h">
+      <Filter>Source files\hsrl</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\hsrl\SpaceHolder.hpp">
+      <Filter>Source files\hsrl</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\MainEngine.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\mainOpenGL.h">
+      <Filter>Source files</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\libs\native_app_glue\android_native_app_glue.h">
+      <Filter>Source files\libs\native_app_glue</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
