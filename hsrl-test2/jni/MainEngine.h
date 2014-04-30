@@ -3,6 +3,7 @@
 #define MAIN_ENGINE
 #include <EGL/egl.h>
 #include "prelibs\native_app_glue\android_native_app_glue.h"
+#include "hsrl\imagePools\ImagePool.hpp"
 
 namespace hsrl {
 
@@ -21,6 +22,9 @@ namespace hsrl {
 		}
 
 		struct android_app* app;
+		struct ANativeActivity* activity;
+		AAssetManager* assetManager;
+
 		bool isReady;
 
 		//ASensorManager* sensorManager;
@@ -36,6 +40,9 @@ namespace hsrl {
 
 		MainEngine();
 		~MainEngine();
+		void initialize(struct android_app* app);
+
+		ImagePool* imagePool;
 	};
 
 }

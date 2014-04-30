@@ -35,6 +35,15 @@
     <Filter Include="Source files\prelibs\native_app_glue">
       <UniqueIdentifier>{4ecc7d4e-698e-46d7-83d5-61fa83e36b99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\hsrl\imagePools">
+      <UniqueIdentifier>{d7128f62-b9e5-492c-97ca-10736c70d979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\hsrl\imagePools\lodepng">
+      <UniqueIdentifier>{df0294da-053c-4147-974b-02e173d4c11e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source files\prelibs\mySTL">
+      <UniqueIdentifier>{ca9d4317-4207-40fb-8858-f6f7b101e976}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AndroidManifest.xml" />
@@ -65,6 +74,15 @@
     <ClCompile Include="jni\prelibs\native_app_glue\android_native_app_glue.c">
       <Filter>Source files\prelibs\native_app_glue</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\out\out\hsrl-frame\CppSource\hsrl\imagePools\lodepng\lodepng.cpp">
+      <Filter>Source files\hsrl\imagePools\lodepng</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\hsrl\imagePools\ImagePool.cpp">
+      <Filter>Source files\hsrl\imagePools</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\prelibs\mySTL\MyMap.cpp">
+      <Filter>Source files\prelibs\mySTL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\hsrl\tools.h">
@@ -81,6 +99,15 @@
     </ClInclude>
     <ClInclude Include="jni\prelibs\native_app_glue\android_native_app_glue.h">
       <Filter>Source files\prelibs\native_app_glue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\out\out\hsrl-frame\CppSource\hsrl\imagePools\lodepng\lodepng.h">
+      <Filter>Source files\hsrl\imagePools\lodepng</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\hsrl\imagePools\ImagePool.hpp">
+      <Filter>Source files\hsrl\imagePools</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\prelibs\mySTL\MyMap.h">
+      <Filter>Source files\prelibs\mySTL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

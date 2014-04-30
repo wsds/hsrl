@@ -12,6 +12,7 @@
     <AndroidPlatform>android-19</AndroidPlatform>
     <IsDebugConfiguration>true</IsDebugConfiguration>
     <JNIOnlyBuild>false</JNIOnlyBuild>
+    <AdditionalBuildArguments>-j4</AdditionalBuildArguments>
     <AdditionalDirectoriesToDeleteOnClean>bin;obj</AdditionalDirectoriesToDeleteOnClean>
     <DeleteANTFilesOnClean>false</DeleteANTFilesOnClean>
     <DoNotEditAndroidManifest>false</DoNotEditAndroidManifest>

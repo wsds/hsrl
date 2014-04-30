@@ -345,13 +345,12 @@ Engine g_engine;
 void android_main(android_app* state)
 {
 
-
 	app_dummy();
 
 	g_engine.SetState(state);
 
 	hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
-	mMainEngine->app = state;
+	mMainEngine->initialize(state);
 
 	//Init helper functions
 	//ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );

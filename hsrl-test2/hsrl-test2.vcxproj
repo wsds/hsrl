@@ -44,6 +44,7 @@
     <ReferencePath />
     <LibraryPath />
     <NMakeOutput>$(ProjectDir)hsrl-test2-Debug.vgdbsettings</NMakeOutput>
+    <NMakeAssemblySearchPath>E:\codespace\android\hsrl\hsrl-test2\jni;$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
     <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -71,18 +72,24 @@
     <None Include="src\com\open\hsrl\MyNativeActivity.java" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\out\out\hsrl-frame\CppSource\hsrl\imagePools\lodepng\lodepng.cpp" />
+    <ClCompile Include="jni\hsrl\imagePools\ImagePool.cpp" />
     <ClCompile Include="jni\hsrl\SpaceHolder.cpp" />
     <ClCompile Include="jni\hsrl\tools.cpp" />
     <ClCompile Include="jni\MainEngine.cpp" />
     <ClCompile Include="jni\mainEntry.cpp" />
     <ClCompile Include="jni\mainOpenGL.cpp" />
+    <ClCompile Include="jni\prelibs\mySTL\MyMap.cpp" />
     <ClCompile Include="jni\prelibs\native_app_glue\android_native_app_glue.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\out\out\hsrl-frame\CppSource\hsrl\imagePools\lodepng\lodepng.h" />
+    <ClInclude Include="jni\hsrl\imagePools\ImagePool.hpp" />
     <ClInclude Include="jni\hsrl\SpaceHolder.hpp" />
     <ClInclude Include="jni\hsrl\tools.h" />
     <ClInclude Include="jni\MainEngine.h" />
     <ClInclude Include="jni\mainOpenGL.h" />
+    <ClInclude Include="jni\prelibs\mySTL\MyMap.h" />
     <ClInclude Include="jni\prelibs\native_app_glue\android_native_app_glue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
