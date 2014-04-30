@@ -53,7 +53,7 @@
     <GDBServerStartupTimeout>10000</GDBServerStartupTimeout>
     <AdditionalGDBServerStartupDelay>0</AdditionalGDBServerStartupDelay>
     <DoubleSlashWorkaround>false</DoubleSlashWorkaround>
-    <AlreadyRunningDecision>Ask</AlreadyRunningDecision>
+    <AlreadyRunningDecision>Relaunch</AlreadyRunningDecision>
     <ShowLogCat>true</ShowLogCat>
     <EnableThreadNameWatcher>true</EnableThreadNameWatcher>
   </Debug>

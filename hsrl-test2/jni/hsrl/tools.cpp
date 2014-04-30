@@ -7,19 +7,47 @@
 //#include "libs/testso.h"
 //#include "add.h"
 
-//#include <string>
-//#include <map>
+#include <string>
+#include <map>
 
 extern "C"
 {
 #include "./../prebuilt\add.h"
 #include "./../prebuilt\sooo1.h"
 }
+#include "./../MainEngine.h"
 
 
 namespace hsrl {
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
+
+	void test5(){
+
+		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+		struct android_app* app = mMainEngine->app;
+		struct ANativeActivity* activity = app->activity;
+
+		const char* internalDataPath = activity->internalDataPath;
+
+		std::string internalDataPathStr = internalDataPath;
+
+		std::string packetNameStr = internalDataPathStr.substr(11, internalDataPathStr.length() - 17);
+
+		LOGI("internalDataPath is %s", internalDataPathStr.c_str());
+		LOGI("packetName is %s", packetNameStr.c_str());
+		
+	}
+
+
+	void test6(){
+		std::map<std::string, int>* children = new std::map<std::string, int>();
+
+		(*children)["a"] = 12;
+
+		LOGI("children['a'] is %d", (*children)["a"]);
+
+	}
 
 	void test4(){
 
@@ -52,8 +80,8 @@ namespace hsrl {
 
 		LOGI("log 15:Hello%d", logCount++);
 		if (logCount == 10){
-			test3();
-			test4();
+			//test3();
+			test6();
 		}
 	}
 
