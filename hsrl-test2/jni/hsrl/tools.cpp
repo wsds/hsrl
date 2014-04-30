@@ -28,6 +28,28 @@ namespace hsrl {
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
 
 
+	void test9(){
+
+		int a1 = 10;
+		int* p = &a1;
+		int a = *p;
+		LOGI("a is %d", a);
+
+		int b1 = 50;
+		p = &b1;
+		int b = *p;
+		LOGI("b is %d", b);
+
+		LOGI("a is %d; b is %d", a, b);
+
+		*p = 980;
+		LOGI("a is %d; b is %d", a, b);
+
+		LOGI("*p is %d; b1 is %d", *p, b1);
+		//std::map<std::string, int>* map;
+	}
+
+
 	void test8(){
 
 		MyMap<std::string, std::string>* images12 = new MyMap<std::string, std::string>();
@@ -140,7 +162,7 @@ namespace hsrl {
 		LOGI("log 15:Hello%d", logCount++);
 		if (logCount == 10){
 			//test3();
-			test8();
+			test9();
 		}
 	}
 
