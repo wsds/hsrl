@@ -28,6 +28,16 @@ namespace hsrl {
 		struct android_app* app = mMainEngine->app;
 		struct ANativeActivity* activity = app->activity;
 
+		AAssetManager* assetManager = activity->assetManager;
+
+		AAsset* test1File = AAssetManager_open(assetManager, "test1.txt", AASSET_MODE_BUFFER);
+
+		const void* buffer = AAsset_getBuffer(test1File);
+		char* bufferChar = (char*)buffer;
+
+		LOGI("AAsset_getBuffer is %s", bufferChar);
+
+
 		const char* internalDataPath = activity->internalDataPath;
 
 		std::string internalDataPathStr = internalDataPath;
@@ -81,7 +91,7 @@ namespace hsrl {
 		LOGI("log 15:Hello%d", logCount++);
 		if (logCount == 10){
 			//test3();
-			test6();
+			test5();
 		}
 	}
 
