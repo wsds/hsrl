@@ -27,7 +27,53 @@ namespace hsrl {
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
 
+	void test13(){
+		MyMap<std::string, float> images11;
 
+		//images11["b"] = "a12";
+		images11.put("b", 0.12);
+
+		float* value1 = images11.getp("b");
+		LOGI("children['b'] is %f", *value1);
+
+		float* value2 = images11.getp("c");
+		if (NULL != value2){
+			LOGI("children['c'] is %f", *value2);
+		}
+		else{
+			LOGI("children['c'] is NULL");
+		}
+
+		(*value1) = 0.24;
+
+		float* value3 = images11.getp("b");
+		LOGI("children['b'] is %f", *value3);
+
+	}
+
+	void test12(){
+		MyMap<std::string, std::string> images11;
+
+		//images11["b"] = "a12";
+		images11.put("b", "a12");
+
+		std::string* value1 = images11.getp("b");
+		LOGI("children['b'] is %s", value1->c_str());
+
+		std::string* value2 = images11.getp("c");
+		if (NULL != value2){
+			LOGI("children['c'] is %s", value2->c_str());
+		}
+		else{
+			LOGI("children['c'] is NULL");
+		}
+
+		(*value1) = "a24";
+
+		std::string* value3 = images11.getp("b");
+		LOGI("children['b'] is %s", value3->c_str());
+
+	}
 
 	void test11(){
 		MyMap<std::string, std::string> images11;
@@ -57,7 +103,7 @@ namespace hsrl {
 
 		MyMap<std::string, std::string> images11;
 
-		images11["b"]="a12";
+		images11["b"] = "a12";
 
 		std::string& value1 = images11["b"];
 
@@ -251,7 +297,7 @@ namespace hsrl {
 		LOGI("log 15:Hello%d", logCount++);
 		if (logCount == 10){
 			//test3();
-			test11();
+			test13();
 			logCount = 0;
 		}
 	}

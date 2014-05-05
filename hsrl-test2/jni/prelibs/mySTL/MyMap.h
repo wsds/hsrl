@@ -38,6 +38,17 @@ public:
 
 	};
 
+	VALUETYPE* getp(const KEYTYPE key){
+		if (this->exist(key)){
+			VALUETYPE& value = (*this->map01)[key];
+			return &value;
+		}
+		else{
+			return NULL;
+		}
+
+	};
+
 	bool exist(const KEYTYPE key){
 		if (this->map01->end() != this->map01->find(key))
 		{
