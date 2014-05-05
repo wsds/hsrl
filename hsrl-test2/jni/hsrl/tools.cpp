@@ -19,13 +19,64 @@ extern "C"
 
 #include "imagePools\lodepng\lodepng.h"
 
-#include "hsrl\imagePools\ImagePool.hpp"
+#include "imagePools\ImagePool.hpp"
 
 #include ".\..\prelibs\mySTL\MyMap.h"
 
 namespace hsrl {
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
+
+
+
+	void test11(){
+		MyMap<std::string, std::string> images11;
+
+		//images11["b"] = "a12";
+		images11.put("b", "a12");
+
+		bool hasb = images11.exist("b");
+		bool hasc = images11.exist("c");
+
+		std::string& value1 = images11["b"];
+		std::string* value11 = &value1;
+
+
+		LOGI("children['b'] is %s", value1.c_str());
+
+
+		std::string& value2 = images11["c"];
+		std::string* value12 = &value2;
+
+		LOGI("children['c'] is %s", value2.c_str());
+
+
+	}
+
+	void test10(){
+
+		MyMap<std::string, std::string> images11;
+
+		images11["b"]="a12";
+
+		std::string& value1 = images11["b"];
+
+		LOGI("children['b'] is %s", value1.c_str());
+
+		images11["b"] = "a24";
+
+		std::string& value2 = images11["b"];
+
+		LOGI("children['b'] is %s", value2.c_str());
+
+
+		std::string& value3 = images11["c"];
+
+		LOGI("children['c'] is %s", value3.c_str());
+
+
+	}
+
 
 
 	void test9(){
@@ -51,16 +102,54 @@ namespace hsrl {
 
 
 	void test8(){
+		//test <string, int>
+		MyMap<std::string, int>* images12 = new MyMap<std::string, int>();
 
-		MyMap<std::string, std::string>* images12 = new MyMap<std::string, std::string>();
+		images12->put("a", 12);
 
-		images12->put("a", "safasfsafasf");
+		////(*children)["a"] = 12;
 
-		//(*children)["a"] = 12;
+		int& value = images12->get("a");
 
-		std::string value = images12->get("a");
+		LOGI("children['a'] is %d", value);
 
-		LOGI("children['a'] is %s", value.c_str());
+		value = 24;
+
+		int& value2 = images12->get("a");
+
+		LOGI("children['a'] is %d", value2);
+
+
+		//test <string, string>
+		MyMap<std::string, std::string>* images13 = new MyMap<std::string, std::string>();
+
+		images13->put("b", "a12");
+
+		std::string& value3 = images13->get("b");
+
+		LOGI("children['b'] is %s", value3.c_str());
+
+		value3 = "a24";
+
+		std::string& value4 = images13->get("b");
+
+		LOGI("children['b'] is %s", value4.c_str());
+
+		//test <string, string> operator[]
+		MyMap<std::string, std::string>* images14 = new MyMap<std::string, std::string>();
+
+		images14->put("b", "a36");
+
+		std::string& value5 = (*images14)["b"];
+
+		LOGI("children['b'] is %s", value5.c_str());
+
+		(*images14)["b"] = "a48";
+
+		std::string& value6 = (*images14)["b"];
+
+		LOGI("children['b'] is %s", value6.c_str());
+
 
 	}
 
@@ -162,7 +251,8 @@ namespace hsrl {
 		LOGI("log 15:Hello%d", logCount++);
 		if (logCount == 10){
 			//test3();
-			test9();
+			test11();
+			logCount = 0;
 		}
 	}
 

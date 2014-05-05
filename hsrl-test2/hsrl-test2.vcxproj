@@ -40,7 +40,7 @@
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
     <NMakeIncludeSearchPath>E:\android-ndk-r9d-windows-x86\android-ndk-r9d\platforms\android-19\arch-arm\usr\include;E:\android-ndk-r9d-windows-x86\android-ndk-r9d\toolchains\arm-linux-androideabi-4.6\prebuilt\windows\lib\gcc\arm-linux-androideabi\4.6\include;E:\android-ndk-r9d-windows-x86\android-ndk-r9d\toolchains\arm-linux-androideabi-4.6\prebuilt\windows\lib\gcc\arm-linux-androideabi\4.6\include-fixed;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <IncludePath>E:\codespace\android\hsrl\hsrl-test2\jni\libs;$(IncludePath)</IncludePath>
+    <IncludePath>E:\android-ndk-r9d-windows-x86\android-ndk-r9d\sources\cxx-stl\stlport\stlport;E:\codespace\android\hsrl\hsrl-test2\jni\libs;$(IncludePath)</IncludePath>
     <ReferencePath />
     <LibraryPath />
     <NMakeOutput>$(ProjectDir)hsrl-test2-Debug.vgdbsettings</NMakeOutput>
