@@ -35,12 +35,12 @@ namespace hsrl {
 
 		AAssetManager* assetManager = mMainEngine->assetManager;
 
-		AAsset* test1File = AAssetManager_open(assetManager, filename, AASSET_MODE_BUFFER);
+		AAsset* file = AAssetManager_open(assetManager, filename, AASSET_MODE_BUFFER);
 
-		const void* buffer = AAsset_getBuffer(test1File);
+		const void* buffer = AAsset_getBuffer(file);
 		unsigned char* bufferChar = (unsigned char*)buffer;
 
-		size_t buffersize = AAsset_getLength(test1File);
+		size_t buffersize = AAsset_getLength(file);
 
 		unsigned char* bitmap;
 

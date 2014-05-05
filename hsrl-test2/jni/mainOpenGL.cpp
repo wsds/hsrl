@@ -27,18 +27,6 @@ namespace hsrl {
 		}
 	}
 
-	static const char gVertexShader[] =
-		"attribute vec4 vPosition;\n"
-		"void main() {\n"
-		"  gl_Position = vPosition;\n"
-		"}\n";
-
-	static const char gFragmentShader[] =
-		"precision mediump float;\n"
-		"void main() {\n"
-		"  gl_FragColor = vec4(1.0, 0.0, 0.0, 0.0);\n"
-		"}\n";
-
 	GLuint loadShader(GLenum shaderType, const char* pSource) {
 		GLuint shader = glCreateShader(shaderType);
 		if (shader) {
@@ -109,6 +97,9 @@ namespace hsrl {
 	GLuint gProgram;
 	GLuint gvPositionHandle;
 
+	std::string VertexShaderFilename = "hsrl/VertexShader.js";
+	std::string FragmentShaderFilename = "hsrl/FragmentShader.js";
+
 	bool setupGraphics(int w, int h) {
 		printGLString("Version", GL_VERSION);
 		printGLString("Vendor", GL_VENDOR);
@@ -116,7 +107,23 @@ namespace hsrl {
 		printGLString("Extensions", GL_EXTENSIONS);
 
 		LOGI("setupGraphics(%d, %d)", w, h);
-		gProgram = createProgram(gVertexShader, gFragmentShader);
+
+
+		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+
+		AAssetManager* assetManager = mMainEngine->assetManager;
+
+		AAsset*  mVertexShaderFile = AAssetManager_open(assetManager, VertexShaderFilename.c_str(), AASSET_MODE_BUFFER);
+		const void* mVertexShaderBuffer = AAsset_getBuffer(mVertexShaderFile);
+		char* mVertexShaderBufferChar = (char*)mVertexShaderBuffer;
+
+
+		AAsset*  mFragmentShaderFile = AAssetManager_open(assetManager, FragmentShaderFilename.c_str(), AASSET_MODE_BUFFER);
+		const void* mFragmentShaderBuffer = AAsset_getBuffer(mFragmentShaderFile);
+		char* mFragmentShaderBufferChar = (char*)mFragmentShaderBuffer;
+
+
+		gProgram = createProgram(mVertexShaderBufferChar, mFragmentShaderBufferChar);
 		if (!gProgram) {
 			LOGE("Could not create program.");
 			return false;
