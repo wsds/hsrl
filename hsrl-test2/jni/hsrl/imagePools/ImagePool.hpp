@@ -12,7 +12,9 @@
 
 //#include <vector>
 #include <string>
-#include "prelibs\mySTL\MyMap.h"
+#include ".\..\..\prelibs\mySTL\MyMap.h"
+
+#include <GLES2/gl2.h>
 
 namespace hsrl {
 
@@ -23,9 +25,13 @@ namespace hsrl {
 
 	class Image {
 	public:
+		std::string* key;
 
 		unsigned width;
 		unsigned height;
+
+		unsigned width2pow;
+		unsigned height2pow;
 		int textureID;
 		//Bitmap bitmap;
 		unsigned char* bitmap;
@@ -57,10 +63,11 @@ namespace hsrl {
 
 
 		int loadingTextureID;
-		//MyMap<std::string, Image*>* images;
+		MyMap<std::string, Image*>* images;
 		//MyMap<int, int>* images;
 
 		void readImageFromApk(const char* filename, Image* image);
+		void createTextureWithPixels(Image* image);
 
 		void test();
 

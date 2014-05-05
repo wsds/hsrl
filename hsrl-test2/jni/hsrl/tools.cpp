@@ -27,6 +27,17 @@ namespace hsrl {
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
 
+
+
+	////test for ImagePool
+
+	void test15(){
+		ImagePool * imagePool = ImagePool::getInstance();
+
+		imagePool->test();
+	}
+
+	////test for MyMap
 	void test14(){
 		MyMap<std::string, std::string> images11;
 
@@ -350,7 +361,7 @@ namespace hsrl {
 			//test12();
 			//test13();
 
-			test14();
+			test15();
 			logCount = 0;
 		}
 	}
