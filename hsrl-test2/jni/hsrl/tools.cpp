@@ -27,16 +27,60 @@ namespace hsrl {
 
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
 
+	void test14(){
+		MyMap<std::string, std::string> images11;
+
+		//insert
+		images11.put("b", "a12");
+
+		//get
+		std::string* value1 = images11["b"];
+		std::string* value2 = images11["c"];//value2==NULL
+		LOGI("children['b'] is %s", value1->c_str());
+
+
+		//modify
+		if (images11["b"] != NULL){
+			*images11["b"] = "a24";
+			LOGI("children['b'] is %s", images11["b"]->c_str());
+		}
+		//delete
+		images11.put("c", "a36");
+		images11.put("d", "a48");
+
+		images11.del("d");
+
+		if (images11["c"] != NULL){
+			LOGI("children['c'] is %s", images11["c"]->c_str());
+		}
+		if (images11["d"] == NULL){
+			LOGI("children['d'] is NULL");
+		}
+
+
+		images11.put("c", "a60");
+		images11.put("d", "a72");
+
+		images11.del("c");
+		if (images11["d"] != NULL){
+			LOGI("children['d'] is %s", images11["d"]->c_str());
+		}
+		if (images11["c"] == NULL){
+			LOGI("children['c'] is NULL");
+		}
+
+	}
+
 	void test13(){
 		MyMap<std::string, float> images11;
 
 		//images11["b"] = "a12";
 		images11.put("b", 0.12);
 
-		float* value1 = images11.getp("b");
+		float* value1 = images11.get("b");
 		LOGI("children['b'] is %f", *value1);
 
-		float* value2 = images11.getp("c");
+		float* value2 = images11.get("c");
 		if (NULL != value2){
 			LOGI("children['c'] is %f", *value2);
 		}
@@ -46,7 +90,7 @@ namespace hsrl {
 
 		(*value1) = 0.24;
 
-		float* value3 = images11.getp("b");
+		float* value3 = images11.get("b");
 		LOGI("children['b'] is %f", *value3);
 
 	}
@@ -57,10 +101,10 @@ namespace hsrl {
 		//images11["b"] = "a12";
 		images11.put("b", "a12");
 
-		std::string* value1 = images11.getp("b");
+		std::string* value1 = images11.get("b");
 		LOGI("children['b'] is %s", value1->c_str());
 
-		std::string* value2 = images11.getp("c");
+		std::string* value2 = images11.get("c");
 		if (NULL != value2){
 			LOGI("children['c'] is %s", value2->c_str());
 		}
@@ -70,7 +114,7 @@ namespace hsrl {
 
 		(*value1) = "a24";
 
-		std::string* value3 = images11.getp("b");
+		std::string* value3 = images11.get("b");
 		LOGI("children['b'] is %s", value3->c_str());
 
 	}
@@ -84,18 +128,17 @@ namespace hsrl {
 		bool hasb = images11.exist("b");
 		bool hasc = images11.exist("c");
 
-		std::string& value1 = images11["b"];
-		std::string* value11 = &value1;
+		std::string* value1 = images11["b"];
 
 
-		LOGI("children['b'] is %s", value1.c_str());
+		LOGI("children['b'] is %s", value1->c_str());
 
 
-		std::string& value2 = images11["c"];
-		std::string* value12 = &value2;
+		std::string* value2 = images11["c"];
 
-		LOGI("children['c'] is %s", value2.c_str());
-
+		if (value2 != NULL){
+			LOGI("children['c'] is %s", value2->c_str());
+		}
 
 	}
 
@@ -103,22 +146,26 @@ namespace hsrl {
 
 		MyMap<std::string, std::string> images11;
 
-		images11["b"] = "a12";
+		//*images11["b"] = "a12";
+		images11.put("b", "a12");
 
-		std::string& value1 = images11["b"];
+		std::string* value1 = images11["b"];
 
-		LOGI("children['b'] is %s", value1.c_str());
+		LOGI("children['b'] is %s", value1->c_str());
 
-		images11["b"] = "a24";
+		*images11["b"] = "a24";
 
-		std::string& value2 = images11["b"];
+		std::string* value2 = images11["b"];
 
-		LOGI("children['b'] is %s", value2.c_str());
+		LOGI("children['b'] is %s", value2->c_str());
 
 
-		std::string& value3 = images11["c"];
+		std::string* value3 = images11["c"];
 
-		LOGI("children['c'] is %s", value3.c_str());
+		if (value3 != NULL){
+			LOGI("children['c'] is %s", value3->c_str());
+		}
+
 
 
 	}
@@ -155,15 +202,15 @@ namespace hsrl {
 
 		////(*children)["a"] = 12;
 
-		int& value = images12->get("a");
+		int* value = images12->get("a");
 
-		LOGI("children['a'] is %d", value);
+		LOGI("children['a'] is %d", *value);
 
-		value = 24;
+		*value = 24;
 
-		int& value2 = images12->get("a");
+		int* value2 = images12->get("a");
 
-		LOGI("children['a'] is %d", value2);
+		LOGI("children['a'] is %d", *value2);
 
 
 		//test <string, string>
@@ -171,30 +218,30 @@ namespace hsrl {
 
 		images13->put("b", "a12");
 
-		std::string& value3 = images13->get("b");
+		std::string* value3 = images13->get("b");
 
-		LOGI("children['b'] is %s", value3.c_str());
+		LOGI("children['b'] is %s", value3->c_str());
 
-		value3 = "a24";
+		*value3 = "a24";
 
-		std::string& value4 = images13->get("b");
+		std::string* value4 = images13->get("b");
 
-		LOGI("children['b'] is %s", value4.c_str());
+		LOGI("children['b'] is %s", value4->c_str());
 
 		//test <string, string> operator[]
 		MyMap<std::string, std::string>* images14 = new MyMap<std::string, std::string>();
 
 		images14->put("b", "a36");
 
-		std::string& value5 = (*images14)["b"];
+		std::string* value5 = (*images14)["b"];
 
-		LOGI("children['b'] is %s", value5.c_str());
+		LOGI("children['b'] is %s", value5->c_str());
 
-		(*images14)["b"] = "a48";
+		*(*images14)["b"] = "a48";
 
-		std::string& value6 = (*images14)["b"];
+		std::string* value6 = (*images14)["b"];
 
-		LOGI("children['b'] is %s", value6.c_str());
+		LOGI("children['b'] is %s", value6->c_str());
 
 
 	}
@@ -297,7 +344,13 @@ namespace hsrl {
 		LOGI("log 15:Hello%d", logCount++);
 		if (logCount == 10){
 			//test3();
-			test13();
+			//test8();
+			//test10();
+			//test11();
+			//test12();
+			//test13();
+
+			test14();
 			logCount = 0;
 		}
 	}
