@@ -79,6 +79,7 @@
     <ClCompile Include="jni\MainEngine.cpp" />
     <ClCompile Include="jni\mainEntry.cpp" />
     <ClCompile Include="jni\mainOpenGL.cpp" />
+    <ClCompile Include="jni\prelibs\math\Matrix4.cpp" />
     <ClCompile Include="jni\prelibs\math\vecmath.cpp" />
     <ClCompile Include="jni\prelibs\mySTL\MyMap.cpp" />
     <ClCompile Include="jni\prelibs\native_app_glue\android_native_app_glue.c" />
@@ -90,6 +91,7 @@
     <ClInclude Include="jni\hsrl\tools.h" />
     <ClInclude Include="jni\MainEngine.h" />
     <ClInclude Include="jni\mainOpenGL.h" />
+    <ClInclude Include="jni\prelibs\math\Matrix4.h" />
     <ClInclude Include="jni\prelibs\math\vecmath.h" />
     <ClInclude Include="jni\prelibs\mySTL\MyMap.h" />
     <ClInclude Include="jni\prelibs\native_app_glue\android_native_app_glue.h" />

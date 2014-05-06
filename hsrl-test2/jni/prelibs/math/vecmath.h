@@ -21,8 +21,10 @@
 
 #include <math.h>
 
+
+#define  LOG_TAG    "vecmath"
 #ifndef LOGI
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "vecmath", __VA_ARGS__))
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__))
 #endif /* LOGI */
 
 namespace hsrl
@@ -750,8 +752,8 @@ namespace hsrl
 	 */
 	class Mat4
 	{
-	private:
-		float f_[16];
+	public:
+		float* f_;
 
 	public:
 		friend class Vec3;
@@ -915,7 +917,7 @@ namespace hsrl
 
 		float* Ptr()
 		{
-			return f_;
+			return this->f_;
 		}
 
 		//--------------------------------------------------------------------------------

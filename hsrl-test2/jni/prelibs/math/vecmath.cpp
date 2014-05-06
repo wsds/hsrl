@@ -53,14 +53,18 @@ namespace hsrl
 	//--------------------------------------------------------------------------------
 	Mat4::Mat4()
 	{
-		for (int32_t i = 0; i < 16; ++i)
-			f_[i] = 0.f;
+		this->f_ = new float[16];
+		for (int32_t i = 0; i < 16; ++i){
+			this->f_[i] = 0.f;
+		}
 	}
 
 	Mat4::Mat4(const float* mIn)
 	{
-		for (int32_t i = 0; i < 16; ++i)
-			f_[i] = mIn[i];
+		this->f_ = new float[16];
+		for (int32_t i = 0; i < 16; ++i){
+			this->f_[i] = mIn[i];
+		}
 	}
 
 	Mat4* Mat4::operator*(const Mat4& rhs) const
@@ -450,91 +454,94 @@ namespace hsrl
 
 	void Mat4::setRotateM(float a, float x, float y, float z) {
 
+		LOGI("debugging the meid puzzle 0, y=%f", y);
+		//float x1 = 155.5f;
+		//float y1 = 65429.8f;
+		//float z1 = 3213.0f;
+		//float a1 = 1.8f;
+		//LOGI("debugging the meid puzzle 1, y=%f", y);
+		//x1 = x + 10.0f;
+		//y1 = y + 120.0f;
+		//z1 = z + 1210.0f;
+		//a1 = a + 0.0f;
+		//LOGI("debugging the meid puzzle 2, y=%f", y);
+		//float* rm = this->f_;
+		//LOGI("debugging the meid puzzle 2.0, *rm=%d,  y=%f, y1=%f",  rm,y, y1);
+		//*(rm + 7) = 1668.0f;
+		//LOGI("debugging the meid puzzle 2.1, *rm=%d,  y=%f, y1=%f", rm, y, y1);
+		//*(rm + 10) = 888848.0f;
+		//LOGI("debugging the meid puzzle 2.2, *rm=%d,  y=%f, y1=%f", rm, y, y1);
+		//rm[7] = 145236.0f;
+		//LOGI("debugging the meid puzzle 2.3, *rm=%d,  y=%f, y1=%f", rm, y, y1);
+		//LOGI("debugging the meid puzzle 3, y=%f", y);
+		//int rmOffset = 0;
+		//rm[rmOffset + 3] = 0.0f;
+		//rm[rmOffset + 7] = 0.0f;
+		//rm[rmOffset + 11] = 0.0f;
+		//rm[rmOffset + 12] = 0.0f;
+		//rm[rmOffset + 13] = 0.0f;
+		//rm[rmOffset + 14] = 0.0f;
+		//rm[rmOffset + 15] = 1.0f;
+		//a1 *= (float)(M_PI / 180.0f);
+		//float s = (float)sin(a1);
+		//float c = (float)cos(a1);
+		//LOGI("debugging the meid puzzle 4, y=%f", y);
+		//if (1.0f == x && 0.0f == y && 0.0f == z) {
+		//	rm[rmOffset + 5] = c;   rm[rmOffset + 10] = c;
+		//	rm[rmOffset + 6] = s;   rm[rmOffset + 9] = -s;
+		//	rm[rmOffset + 1] = 0;   rm[rmOffset + 2] = 0;
+		//	rm[rmOffset + 4] = 0;   rm[rmOffset + 8] = 0;
+		//	rm[rmOffset + 0] = 1;
+		//}
+		//else if (0.0f == x && 1.0f == y && 0.0f == z) {
+		//	rm[rmOffset + 0] = c;   rm[rmOffset + 10] = c;
+		//	rm[rmOffset + 8] = s;   rm[rmOffset + 2] = -s;
+		//	rm[rmOffset + 1] = 0;   rm[rmOffset + 4] = 0;
+		//	rm[rmOffset + 6] = 0;   rm[rmOffset + 9] = 0;
+		//	rm[rmOffset + 5] = 1;
+		//}
+		//else if (0.0f == x && 0.0f == y && 1.0f == z) {
+		//	rm[rmOffset + 0] = c;   rm[rmOffset + 5] = c;
+		//	rm[rmOffset + 1] = s;   rm[rmOffset + 4] = -s;
+		//	rm[rmOffset + 2] = 0;   rm[rmOffset + 6] = 0;
+		//	rm[rmOffset + 8] = 0;   rm[rmOffset + 9] = 0;
+		//	rm[rmOffset + 10] = 1;
+		//}
+		//else {
+		//	LOGI("debugging the meid puzzle");
 
-		float x1 = 155.5f;
-		float y1 = 65429.8f;
-		float z1 = 3213.0f;
-		float a1 = 1.8f;
-
-		x1 = x + 10;
-		y1 = y + 120;
-		z1 = z + 1210;
-		a1 = a;
-
-		float* rm = f_;
-		*(rm + 7) = 1668.0f;
-		*(rm + 10) = 888848.0f;
-
-		rm[7] = 145236.0f;
-
-		int rmOffset = 0;
-		rm[rmOffset + 3] = 0.0f;
-		rm[rmOffset + 7] = 0.0f;
-		rm[rmOffset + 11] = 0.0f;
-		rm[rmOffset + 12] = 0.0f;
-		rm[rmOffset + 13] = 0.0f;
-		rm[rmOffset + 14] = 0.0f;
-		rm[rmOffset + 15] = 1.0f;
-		a1 *= (float)(M_PI / 180.0f);
-		float s = (float)sin(a1);
-		float c = (float)cos(a1);
-
-		if (1.0f == x && 0.0f == y && 0.0f == z) {
-			rm[rmOffset + 5] = c;   rm[rmOffset + 10] = c;
-			rm[rmOffset + 6] = s;   rm[rmOffset + 9] = -s;
-			rm[rmOffset + 1] = 0;   rm[rmOffset + 2] = 0;
-			rm[rmOffset + 4] = 0;   rm[rmOffset + 8] = 0;
-			rm[rmOffset + 0] = 1;
-		}
-		else if (0.0f == x && 1.0f == y && 0.0f == z) {
-			rm[rmOffset + 0] = c;   rm[rmOffset + 10] = c;
-			rm[rmOffset + 8] = s;   rm[rmOffset + 2] = -s;
-			rm[rmOffset + 1] = 0;   rm[rmOffset + 4] = 0;
-			rm[rmOffset + 6] = 0;   rm[rmOffset + 9] = 0;
-			rm[rmOffset + 5] = 1;
-		}
-		else if (0.0f == x && 0.0f == y && 1.0f == z) {
-			rm[rmOffset + 0] = c;   rm[rmOffset + 5] = c;
-			rm[rmOffset + 1] = s;   rm[rmOffset + 4] = -s;
-			rm[rmOffset + 2] = 0;   rm[rmOffset + 6] = 0;
-			rm[rmOffset + 8] = 0;   rm[rmOffset + 9] = 0;
-			rm[rmOffset + 10] = 1;
-		}
-		else {
-			LOGI("debugging the meid puzzle");
 
 
+		//	/*int testa = 10;
+		//	testa = testa + 121234;
+		//	LOGI("debugging the meid puzzle, %d", testa);*/
 
-			int testa = 10;
-			testa = testa + 121234;
-			LOGI("debugging the meid puzzle, %d", testa);
+		//	//float len = (float)sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+		//	//if (1.0f != len) {
+		//	//float recipLen = 1.0f / len;
+		//	//x1 *= recipLen;
+		//	//y1 *= recipLen;
+		//	//z1 *= recipLen;
+		//	//}
 
-			//float len = (float)sqrt(x1 * x1 + y1 * y1 + z1 * z1);
-			//if (1.0f != len) {
-			//float recipLen = 1.0f / len;
-			//x1 *= recipLen;
-			//y1 *= recipLen;
-			//z1 *= recipLen;
-			//}
+		//	//float nc = 1.0f - c;
+		//	//float xy = x1 * y1;
+		//	//float yz = y1 * z1;
+		//	//float zx = z1 * x1;
+		//	//float xs = x1 * s;
+		//	//float ys = y1 * s;
+		//	//float zs = z1 * s;
+		//	//rm[rmOffset + 0] = x1*x1*nc + c;
+		//	//rm[rmOffset + 4] = xy*nc - zs;
+		//	//rm[rmOffset + 8] = zx*nc + ys;
+		//	//rm[rmOffset + 1] = xy*nc + zs;
+		//	//rm[rmOffset + 5] = y1*y1*nc + c;
+		//	//rm[rmOffset + 9] = yz*nc - xs;
+		//	//rm[rmOffset + 2] = zx*nc - ys;
+		//	//rm[rmOffset + 6] = yz*nc + xs;
+		//	//rm[rmOffset + 10] = z1*z1*nc + c;
 
-			//float nc = 1.0f - c;
-			//float xy = x1 * y1;
-			//float yz = y1 * z1;
-			//float zx = z1 * x1;
-			//float xs = x1 * s;
-			//float ys = y1 * s;
-			//float zs = z1 * s;
-			//rm[rmOffset + 0] = x1*x1*nc + c;
-			//rm[rmOffset + 4] = xy*nc - zs;
-			//rm[rmOffset + 8] = zx*nc + ys;
-			//rm[rmOffset + 1] = xy*nc + zs;
-			//rm[rmOffset + 5] = y1*y1*nc + c;
-			//rm[rmOffset + 9] = yz*nc - xs;
-			//rm[rmOffset + 2] = zx*nc - ys;
-			//rm[rmOffset + 6] = yz*nc + xs;
-			//rm[rmOffset + 10] = z1*z1*nc + c;
-
-		}
+		//}
 		LOGI("setRotateM completed");
 	}
 

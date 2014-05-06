@@ -18,6 +18,7 @@ namespace hsrl {
 
 	SpaceHolder::SpaceHolder() {
 		this->imagePool = ImagePool::getInstance();
+		this->mMatrix4Helper = Matrix4Helper::getInstance();
 		LOGI("One instance of {SpaceHolder} created");
 	}
 	SpaceHolder::~SpaceHolder(){
@@ -37,7 +38,7 @@ namespace hsrl {
 
 		this->mModelMatrixHandle = mModelMatrixHandle;
 
-		mModelMatrixMove = Mat4::Identity();
+		mModelMatrixMove = Matrix4Helper::getInstance()->Identity();
 		angle = 0.0f;
 		offset_x = 0.0f;
 		offset_y = 0.0f;
@@ -60,12 +61,14 @@ namespace hsrl {
 		offset_w = 2 * width / this->width;
 		offset_h = 2 * height / this->width;
 
-		mModelMatrixMove->setRotateM(angle, 0.0f, 0.0f, 1.0f);
-		mModelMatrixMove->translateM(offset_x, offset_y, offset_z);
+		//mModelMatrixMove->setRotateM(angle, 0.0f, 0.0f, 1.0f);
+		//mModelMatrixMove->translateM(offset_x, offset_y, offset_z);
 
-		mModelMatrixMove->scaleM(offset_w, offset_h, 1.0f);
+		//mModelMatrixMove->scaleM(offset_w, offset_h, 1.0f);
 
-		glUniformMatrix4fv(mModelMatrixHandle, 1, false, mModelMatrixMove->Ptr());
+
+		GLfloat* value = mMatrix4Helper->getDataCopy(mModelMatrixMove);
+		glUniformMatrix4fv(mModelMatrixHandle, 1, false, value);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 

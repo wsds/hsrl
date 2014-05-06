@@ -38,16 +38,18 @@ namespace hsrl {
 	int ImagePool::getImage(std::string key){
 
 
-		LOGI("Getting image(%s)", key.c_str());
+
 		int textureID = loadingTextureID;
 		Image** ppimage = this->images->get(key);
 
 		if (ppimage == NULL) {
+			//LOGI("loading image(%s), textureID=%d", key.c_str(), textureID);
 			textureID = loadingTextureID;
 			// TODO load image in other thread.
 			Image* image = this->loadImage(key);
 		}
 		else {
+
 			Image* image = *ppimage;
 			if (image->status != STATUS_ONGPU) {
 				textureID = loadingTextureID;
@@ -55,13 +57,14 @@ namespace hsrl {
 			else {
 				textureID = image->textureID;
 			}
+			//LOGI("Got image(%s), textureID=%d", key.c_str(), textureID);
 		}
 		return textureID;
 	}
 
 
 	Image* ImagePool::loadImage(std::string key){
-
+		LOGI("loading image(%s)", key.c_str());
 		Image* image = new Image();
 		image->key = &key;
 		image->status = STATUS_PRELOAD;
@@ -69,8 +72,10 @@ namespace hsrl {
 		image->status = STATUS_ONRAM;
 		this->createTextureWithPixels(image);
 		image->status = STATUS_ONGPU;
-		this->images->put(key, image);
 
+		this->images->put(key, image);
+		//LOGI("loaded image(%s), textureID=%d", key.c_str(), image->textureID);
+		return image;
 	}
 
 	void ImagePool::readImageFromApk(const char* filename, Image* image){

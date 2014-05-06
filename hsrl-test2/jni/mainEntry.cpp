@@ -152,13 +152,10 @@ void Engine::UnloadResources()
 int Engine::InitDisplay()
 {
 	LOGI("InitDisplay 0");
-	sleep(5);
+	//sleep(5);
 	LOGI("InitDisplay 1");
 	hsrl::engine_init_display();
 	LOGI("InitDisplay 2");
-
-
-
 }
 
 /**
@@ -358,7 +355,7 @@ void android_main(android_app* state)
 	app_dummy();
 
 	LOGI("android_main 0");
-	//sleep(5);
+	sleep(5);
 	g_engine.SetState(state);
 	LOGI("android_main 1");
 	hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();

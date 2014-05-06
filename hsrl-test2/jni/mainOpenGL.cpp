@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "prelibs/native_app_glue/android_native_app_glue.h"
-#include "prelibs/math/vecmath.h"
+#include "prelibs/math/Matrix4.h"
 
 #include "hsrl/tools.h"
 #include "MainEngine.h"
@@ -173,24 +173,26 @@ namespace hsrl {
 	//float mViewMatrix[16];
 
 	// mModelMatrix模型矩阵；mViewMatrix视图矩阵；mProjectionMatrix透视矩阵；
-	Mat4* mModelMatrixMove;
-	Mat4* mProjectionViewMatrix;
-	Mat4* mProjectionMatrix;
-	Mat4* mViewMatrix;
+	Matrix4* mModelMatrixMove;
+	Matrix4* mProjectionViewMatrix;
+	Matrix4* mProjectionMatrix;
+	Matrix4* mViewMatrix;
+	Matrix4Helper* mMatrix4Helper;
 
 	void setupProjectionView(int width, int height){
+		mMatrix4Helper = Matrix4Helper::getInstance();
+
 		glViewport(0, 0, width, height);
 		checkGlError("glViewport");
 
 		float ratio = (float)width / height;
-		Vec3 vEye(0, 0, 1);
-		Vec3 vAt(0, 0, 0);
-		Vec3 vUp(0, 1, 0);
-		mViewMatrix = Mat4::LookAt(vEye, vAt, vUp);
-		mProjectionMatrix = Mat4::OrthoM(-1, 1, -1 / ratio, 1 / ratio, 1.0f, 11);// 正交投影//near at z=1//far at z=11
-		mProjectionViewMatrix = (*mProjectionMatrix)*(*mViewMatrix);
 
-		glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());
+		mViewMatrix = mMatrix4Helper->setLookAtM(0.0f, 0.0f, 1.0f/* look at z=1 */, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		mProjectionMatrix = mMatrix4Helper->OrthoM(-1.0f, 1.0f, -1.0f / ratio, 1.0f / ratio, 1.0f, 11.0f);// 正交投影//near at z=1//far at z=11
+		mProjectionViewMatrix = mMatrix4Helper->multiplyMM(mProjectionMatrix, mViewMatrix);
+
+		GLfloat* value = mMatrix4Helper->getDataCopy(mProjectionViewMatrix);
+		glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, value);
 	}
 
 	SpaceHolder* spaceHolder;
@@ -283,7 +285,12 @@ namespace hsrl {
 			glVertexAttribPointer(maTextureHandle, 2, GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVerticesUV);
 			glEnableVertexAttribArray(maTextureHandle);
 
-			glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());//重复？
+
+			//GLfloat* value = mProjectionViewMatrix->Ptr();
+			//glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, value);
+			//glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());//重复？
+			GLfloat* value = mMatrix4Helper->getDataCopy(mProjectionViewMatrix);
+			glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, value);
 			isInitailized = true;
 		}
 
@@ -311,6 +318,8 @@ namespace hsrl {
 		//////Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, -8.0f);
 		//////spaceHolder.renderWorld();
 		spaceHolder->drawImage("emoji_normal.png", 100, 600, 0, 96, 96);
+
+		eglSwapBuffers(mMainEngine->display, mMainEngine->surface);
 
 
 	}

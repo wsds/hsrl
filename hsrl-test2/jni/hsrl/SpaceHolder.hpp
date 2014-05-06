@@ -13,7 +13,7 @@
 #endif /* NULL */
 
 #include "imagePools/ImagePool.hpp"
-#include "./../prelibs/math/vecmath.h"
+#include "./../prelibs/math/Matrix4.h"
 #include <android/log.h>
 
 namespace hsrl {
@@ -64,7 +64,7 @@ namespace hsrl {
 		float dy;
 
 		int mModelMatrixHandle;
-		Mat4* mModelMatrixMove;
+		Matrix4* mModelMatrixMove;
 
 		float angle;
 		float offset_x;
@@ -72,6 +72,8 @@ namespace hsrl {
 		float offset_z;
 		float offset_w;
 		float offset_h;
+
+		Matrix4Helper* mMatrix4Helper;
 	};
 
 }
