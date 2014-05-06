@@ -63,6 +63,8 @@ namespace hsrl
 		Matrix4* multiplyMM(Matrix4* matrixL, Matrix4* matrixR);
 
 		void translateM(Matrix4* result, float x, float y, float z);
+		void setRotateM(Matrix4* result, float a, float x, float y, float z);
+		void scaleM(Matrix4* result, float x, float y, float z);
 
 	};
 } //namespace ndk_helper

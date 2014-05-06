@@ -171,8 +171,77 @@ namespace hsrl
 
 	void Matrix4Helper::translateM(Matrix4* result, float x, float y, float z) {
 		for (int i = 0; i < 4; i++) {
-			int mi = 1 + i;
+			int mi = 0 + i;
 			result->data[12 + mi] += result->data[mi] * x + result->data[4 + mi] * y + result->data[8 + mi] * z;
+		}
+	}
+
+	void Matrix4Helper::setRotateM(Matrix4* result, float a, float x, float y, float z) {
+
+		result->data[3] = 0;
+		result->data[7] = 0;
+		result->data[11] = 0;
+		result->data[12] = 0;
+		result->data[13] = 0;
+		result->data[14] = 0;
+		result->data[15] = 1;
+		a *= (float)(M_PI / 180.0f);
+		float s = (float)sin(a);
+		float c = (float)cos(a);
+		if (1.0f == x && 0.0f == y && 0.0f == z) {
+			result->data[5] = c;   result->data[10] = c;
+			result->data[6] = s;   result->data[9] = -s;
+			result->data[1] = 0;   result->data[2] = 0;
+			result->data[4] = 0;   result->data[8] = 0;
+			result->data[0] = 1;
+		}
+		else if (0.0f == x && 1.0f == y && 0.0f == z) {
+			result->data[0] = c;   result->data[10] = c;
+			result->data[8] = s;   result->data[2] = -s;
+			result->data[1] = 0;   result->data[4] = 0;
+			result->data[6] = 0;   result->data[9] = 0;
+			result->data[5] = 1;
+		}
+		else if (0.0f == x && 0.0f == y && 1.0f == z) {
+			result->data[0] = c;   result->data[5] = c;
+			result->data[1] = s;   result->data[4] = -s;
+			result->data[2] = 0;   result->data[6] = 0;
+			result->data[8] = 0;   result->data[9] = 0;
+			result->data[10] = 1;
+		}
+		else {
+			float len = (float)sqrt(x * x + y * y + z * z);
+			if (1.0f != len) {
+				float recipLen = 1.0f / len;
+				x *= recipLen;
+				y *= recipLen;
+				z *= recipLen;
+			}
+			float nc = 1.0f - c;
+			float xy = x * y;
+			float yz = y * z;
+			float zx = z * x;
+			float xs = x * s;
+			float ys = y * s;
+			float zs = z * s;
+			result->data[0] = x*x*nc + c;
+			result->data[4] = xy*nc - zs;
+			result->data[8] = zx*nc + ys;
+			result->data[1] = xy*nc + zs;
+			result->data[5] = y*y*nc + c;
+			result->data[9] = yz*nc - xs;
+			result->data[2] = zx*nc - ys;
+			result->data[6] = yz*nc + xs;
+			result->data[10] = z*z*nc + c;
+		}
+	}
+
+	void Matrix4Helper::scaleM(Matrix4* result, float x, float y, float z) {
+		for (int i = 0; i < 4; i++) {
+			int mi = 0 + i;
+			result->data[mi] *= x;
+			result->data[4 + mi] *= y;
+			result->data[8 + mi] *= z;
 		}
 	}
 

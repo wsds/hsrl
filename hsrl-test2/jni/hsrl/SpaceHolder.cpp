@@ -61,11 +61,9 @@ namespace hsrl {
 		offset_w = 2 * width / this->width;
 		offset_h = 2 * height / this->width;
 
-		//mModelMatrixMove->setRotateM(angle, 0.0f, 0.0f, 1.0f);
-		//mModelMatrixMove->translateM(offset_x, offset_y, offset_z);
-
-		//mModelMatrixMove->scaleM(offset_w, offset_h, 1.0f);
-
+		mMatrix4Helper->setRotateM(mModelMatrixMove, angle, 0.0f, 0.0f, 1.0f);
+		mMatrix4Helper->translateM(mModelMatrixMove, offset_x, offset_y, offset_z);
+		mMatrix4Helper->scaleM(mModelMatrixMove, offset_w, offset_h, 1.0f);
 
 		GLfloat* value = mMatrix4Helper->getDataCopy(mModelMatrixMove);
 		glUniformMatrix4fv(mModelMatrixHandle, 1, false, value);
