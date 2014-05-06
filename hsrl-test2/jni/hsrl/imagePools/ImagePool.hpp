@@ -64,7 +64,9 @@ namespace hsrl {
 
 		int loadingTextureID;
 		MyMap<std::string, Image*>* images;
-		//MyMap<int, int>* images;
+
+		int getImage(std::string key);
+		Image* loadImage(std::string key);
 
 		void readImageFromApk(const char* filename, Image* image);
 		void createTextureWithPixels(Image* image);

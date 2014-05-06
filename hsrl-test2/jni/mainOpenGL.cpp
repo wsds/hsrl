@@ -6,14 +6,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include "prelibs/native_app_glue/android_native_app_glue.h"
+#include "prelibs/math/vecmath.h"
 
 #include "hsrl/tools.h"
 #include "MainEngine.h"
 
 
 #define  LOG_TAG    "mainOpenGL"
+#ifndef LOGI
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#endif /* LOGI */
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
 namespace hsrl {
 	static void printGLString(const char *name, GLenum s) {
 		const char *v = (const char *)glGetString(s);
@@ -21,8 +25,7 @@ namespace hsrl {
 	}
 
 	static void checkGlError(const char* op) {
-		for (GLint error = glGetError(); error; error
-			= glGetError()) {
+		for (GLint error = glGetError(); error; error = glGetError()) {
 			LOGI("after %s() glError (0x%x)\n", op, error);
 		}
 	}
@@ -53,6 +56,8 @@ namespace hsrl {
 		LOGE("shader loadeed.");
 		return shader;
 	}
+
+
 
 	GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
 		GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
@@ -97,17 +102,37 @@ namespace hsrl {
 	GLuint gProgram;
 	GLuint gvPositionHandle;
 
+
+	GLuint mProjectionViewMatrixHandle;
+	GLuint mModelMatrixHandle;
+	GLuint maPositionHandle;
+	GLuint maTextureHandle;
+
 	std::string VertexShaderFilename = "hsrl/VertexShader.js";
 	std::string FragmentShaderFilename = "hsrl/FragmentShader.js";
 
-	bool setupGraphics(int w, int h) {
-		printGLString("Version", GL_VERSION);
-		printGLString("Vendor", GL_VENDOR);
-		printGLString("Renderer", GL_RENDERER);
-		printGLString("Extensions", GL_EXTENSIONS);
+	static const char gVertexShader[] =
+		"attribute vec4 aPosition; \n"
+		"attribute vec2 aTextureCoord; \n"
+		"varying vec2 vTextureCoord; \n"
+		"uniform mat4 projectionView; \n"
+		"uniform mat4 model; \n"
+		"void main() {\n"
+		"gl_Position = projectionView * model * aPosition; \n"
+		"vTextureCoord = aTextureCoord; \n"
+		"}\n";
 
-		LOGI("setupGraphics(%d, %d)", w, h);
 
+	static const char gFragmentShader[] =
+		"precision mediump float;\n"
+		"varying vec2 vTextureCoord;\n"
+		"uniform sampler2D sTexture;\n"
+		"void main() {\n"
+		"gl_FragColor = texture2D(sTexture, vTextureCoord);\n"
+		"}\n";
+
+
+	bool setupProgram(){
 
 		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
 
@@ -123,18 +148,68 @@ namespace hsrl {
 		char* mFragmentShaderBufferChar = (char*)mFragmentShaderBuffer;
 
 
-		gProgram = createProgram(mVertexShaderBufferChar, mFragmentShaderBufferChar);
+		//gProgram = createProgram(mVertexShaderBufferChar, mFragmentShaderBufferChar);
+
+		gProgram = createProgram(gVertexShader, gFragmentShader);
 		if (!gProgram) {
 			LOGE("Could not create program.");
 			return false;
 		}
-		gvPositionHandle = glGetAttribLocation(gProgram, "vPosition");
-		checkGlError("glGetAttribLocation");
-		LOGI("glGetAttribLocation(\"vPosition\") = %d\n",
-			gvPositionHandle);
+		//gvPositionHandle = glGetAttribLocation(gProgram, "vPosition");
+		//checkGlError("glGetAttribLocation");
+		//LOGI("glGetAttribLocation(\"vPosition\") = %d\n", gvPositionHandle);
 
-		glViewport(0, 0, w, h);
+		maPositionHandle = glGetAttribLocation(gProgram, "aPosition");
+		maTextureHandle = glGetAttribLocation(gProgram, "aTextureCoord");
+		mProjectionViewMatrixHandle = glGetUniformLocation(gProgram, "projectionView");
+		mModelMatrixHandle = glGetUniformLocation(gProgram, "model");
+
+		return true;
+	}
+
+	//float mModelMatrixMove[16];
+	//float mProjectionViewMatrix[16];
+	//float mProjectionMatrix[16];
+	//float mViewMatrix[16];
+
+	// mModelMatrix模型矩阵；mViewMatrix视图矩阵；mProjectionMatrix透视矩阵；
+	Mat4* mModelMatrixMove;
+	Mat4* mProjectionViewMatrix;
+	Mat4* mProjectionMatrix;
+	Mat4* mViewMatrix;
+
+	void setupProjectionView(int width, int height){
+		glViewport(0, 0, width, height);
 		checkGlError("glViewport");
+
+		float ratio = (float)width / height;
+		Vec3 vEye(0, 0, 1);
+		Vec3 vAt(0, 0, 0);
+		Vec3 vUp(0, 1, 0);
+		mViewMatrix = Mat4::LookAt(vEye, vAt, vUp);
+		mProjectionMatrix = Mat4::OrthoM(-1, 1, -1 / ratio, 1 / ratio, 1.0f, 11);// 正交投影//near at z=1//far at z=11
+		mProjectionViewMatrix = (*mProjectionMatrix)*(*mViewMatrix);
+
+		glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());
+	}
+
+	SpaceHolder* spaceHolder;
+	bool setupGraphics(int width, int height) {
+		printGLString("Version", GL_VERSION);
+		printGLString("Vendor", GL_VENDOR);
+		printGLString("Renderer", GL_RENDERER);
+		printGLString("Extensions", GL_EXTENSIONS);
+
+		LOGI("setupGraphics(%d, %d)", width, height);
+
+		if (!setupProgram()){
+			return false;
+		}
+
+		setupProjectionView(width, height);
+
+		spaceHolder = new SpaceHolder();
+		spaceHolder->initialize(width, height, mModelMatrixHandle);
 
 		LOGE("setupGraphics done.");
 		return true;
@@ -142,7 +217,18 @@ namespace hsrl {
 
 	const GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
 		0.5f, -0.5f };
+	const GLfloat mTriangleVerticesData[] = {
+		// X, Y, Z, U, V
+		// 1
+		0.0f, -1.0f, 0, 0.0f, 1.0f,
+		// 2
+		1.0f, -1.0f, 0, 1.0f, 1.0f,
+		// 3
+		0.0f, 0.0f, 0, 0.0f, 0.0f,
+		// 4
+		1.0f, 0.0f, 0, 1.0f, 0.0f
 
+	};
 
 	int testFlag = 600;
 	int count = 0;
@@ -153,36 +239,80 @@ namespace hsrl {
 			LOGI("renderFrame : %d", count++);
 		}
 	}
+	long renderCount = 0;
+	bool isInitailized = false;
+
+	const int FLOAT_SIZE_BYTES = 4;
+	const int TRIANGLE_VERTICES_DATA_POS_OFFSET = 0;
+	const int TRIANGLE_VERTICES_DATA_UV_OFFSET = 3;
+	const int TRIANGLE_VERTICES_DATA_STRIDE_BYTES = 5 * FLOAT_SIZE_BYTES;
 
 	void renderFrame() {
 		hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
 		if (mMainEngine->display == NULL) {
 			// No display.
+			LOGI("No display");
 			return;
 		}
 
-		static float grey;
-		grey += 0.01f;
-		if (grey > 1.0f) {
-			grey = 0.0f;
-		}
-		glClearColor(grey, grey, grey, 1.0f);
-		checkGlError("glClearColor");
+		renderCount++;
+
+		// GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.6f, 0.804f, 1.0f);
+
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		checkGlError("glClear");
 
-		glUseProgram(gProgram);
-		checkGlError("glUseProgram");
+		if (isInitailized == false) {
 
-		glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
-		checkGlError("glVertexAttribPointer");
-		glEnableVertexAttribArray(gvPositionHandle);
-		checkGlError("glEnableVertexAttribArray");
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		checkGlError("glDrawArrays");
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glActiveTexture(GL_TEXTURE0);
 
-		eglSwapBuffers(mMainEngine->display, mMainEngine->surface);
-		test1();
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+
+			glUseProgram(gProgram);
+
+			const GLfloat* mTriangleVertices = mTriangleVerticesData + TRIANGLE_VERTICES_DATA_POS_OFFSET;
+
+			glVertexAttribPointer(maPositionHandle, 3, GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVertices);
+			glEnableVertexAttribArray(maPositionHandle);
+
+			const GLfloat* mTriangleVerticesUV = mTriangleVerticesData + TRIANGLE_VERTICES_DATA_UV_OFFSET;
+
+			glVertexAttribPointer(maTextureHandle, 2, GL_FLOAT, false, TRIANGLE_VERTICES_DATA_STRIDE_BYTES, mTriangleVerticesUV);
+			glEnableVertexAttribArray(maTextureHandle);
+
+			glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());//重复？
+			isInitailized = true;
+		}
+
+		////// spaceHolder.drawImage("snow_d_blur.jpg", 0, 0, spaceHolder.width,
+		////// spaceHolder.height);
+
+		////// spaceHolder.drawImage("test2.png", 0, 0, 50, 50);
+		////// spaceHolder.drawImage("face_man.png", 100, 200, 250, 250);
+		////// for (int i = 1; i < 20; i++) {
+		////// spaceHolder.drawImage("test2.png", 0, i * 60, 50, 50);
+		////// }
+
+		////Matrix.setIdentityM(mModelMatrixMove, 0);
+
+		////float offset_x_move = 0;
+		////float offset_y_move = 0;
+
+		////offset_x_move = spaceHolder.screen_offset_x + (x_move - 48) * spaceHolder.Pi;
+		////offset_y_move = spaceHolder.screen_offset_y - (y_move - 48) * spaceHolder.Pi;
+
+		////// offset_x_move = x_move * spaceHolder.Pi;
+		//////
+		////// offset_y_move = -y_move * spaceHolder.Pi;
+
+		//////Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, -8.0f);
+		//////spaceHolder.renderWorld();
+		spaceHolder->drawImage("emoji_normal.png", 100, 600, 0, 96, 96);
+
+
 	}
 
 	//hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
@@ -224,8 +354,7 @@ namespace hsrl {
 
 		ANativeWindow_setBuffersGeometry(mMainEngine->app->window, 0, 0, format);
 
-		surface = eglCreateWindowSurface(display, config, mMainEngine->app->window,
-			NULL);
+		surface = eglCreateWindowSurface(display, config, mMainEngine->app->window, NULL);
 
 
 		EGLint contextAtt[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
@@ -257,7 +386,7 @@ namespace hsrl {
 		LOGE("engine_init_display done.");
 
 		hsrl::setupGraphics(w, h);
-		hsrl::renderFrame();
+		//hsrl::renderFrame();
 
 		return 0;
 	}

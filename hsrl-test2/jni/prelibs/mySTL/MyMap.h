@@ -43,7 +43,7 @@ public:
 			return &value;
 		}
 		else{
-			return NULL;
+			return (VALUETYPE*)NULL;
 		}
 
 	};

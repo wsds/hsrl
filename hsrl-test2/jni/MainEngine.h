@@ -4,6 +4,7 @@
 #include <EGL/egl.h>
 #include "prelibs\native_app_glue\android_native_app_glue.h"
 #include "hsrl\imagePools\ImagePool.hpp"
+#include "hsrl\SpaceHolder.hpp"
 
 namespace hsrl {
 
@@ -43,6 +44,7 @@ namespace hsrl {
 		void initialize(struct android_app* app);
 
 		ImagePool* imagePool;
+		SpaceHolder* spaceHolder;
 	};
 
 }

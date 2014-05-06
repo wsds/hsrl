@@ -19,6 +19,7 @@
 //--------------------------------------------------------------------------------
 #include <jni.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -35,8 +36,12 @@
 #include "MainEngine.h"
 
 #define  LOG_TAG    "mainEntry"
-#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
+#ifndef LOGI
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#endif /* LOGI */
 
 //#include "TeapotRenderer.h"
 //#include "libs/ndk_helper/NDKHelper.h"
@@ -146,7 +151,12 @@ void Engine::UnloadResources()
  */
 int Engine::InitDisplay()
 {
+	LOGI("InitDisplay 0");
+	sleep(5);
+	LOGI("InitDisplay 1");
 	hsrl::engine_init_display();
+	LOGI("InitDisplay 2");
+
 
 
 }
@@ -347,10 +357,14 @@ void android_main(android_app* state)
 
 	app_dummy();
 
+	LOGI("android_main 0");
+	//sleep(5);
 	g_engine.SetState(state);
-
+	LOGI("android_main 1");
 	hsrl::MainEngine* mMainEngine = hsrl::MainEngine::getInstance();
+	LOGI("android_main 2");
 	mMainEngine->initialize(state);
+	LOGI("android_main 3");
 
 	//Init helper functions
 	//ndk_helper::JNIHelper::Init( state->activity, HELPER_CLASS_NAME );
@@ -358,11 +372,11 @@ void android_main(android_app* state)
 	state->userData = &g_engine;
 	state->onAppCmd = Engine::HandleCommand;
 	state->onInputEvent = Engine::HandleInput;
-
+	LOGI("android_main 4");
 
 	// Prepare to monitor accelerometer
 	//g_engine.InitSensors();
-
+	LOGI("loop waiting");
 	// loop waiting for stuff to do.
 	while (1)
 	{

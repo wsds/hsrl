@@ -25,7 +25,10 @@ extern "C"
 
 namespace hsrl {
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "tools", __VA_ARGS__))
+#define  LOG_TAG    "tools"
+#ifndef LOGI
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#endif /* LOGI */
 
 
 

@@ -15,18 +15,62 @@
 
 namespace hsrl {
 
+#define  LOG_TAG    "ImagePool"
 
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "ImagePool", __VA_ARGS__))
-
+#ifndef LOGI
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#endif /* LOGI */
 
 	ImagePool* ImagePool::instance = NULL;
 
 	ImagePool::ImagePool() {
 		this->images = new MyMap<std::string, Image*>();
+		Image* image = this->loadImage("loading.png");
+		loadingTextureID = image->textureID;
+
+		LOGI("One instance of {ImagePool} created");
 	}
 
-	ImagePool::~ImagePool() {
-		// TODO Auto-generated destructor stub
+	ImagePool::~ImagePool(){
+
+	}
+
+	int ImagePool::getImage(std::string key){
+
+
+		LOGI("Getting image(%s)", key.c_str());
+		int textureID = loadingTextureID;
+		Image** ppimage = this->images->get(key);
+
+		if (ppimage == NULL) {
+			textureID = loadingTextureID;
+			// TODO load image in other thread.
+			Image* image = this->loadImage(key);
+		}
+		else {
+			Image* image = *ppimage;
+			if (image->status != STATUS_ONGPU) {
+				textureID = loadingTextureID;
+			}
+			else {
+				textureID = image->textureID;
+			}
+		}
+		return textureID;
+	}
+
+
+	Image* ImagePool::loadImage(std::string key){
+
+		Image* image = new Image();
+		image->key = &key;
+		image->status = STATUS_PRELOAD;
+		this->readImageFromApk(key.c_str(), image);
+		image->status = STATUS_ONRAM;
+		this->createTextureWithPixels(image);
+		image->status = STATUS_ONGPU;
+		this->images->put(key, image);
+
 	}
 
 	void ImagePool::readImageFromApk(const char* filename, Image* image){
@@ -124,5 +168,7 @@ namespace hsrl {
 		if (!wasEnabled) {
 			glDisable(GL_TEXTURE_2D);
 		}
+
+		free(image->bitmap);
 	}
 }

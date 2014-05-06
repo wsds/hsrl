@@ -44,6 +44,9 @@
     <Filter Include="Source files\prelibs\mySTL">
       <UniqueIdentifier>{ca9d4317-4207-40fb-8858-f6f7b101e976}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\prelibs\math">
+      <UniqueIdentifier>{6dab264e-12de-4a57-bf1b-546cf0cb18d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AndroidManifest.xml" />
@@ -83,6 +86,9 @@
     <ClCompile Include="jni\prelibs\mySTL\MyMap.cpp">
       <Filter>Source files\prelibs\mySTL</Filter>
     </ClCompile>
+    <ClCompile Include="jni\prelibs\math\vecmath.cpp">
+      <Filter>Source files\prelibs\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\hsrl\tools.h">
@@ -108,6 +114,9 @@
     </ClInclude>
     <ClInclude Include="jni\prelibs\mySTL\MyMap.h">
       <Filter>Source files\prelibs\mySTL</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\prelibs\math\vecmath.h">
+      <Filter>Source files\prelibs\math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

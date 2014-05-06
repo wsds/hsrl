@@ -8,4 +8,4 @@ uniform mat4 model;
 void main() {
  gl_Position = projectionView * model * aPosition;
  vTextureCoord = aTextureCoord;
-  }
+}
