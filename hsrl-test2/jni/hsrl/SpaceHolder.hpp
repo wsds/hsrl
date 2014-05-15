@@ -27,7 +27,7 @@ namespace hsrl {
 
 		static SpaceHolder * getInstance()
 		{
-			if (instance == NULL) { //ÅÐ¶ÏÊÇ·ñµÚÒ»´Îµ÷ÓÃ  
+			if (instance == NULL) { //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½ï¿½  
 				instance = new SpaceHolder();
 			}
 			return instance;
@@ -36,6 +36,8 @@ namespace hsrl {
 		void initialize(float width, float height, int mModelMatrixHandle);
 
 		void drawImage(std::string key, float left, float top, float z, float width, float height);
+		void drawText(std::string& text, float left, float top, float z,
+					float textSize, float width, float height);
 		void test();
 
 		ImagePool* imagePool;
