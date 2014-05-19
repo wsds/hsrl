@@ -9,7 +9,3 @@ LOCAL_MODULE    := sooo1
 LOCAL_SRC_FILES := libsooo1.so
 include $(PREBUILT_SHARED_LIBRARY)
 
-include $(CLEAR_VARS) 
-LOCAL_MODULE    := ft2
-LOCAL_SRC_FILES := libft2.so
-include $(PREBUILT_SHARED_LIBRARY)
