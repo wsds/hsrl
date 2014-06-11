@@ -11,7 +11,13 @@
 
 #include <math.h>
 
+#include <iostream>
+#include <string>
+#include <strstream>
+
 #include <android/log.h>
+
+#include "../FreeType2.h"
 
 namespace hsrl {
 
@@ -61,6 +67,103 @@ namespace hsrl {
 		}
 		return textureID;
 	}
+
+	int ImagePool::getCharImage(UNICODE_CHAR ch) {
+
+		std::string key;
+
+		std::strstream ss;
+		ss << "text_" << ch;
+		ss >> key;
+
+		int textureID = loadingTextureID;
+		Image** ppimage = this->images->get(key);
+
+		if (ppimage != NULL) {
+			Image* image = *ppimage;
+			if (image->status != STATUS_ONGPU) {
+				textureID = loadingTextureID;
+			} else {
+				textureID = image->textureID;
+			}
+			return textureID;
+		}
+		Image* image = new Image();
+
+		image->status = STATUS_PRELOAD;
+		image->key = &key;
+		FreeType2* ft2 = FreeType2::getInstance();
+		FT_Bitmap* bitmap = ft2->genCharBitmap(ch);
+
+		int bwidth = bitmap->width;
+		int bheight = bitmap->rows;
+
+		image->width = bwidth;
+		image->height = bheight;
+		char * pixels = new char[bwidth * bheight * 4];
+		for (int j = 0; j < bheight; j++) {
+			for (int i = 0; i < bwidth; i++) {
+				unsigned char _vl =
+						(i >= bwidth || j >= bheight) ?
+								0 :
+								bitmap->buffer[i + bwidth * (bheight - 1 - j)];
+				pixels[(4 * i + (bheight - j - 1) * bwidth * 4)] = 0xFF;
+				pixels[(4 * i + (bheight - j - 1) * bwidth * 4) + 1] = 0xFF;
+				pixels[(4 * i + (bheight - j - 1) * bwidth * 4) + 2] = 0xFF;
+				pixels[(4 * i + (bheight - j - 1) * bwidth * 4) + 3] = _vl;
+			}
+		}
+
+		image->status = STATUS_ONRAM;
+
+	// Release previous texture if we had one
+		if (image->textureID) {
+			glDeleteTextures(1, (const GLuint*) &(image->textureID));
+			image->textureID = 0;
+		}
+
+		GLint maxTextureSize;
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+
+		if (image->width > maxTextureSize || image->height > maxTextureSize) {
+
+			LOGI("Warning: Image %s larger than MAX_TEXTURE_SIZE (%d)",
+					image->key->c_str(), maxTextureSize);
+		}
+		GLenum format = GL_RGBA;
+
+		bool wasEnabled = glIsEnabled(GL_TEXTURE_2D);
+		int boundTexture = 0;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, (GLuint*) &(image->textureID));
+		glBindTexture(GL_TEXTURE_2D, image->textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, image->width, image->height, 0,
+				format, GL_UNSIGNED_BYTE, pixels);
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glBindTexture(GL_TEXTURE_2D, boundTexture);
+
+		if (!wasEnabled) {
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		image->status = STATUS_ONGPU;
+
+		this->images->put(key, image);
+
+		return image->textureID;
+	}
+
 
 
 	Image* ImagePool::loadImage(std::string key){

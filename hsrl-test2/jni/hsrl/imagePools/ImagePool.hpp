@@ -16,6 +16,8 @@
 
 #include <GLES2/gl2.h>
 
+#include "../StringTools.h"
+
 namespace hsrl {
 
 #define STATUS_PRELOAD 0
@@ -55,7 +57,7 @@ namespace hsrl {
 
 		static ImagePool * getInstance()
 		{
-			if (instance == NULL) { //ÅÐ¶ÏÊÇ·ñµÚÒ»´Îµ÷ÓÃ  
+			if (instance == NULL) { //ï¿½Ð¶ï¿½ï¿½Ç·ï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½ï¿½  
 				instance = new ImagePool();
 			}
 			return instance;
@@ -66,6 +68,7 @@ namespace hsrl {
 		MyMap<std::string, Image*>* images;
 
 		int getImage(std::string key);
+		int getCharImage(UNICODE_CHAR ch);
 		Image* loadImage(std::string key);
 
 		void readImageFromApk(const char* filename, Image* image);

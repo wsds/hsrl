@@ -172,7 +172,7 @@ namespace hsrl {
 	//float mProjectionMatrix[16];
 	//float mViewMatrix[16];
 
-	// mModelMatrixÄ£ÐÍ¾ØÕó£»mViewMatrixÊÓÍ¼¾ØÕó£»mProjectionMatrixÍ¸ÊÓ¾ØÕó£»
+	// mModelMatrixÄ£ï¿½Í¾ï¿½ï¿½ï¿½mViewMatrixï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½mProjectionMatrixÍ¸ï¿½Ó¾ï¿½ï¿½ï¿½
 	Matrix4* mModelMatrixMove;
 	Matrix4* mProjectionViewMatrix;
 	Matrix4* mProjectionMatrix;
@@ -188,7 +188,7 @@ namespace hsrl {
 		float ratio = (float)width / height;
 
 		mViewMatrix = mMatrix4Helper->setLookAtM(0.0f, 0.0f, 1.0f/* look at z=1 */, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-		mProjectionMatrix = mMatrix4Helper->OrthoM(-1.0f, 1.0f, -1.0f / ratio, 1.0f / ratio, 1.0f, 11.0f);// Õý½»Í¶Ó°//near at z=1//far at z=11
+		mProjectionMatrix = mMatrix4Helper->OrthoM(-1.0f, 1.0f, -1.0f / ratio, 1.0f / ratio, 1.0f, 11.0f);// ï¿½ï¿½Í¶Ó°//near at z=1//far at z=11
 		mProjectionViewMatrix = mMatrix4Helper->multiplyMM(mProjectionMatrix, mViewMatrix);
 
 		GLfloat* value = mMatrix4Helper->getDataCopy(mProjectionViewMatrix);
@@ -288,7 +288,7 @@ namespace hsrl {
 
 			//GLfloat* value = mProjectionViewMatrix->Ptr();
 			//glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, value);
-			//glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());//ÖØ¸´£¿
+			//glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, mProjectionViewMatrix->Ptr());//ï¿½Ø¸ï¿½ï¿½ï¿½
 			GLfloat* value = mMatrix4Helper->getDataCopy(mProjectionViewMatrix);
 			glUniformMatrix4fv(mProjectionViewMatrixHandle, 1, false, value);
 			isInitailized = true;
@@ -318,6 +318,13 @@ namespace hsrl {
 		//////Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, -8.0f);
 		//////spaceHolder.renderWorld();
 		spaceHolder->drawImage("emoji_normal.png", 200, 300, 0, 128, 128);
+
+		std::string str1 = "ä½ ";
+		spaceHolder->drawText(str1, 100, 400, 0, 50, 50, 50);
+		std::string str2 = "å¥½";
+		spaceHolder->drawText(str2, 150, 400, 0, 50, 50, 50);
+		std::string str3 = "é˜¿";
+		spaceHolder->drawText(str3, 200, 400, 0, 50, 50, 50);
 
 		eglSwapBuffers(mMainEngine->display, mMainEngine->surface);
 
