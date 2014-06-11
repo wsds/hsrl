@@ -98,9 +98,28 @@ class GLES20TriangleRenderer implements GLSurfaceView.Renderer {
 		// offset_y_move = -y_move * spaceHolder.Pi;
 
 		Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, -8.0f);
-		spaceHolder.renderWorld();
-		spaceHolder.drawImage("emoji_normal.png", 100, 600, 0, 96, 96, mModelMatrixMove);
-
+//		spaceHolder.renderWorld();
+//		spaceHolder.drawImage("emoji_normal.png", 100, 600, 0, 96, 96, mModelMatrixMove);
+		spaceHolder.drawImage("loading.png", 100, 600, 0, 96, 96, mModelMatrixMove);
+//		spaceHolder.drawImage("test1001.jpg", 100, 600, 0, 96, 96, mModelMatrixMove);
+		
+		spaceHolder.drawImage("test1001.jpg", 50, 100, 0, 300, 300);
+		spaceHolder.drawImage("test1002.jpg", 50, 400, 0, 300, 300);
+		spaceHolder.drawImage("test1003.jpg", 50, 700, 0, 300, 300);
+		spaceHolder.drawImage("test1004.jpg", 50, 1000, 0, 300, 300);
+		spaceHolder.drawImage("test1005.jpg", 350, 100, 0, 300, 300);
+		spaceHolder.drawImage("test1006.jpg", 350, 400, 0, 300, 300);
+		spaceHolder.drawImage("test1007.jpg", 350, 700, 0, 300, 300);
+		spaceHolder.drawImage("test1008.jpg", 350, 1000, 0, 300, 300);
+		spaceHolder.drawImage("test1009.jpg", 650, 100, 0, 300, 300);
+		spaceHolder.drawImage("test1010.jpg", 650, 400, 0, 300, 300);
+		spaceHolder.drawImage("test1011.jpg", 950, 100, 0, 300, 300);
+		spaceHolder.drawImage("test1012.jpg", 950, 400, 0, 300, 300);
+		spaceHolder.drawImage("test1013.jpg", 950, 700, 0, 300, 300);
+		spaceHolder.drawImage("test1014.jpg", 650, 1000, 0, 300, 300);
+		spaceHolder.drawImage("test1015.jpg", 950, 1000, 0, 300, 300);
+		spaceHolder.drawImage("test1016.jpg", 50, 1000, 0, 300, 300);
+		
 
 	}
 

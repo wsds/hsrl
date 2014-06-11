@@ -39,15 +39,15 @@ public class ImagePool {
 
 	void initialize(Context mContext) {
 		this.mContext = mContext;
-		Image image = loadImage("loading.png");
+		Image image = loadImage("test3.png");
 		loadingTextureID = image.textureID;
 		images.clear();
 	}
 
 	public int getImage(String key) {
-		// if (key.equals("loading.png")) {
-		// return loadingTextureID;
-		// }
+		 if (key.equals("loading.png")) {
+		 return loadingTextureID;
+		 }
 		int textureID = loadingTextureID;
 		Image image = images.get(key);
 		if (image == null) {
@@ -90,6 +90,8 @@ public class ImagePool {
 
 		int[] textures = new int[1];
 
+		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+		
 		GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 		GLES20.glEnable(GLES20.GL_BLEND);
 		GLES20.glGenTextures(1, textures, 0);

@@ -317,7 +317,7 @@ namespace hsrl {
 
 		//////Matrix.translateM(mModelMatrixMove, 0, offset_x_move, offset_y_move, -8.0f);
 		//////spaceHolder.renderWorld();
-		spaceHolder->drawImage("emoji_normal.png", 100, 600, 0, 96, 96);
+		spaceHolder->drawImage("emoji_normal.png", 200, 300, 0, 128, 128);
 
 		eglSwapBuffers(mMainEngine->display, mMainEngine->surface);
 
