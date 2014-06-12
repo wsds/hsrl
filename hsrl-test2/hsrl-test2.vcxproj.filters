@@ -47,6 +47,9 @@
     <Filter Include="Source files\prelibs\math">
       <UniqueIdentifier>{6dab264e-12de-4a57-bf1b-546cf0cb18d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source files\prelibs\data_core">
+      <UniqueIdentifier>{5ddc12db-dccb-4084-919c-b537460c1734}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="AndroidManifest.xml" />
@@ -92,6 +95,15 @@
     <ClCompile Include="jni\prelibs\math\Matrix4.cpp">
       <Filter>Source files\prelibs\math</Filter>
     </ClCompile>
+    <ClCompile Include="jni\prelibs\data_core\JSObject.cpp">
+      <Filter>Source files\prelibs\data_core</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\prelibs\data_core\JSNumber.cpp">
+      <Filter>Source files\prelibs\data_core</Filter>
+    </ClCompile>
+    <ClCompile Include="jni\prelibs\data_core\JSON.cpp">
+      <Filter>Source files\prelibs\data_core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="jni\hsrl\tools.h">
@@ -123,6 +135,15 @@
     </ClInclude>
     <ClInclude Include="jni\prelibs\math\Matrix4.h">
       <Filter>Source files\prelibs\math</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\prelibs\data_core\JSObject.h">
+      <Filter>Source files\prelibs\data_core</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\prelibs\data_core\JSNumber.h">
+      <Filter>Source files\prelibs\data_core</Filter>
+    </ClInclude>
+    <ClInclude Include="jni\prelibs\data_core\JSON.h">
+      <Filter>Source files\prelibs\data_core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
