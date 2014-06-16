@@ -1,0 +1,34 @@
+# depslib dependency file v1.0
+1402933319 source:d:\code\hsrl\cppdatacore\data_core\base\hashtable.cpp
+	"HashTable.h"
+
+1402934736 d:\code\hsrl\cppdatacore\data_core\base\hashtable.h
+
+1402933390 source:d:\code\hsrl\cppdatacore\data_core\base\list.cpp
+	"List.h"
+
+1402934747 d:\code\hsrl\cppdatacore\data_core\base\list.h
+
+1402898656 source:d:\code\hsrl\cppdatacore\data_core\jsnumber.cpp
+	"JSNumber.h"
+
+1402898656 d:\code\hsrl\cppdatacore\data_core\jsnumber.h
+	"JSObject.h"
+
+1402898656 d:\code\hsrl\cppdatacore\data_core\jsobject.h
+
+1402898656 source:d:\code\hsrl\cppdatacore\data_core\jsobject.cpp
+	"JSObject.h"
+
+1402898656 source:d:\code\hsrl\cppdatacore\data_core\json.cpp
+	"JSON.h"
+
+1402898656 d:\code\hsrl\cppdatacore\data_core\json.h
+	"JSObject.h"
+
+1402934664 source:d:\code\hsrl\cppdatacore\main.cpp
+	<iostream>
+	"test.h"
+
+1402934767 d:\code\hsrl\cppdatacore\test.h
+
