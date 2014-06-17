@@ -36,12 +36,14 @@
 		<Unit filename="data_core/JSNumber.h" />
 		<Unit filename="data_core/JSON.cpp" />
 		<Unit filename="data_core/JSON.h" />
-		<Unit filename="data_core/JSObject.cpp" />
-		<Unit filename="data_core/JSObject.h" />
 		<Unit filename="data_core/base/HashTable.cpp" />
 		<Unit filename="data_core/base/HashTable.h" />
+		<Unit filename="data_core/base/JSObject.cpp" />
+		<Unit filename="data_core/base/JSObject.h" />
 		<Unit filename="data_core/base/List.cpp" />
 		<Unit filename="data_core/base/List.h" />
+		<Unit filename="data_core/base/MemoryManagement.cpp" />
+		<Unit filename="data_core/base/MemoryManagement.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="test.cpp" />
 		<Unit filename="test.h" />

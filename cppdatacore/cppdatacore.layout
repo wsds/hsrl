@@ -1,54 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="test.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="test.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="31" topLine="0" />
+			<Cursor1 position="996" topLine="33" />
 		</Cursor>
 	</File>
-	<File name="test.cpp" open="1" top="1" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="21" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="data_core\base\List.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="56" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="data_core\base\HashTable.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="24" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="data_core\base\HashTable.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="66" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="data_core\base\List.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="data_core\JSON.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="data_core\JSON.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="82" topLine="5" />
+			<Cursor1 position="168" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="data_core\JSNumber.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="data_core\base\HashTable.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="156" topLine="0" />
+			<Cursor1 position="252" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="data_core\JSON.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="20" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\MemoryManagement.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="159" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\MemoryManagement.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="172" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\JSObject.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="23" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\JSObject.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="102" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\List.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="142" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="test.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="147" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\HashTable.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="46" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\JSNumber.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="62" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="data_core\base\List.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1938" topLine="74" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
