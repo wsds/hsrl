@@ -3,34 +3,51 @@
 
 
 #include "JSObject.h"
+#include "MemoryManagement.h"
 
 #ifndef NULL
 #define NULL 0;
 #endif /* NULL */
 
+class HashEntry
+{
+public:
+	void* key;
+	void* value;
+
+	HashEntry* next;
+};
+
 class HashTable
 {
+public:
+
+	HashEntry** elements;//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~
+
+	int length;
+
+	int max_size;
+	int threshold;
 
 
-    //find O(1)
-    JSObject* find(char* key);
+	bool is_initialized = false;
 
-    //set O(1)
-    bool set(char* key, JSObject* object);
+	//find O(1)
+	JSObject* find(char* key);
 
-    //del O(1)
-    bool del(char* key);
+	//set O(1)
+	bool set(char* key, JSObject* object);
 
-    //resize O(n)
-    bool resize();
+	//del O(1)
+	bool del(char* key);
 
+	//resize O(n)
+	bool resize();
 
-    void test()
-    {
+	//initialize default size=8;
+	bool initialize();
 
-        //        int i = 1 + 1;
-    }
-
+	bool free();
 };
 
 

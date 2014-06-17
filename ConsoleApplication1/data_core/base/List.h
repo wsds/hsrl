@@ -12,6 +12,7 @@
 class LIST
 {
 public:
+	//store the orginal type of data directly should be supported. or supported by another class. 
     JSObject** elements;//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~
 
     int length;
@@ -51,12 +52,6 @@ public:
     bool initialize();
 
     bool free();
-
-
-    void test()
-    {
-        //        int i = 1 + 1;
-    }
 
 };
 
