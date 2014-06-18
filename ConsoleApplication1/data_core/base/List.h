@@ -33,8 +33,8 @@ public:
     bool insert(JSObject* object, int index);
 
 
-	//replace O(1)
-	bool replace(JSObject* object, int index);
+    //replace O(1)
+    bool replace(JSObject* object, int index);
 
     //del O(n)
     bool del(int index);
