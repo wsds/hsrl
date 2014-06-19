@@ -5,15 +5,20 @@
 #include "JSObject.h"
 #include "MemoryManagement.h"
 
+#include "../JSNumber.h"
+
 #ifndef NULL
-#define NULL 0;
+#define NULL 0
 #endif /* NULL */
 
 class HashEntry
 {
 public:
-	void* key;
-	void* value;
+	char* key;
+	JSNumber* value;
+	unsigned int hash;
+
+	int level;
 
 	HashEntry* next;
 };
@@ -32,11 +37,11 @@ public:
 
 	bool is_initialized = false;
 
-	//find O(1)
-	JSObject* find(char* key);
+	//get O(1)
+	JSObject* get(char* key);
 
 	//set O(1)
-	bool set(char* key, JSObject* object);
+	bool set(char* key, JSObject* value);
 
 	//del O(1)
 	bool del(char* key);
@@ -50,6 +55,10 @@ public:
 	bool free();
 };
 
+unsigned int dictGenHashFunction(const void *key, int len);
+
+int strlen(char *str);
+int strcmp(char *src, char *dst);
 
 #endif /* HASHTABLE_H */
 

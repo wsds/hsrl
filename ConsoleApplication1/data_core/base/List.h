@@ -6,7 +6,7 @@
 #include "MemoryManagement.h"
 
 #ifndef NULL
-#define NULL 0;
+#define NULL 0
 #endif /* NULL */
 
 class LIST

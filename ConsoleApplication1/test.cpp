@@ -1,6 +1,7 @@
 #include <iostream>
 #include "test.h"
 #include "data_core/base/List.h"
+#include "data_core/base/HashTable.h"
 #include "data_core/JSNumber.h"
 
 
@@ -80,7 +81,53 @@ void test2()
 
 
 
+//test base hashmap
+void test3(){
 
+	std::cout << "test3" << std::endl;
+	HashTable *hashTable = new HashTable();
+	hashTable->initialize();
+	char *test = "ab0";
+	for (int i = 0; i < 31; i++)
+	{
+		JSNumber * number = new JSNumber();
+		number->number = 1000 + i;
+		char* key = (char*)JSMalloc(4);
+		key[0] = 97;
+		key[1] = 98;
+		key[2] = 48 + i;
+		key[3] = 0;
+
+		hashTable->set(key, (JSObject*)number);
+	}
+
+
+	for (int i = 0; i < 31; i++)
+	{
+
+		char* key = (char*)JSMalloc(4);
+		key[0] = 97;
+		key[1] = 98;
+		key[2] = 48 + i;
+		key[3] = 0;
+
+		JSNumber * number = (JSNumber *)hashTable->get(key);
+		if (number == NULL){
+			std::cout << "key:" << key << " ц╩сп" << std::endl;
+		}
+		else{
+			std::cout << "key:" << key << "    value:" <<number->number << std::endl;
+
+		}
+	}
+	HashEntry* e[32];
+
+	for (int i = 0; i < 32; i++){
+		e[i] = hashTable->elements[i];
+	}
+
+	std::cout << "test3 end" << std::endl;
+}
 
 
 
@@ -103,6 +150,6 @@ void testEntry()
 {
 
 	std::cout << "test entry." << std::endl;
-	test2();
-
+	test3();
+	std::cout << "test end." << std::endl;
 }

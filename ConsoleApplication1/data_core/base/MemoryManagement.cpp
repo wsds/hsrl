@@ -3,11 +3,15 @@
 
 void* JSMalloc(size_t size)
 {
-    void *pointer = malloc(size);
-    return pointer;
+	void *pointer = malloc(size);
+
+	for (int i = 0; i < size; i++){
+		*((char*)pointer + i) = 0;
+	}
+	return pointer;
 }
 
 void JSFree(void* pointer)
 {
-    free(pointer);
+	free(pointer);
 }

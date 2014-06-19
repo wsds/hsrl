@@ -114,7 +114,7 @@ bool LIST::resize()
 {
 	JSObject** old_elements = this->elements;
 	this->max_size = this->max_size * 2;
-	this->threshold = this->max_size * 0.8;
+	this->threshold = (int)(this->max_size * 0.8);
 
 	int mem_size = this->max_size*sizeof(void*);
 
@@ -134,7 +134,7 @@ bool LIST::initialize()
 {
 	this->max_size = 8;
 	this->length = 0;
-	this->threshold = this->max_size * 0.8;
+	this->threshold = (int)(this->max_size * 0.8);
 
 	int mem_size = this->max_size*sizeof(void*);
 

@@ -2,7 +2,7 @@
 #define TEST_H
 
 #ifndef NULL
-#define NULL 0;
+#define NULL 0
 #endif /* NULL */
 
 void testEntry();
