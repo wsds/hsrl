@@ -15,7 +15,7 @@ class HashEntry
 {
 public:
 	char* key;
-	JSNumber* value;
+	JSObject* value;
 	unsigned int hash;
 
 	int level;
@@ -41,10 +41,10 @@ public:
 	JSObject* get(char* key);
 
 	//set O(1)
-	bool set(char* key, JSObject* value);
+	int set(char* key, JSObject* value);
 
 	//del O(1)
-	bool del(char* key);
+	JSObject*  del(char* key);
 
 	//resize O(n)
 	bool resize();

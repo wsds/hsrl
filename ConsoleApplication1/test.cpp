@@ -3,7 +3,8 @@
 #include "data_core/base/List.h"
 #include "data_core/base/HashTable.h"
 #include "data_core/JSNumber.h"
-
+#include "data_core/JSKeyValue.h"
+#include "data_core/JSON.h"
 
 //test base list
 void testMM(){
@@ -31,8 +32,34 @@ void showList(LIST *list)
 
 		std::cout << number->number << std::endl;
 	}
-
 }
+
+void showJSObject(JSObject *object, int indent)
+{
+	char *indentation = (char*)JSMalloc(indent*2+1);
+
+	for (int i = 0; i < indent * 2 + 1; i++){
+		*((char*)indentation + i) = 32;
+	}
+
+	if (object->type == JSNUMBER){
+		JSNumber * number = (JSNumber*)object;
+		std::cout << "JSNumber: " << number->number << std::endl;
+	}
+	else if (object->type == JSKEYVALUE){
+		JSKeyValue * keyValue = (JSKeyValue*)object;
+		std::cout << "JSKeyValue: key:" << keyValue->key << "            value:" << keyValue->value << std::endl;
+	}
+	else if (object->type == JSJSON){
+		JSON* json = (JSON*)object;
+		for (int i = 0; i < json->length; i++)
+		{
+			JSObject * child = json->find(i);
+			showJSObject(child, indent + 1);
+		}
+	}
+}
+
 void test1()
 {
 	std::cout << "test1" << std::endl;
@@ -126,7 +153,7 @@ void test3(){
 			std::cout << "key:" << key << " ц╩сп" << std::endl;
 		}
 		else{
-			std::cout << "key:" << key << "    value:" <<number->number << std::endl;
+			std::cout << "key:" << key << "    value:" << number->number << std::endl;
 
 		}
 	}

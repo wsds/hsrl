@@ -45,6 +45,12 @@
     <ClInclude Include="data_core\base\MemoryManagement.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="data_core\JSKeyValue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="data_core\JSString.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +78,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="data_core\base\MemoryManagement.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\JSKeyValue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\JSString.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

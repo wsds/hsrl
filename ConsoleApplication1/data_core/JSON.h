@@ -6,6 +6,8 @@
 #include "base/List.h"
 #include "base/HashTable.h"
 
+#include "JSKeyValue.h"
+
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
@@ -32,13 +34,13 @@ public:
 	bool push(JSObject* object);
 	bool insert(JSObject* object, int index);
 	bool replace(JSObject* object, int index);
-	bool del(int index);
+	JSObject*  del(int index);
 	JSObject* find(int index);
 
 	//hash
 	JSObject* get(char* key);
 	bool set(char* key, JSObject* value);
-	bool del(char* key);
+	JSObject*  del(char* key);
 
 	//serialize
 	char* stringify();

@@ -8,7 +8,7 @@ JSObject* HashTable::get(char* key)
 		HashEntry* brother = elements[index];
 		do{
 			if (strcmp(brother->key, key) == 0){
-				return (JSObject*)brother->value;
+				return brother->value;
 			}
 			brother = brother->next;
 		} while (brother != NULL);
@@ -17,7 +17,7 @@ JSObject* HashTable::get(char* key)
 	return NULL;
 }
 
-bool HashTable::set(char* key, JSObject* value)
+int HashTable::set(char* key, JSObject* value)
 {
 	HashEntry* element = new HashEntry();//get from HashEntry pool//to do
 
@@ -30,15 +30,15 @@ bool HashTable::set(char* key, JSObject* value)
 			if (strcmp(brother->key, key) == 0){
 				//free the old value "brother->value"
 				//todo
-				brother->value = (JSNumber *)value;
-				return true;
+				brother->value = value;
+				return 1;//replace entry
 			}
 			brother = brother->next;
 		} while (brother != NULL);
 	}
 
 	element->key = key;
-	element->value = (JSNumber *)value;
+	element->value = value;
 	element->hash = hash;
 
 	if (elements[index] == NULL){
@@ -62,10 +62,10 @@ bool HashTable::set(char* key, JSObject* value)
 		this->resize();//asynchronous//todo
 	}
 
-	return true;
+	return 2;//new entry
 }
 
-bool HashTable::del(char* key)
+JSObject*  HashTable::del(char* key)
 {
 	unsigned int hash = dictGenHashFunction(key, strlen(key));
 	int index = hash%max_size;
@@ -78,14 +78,14 @@ bool HashTable::del(char* key)
 				//todo
 
 				(*brother) = (*brother)->next;
-				return true;
+				return old_element->value;
 			}
 			brother = &((*brother)->next);
 		} while ((*brother) != NULL);
 	}
 
 
-	return false;
+	return NULL;
 }
 
 bool HashTable::resize()

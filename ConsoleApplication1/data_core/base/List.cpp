@@ -55,10 +55,11 @@ bool LIST::replace(JSObject* object, int index){
 	}
 }
 
-bool LIST::del(int index)
+JSObject* LIST::del(int index)
 {
 	if (this->length > index && index >= 0)
 	{
+		JSObject* object = this->elements[index];
 		int i = 0;//~~~~~~~~~~~~~~~Need Memory Management~~~~~~~~~~~~~~~~~
 		for (i = index; i <= this->length - 2; i++)
 		{
@@ -67,11 +68,11 @@ bool LIST::del(int index)
 		this->elements[this->length - 1] = NULL;
 		this->length--;
 
-		return true;
+		return object;
 	}
 	else
 	{
-		return false;
+		return NULL;
 	}
 
 }

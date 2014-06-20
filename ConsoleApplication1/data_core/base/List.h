@@ -37,7 +37,7 @@ public:
     bool replace(JSObject* object, int index);
 
     //del O(n)
-    bool del(int index);
+	JSObject*  del(int index);
 
     //pop O(1)
     JSObject* pop();
