@@ -88,7 +88,7 @@ void test3(){
 	HashTable *hashTable = new HashTable();
 	hashTable->initialize();
 	char *test = "ab0";
-	for (int i = 0; i < 31; i++)
+	for (int i = 0; i < 43; i++)
 	{
 		JSNumber * number = new JSNumber();
 		number->number = 1000 + i;
@@ -112,7 +112,7 @@ void test3(){
 	hashTable->del("abG");
 	hashTable->del("abA");
 
-	for (int i = 0; i < 31; i++)
+	for (int i = 0; i < 43; i++)
 	{
 
 		char* key = (char*)JSMalloc(4);
@@ -130,10 +130,10 @@ void test3(){
 
 		}
 	}
-	HashEntry* e[32];
+	HashEntry* e[113];
 
 
-	for (int i = 0; i < 32; i++){
+	for (int i = 0; i < 113; i++){
 		e[i] = hashTable->elements[i];
 	}
 

@@ -69,11 +69,11 @@ bool HashTable::del(char* key)
 	unsigned int hash = dictGenHashFunction(key, strlen(key));
 	int index = hash%max_size;
 	if (elements[index] != NULL){
-		HashEntry** brother = elements+index;
+		HashEntry** brother = elements + index;
 		do{
 			if (strcmp((*brother)->key, key) == 0){
 				HashEntry* old_element = *brother;
-				//free the old element, put them into a pool to reuse them.
+				//free the old element, put them into a HashEntry pool to reuse them.
 
 				(*brother) = (*brother)->next;
 				return true;
@@ -88,12 +88,61 @@ bool HashTable::del(char* key)
 
 bool HashTable::resize()
 {
+	int old_index = 0;//~~~~~~~~~~~~~~~Need Memory Management~~~~~~~~~~~~~~~~~
+	int index = 0;
+	HashEntry* element = NULL;
+	HashEntry* old_element = NULL;
+	HashEntry* brother = NULL;
+	int level = 1;
+	int old_max_size = this->max_size;
+
+	HashEntry** old_elements = this->elements;
+
+	this->max_size = this->max_size * 2 + 7;
+	this->threshold = (int)(this->max_size * 0.8);
+
+	int mem_size = this->max_size*sizeof(void*);
+
+	this->elements = (HashEntry**)JSMalloc(mem_size);
+
+	for (old_index = 0; old_index < old_max_size; old_index++)
+	{
+		element = old_elements[old_index];
+		if (element != NULL){
+			do{
+
+				//put old element into the new space
+				index = element->hash%this->max_size;
+				if (elements[index] == NULL){
+					elements[index] = element;
+				}
+
+				else{
+					level = 1;
+					brother = elements[index];
+					while (brother->next != NULL) {
+						level++;
+						brother = brother->next;
+					}
+					brother->next = element;
+					element->level = level;
+				}
+				//put old element into the new space
+				old_element = element;
+				element = element->next;
+				old_element->next = NULL;
+			} while (element != NULL);
+		}
+
+	}
+	JSFree((void*)old_elements);
+
 	return true;
 }
 
 bool HashTable::initialize()
 {
-	this->max_size = 31;
+	this->max_size = 1 + 7;
 	this->length = 0;
 	this->threshold = (int)(this->max_size * 0.8);
 
