@@ -19,7 +19,7 @@ JSObject* HashTable::get(char* key)
 
 bool HashTable::set(char* key, JSObject* value)
 {
-	HashEntry* element = new HashEntry();
+	HashEntry* element = new HashEntry();//get from HashEntry pool//to do
 
 	unsigned int hash = dictGenHashFunction(key, strlen(key));
 	int index = hash%max_size;
@@ -29,6 +29,7 @@ bool HashTable::set(char* key, JSObject* value)
 		do{
 			if (strcmp(brother->key, key) == 0){
 				//free the old value "brother->value"
+				//todo
 				brother->value = (JSNumber *)value;
 				return true;
 			}
@@ -58,7 +59,7 @@ bool HashTable::set(char* key, JSObject* value)
 	this->length++;
 	if (this->length > this->threshold)
 	{
-		this->resize();//asynchronous
+		this->resize();//asynchronous//todo
 	}
 
 	return true;
@@ -74,6 +75,7 @@ bool HashTable::del(char* key)
 			if (strcmp((*brother)->key, key) == 0){
 				HashEntry* old_element = *brother;
 				//free the old element, put them into a HashEntry pool to reuse them.
+				//todo
 
 				(*brother) = (*brother)->next;
 				return true;
@@ -153,7 +155,6 @@ bool HashTable::initialize()
 	this->is_initialized = true;
 
 	return true;
-
 
 }
 

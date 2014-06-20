@@ -3,6 +3,8 @@
 
 
 #include "base/JSObject.h"
+#include "base/List.h"
+#include "base/HashTable.h"
 
 #ifndef NULL
 #define NULL 0
@@ -10,13 +12,33 @@
 
 class JSON : JSObject
 {
+	LIST *list;
+	HashTable *hashTable;
+
+	int length;
+	bool is_initialized = false;
+
+	bool initialize();
+	bool free();
 
 
-	void test(){
+	//API
+	//list
+	JSObject* pop();
+	bool push(JSObject* object);
+	bool insert(JSObject* object, int index);
+	bool replace(JSObject* object, int index);
+	bool del(int index);
+	JSObject* find(int index);
 
-//		int i = 1 + 1;
-	}
+	//hash
+	JSObject* get(char* key);
+	bool set(char* key, JSObject* value);
+	bool del(char* key);
 
+	//serialize
+	char* stringify();
+	bool parse(char* string);
 };
 
 
