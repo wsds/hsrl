@@ -29,27 +29,29 @@ bool HashTable::set(char* key, JSObject* value)
 	if (elements[index] == NULL){
 		elements[index] = element;
 	}
+
 	else{
 		int level = 1;
-		HashEntry* brother = elements[index];
-		while (brother->next != NULL){
-			if (strcmp(brother->key, key) == 0){
-				//free the old element
-				brother = element;
+		HashEntry** brother = elements+index;
+		do {
+			if (strcmp((*brother)->key, key) == 0){
+
+				element->next = (*brother)->next;
+				element->level = level;
+				(*brother) = element;
+				//free the old element "brother", put it in a pool.
+				break;
+			}
+			else if ((*brother)->next != NULL){
+				level++;
+				brother = &((*brother)->next);
+			}
+			else{
+				(*brother)->next = element;
 				element->level = level;
 				break;
 			}
-			else{
-				level++;
-				brother = brother->next;
-			}
-		} ;
-
-
-		if (brother != element){
-			brother->next = element;
-			element->level = level;
-		}
+		} while ((*brother) != NULL);
 
 	}
 
@@ -89,7 +91,7 @@ bool HashTable::resize()
 
 bool HashTable::initialize()
 {
-	this->max_size = 32;
+	this->max_size = 31;
 	this->length = 0;
 	this->threshold = (int)(this->max_size * 0.8);
 

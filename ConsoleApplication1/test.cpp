@@ -101,6 +101,12 @@ void test3(){
 		hashTable->set(key, (JSObject*)number);
 	}
 
+	JSNumber * number = new JSNumber();
+	number->number = 888006;
+	char* key = "ab5";
+	hashTable->set(key, (JSObject*)number);
+
+	hashTable->set(key, (JSObject*)number);
 
 	for (int i = 0; i < 31; i++)
 	{
@@ -121,6 +127,7 @@ void test3(){
 		}
 	}
 	HashEntry* e[32];
+
 
 	for (int i = 0; i < 32; i++){
 		e[i] = hashTable->elements[i];
