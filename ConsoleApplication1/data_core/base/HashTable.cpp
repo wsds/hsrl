@@ -21,38 +21,38 @@ bool HashTable::set(char* key, JSObject* value)
 {
 	HashEntry* element = new HashEntry();
 
+	unsigned int hash = dictGenHashFunction(key, strlen(key));
+	int index = hash%max_size;
+
+	if (elements[index] != NULL){
+		HashEntry* brother = elements[index];
+		do{
+			if (strcmp(brother->key, key) == 0){
+				//free the old value "brother->value"
+				brother->value = (JSNumber *)value;
+				return true;
+			}
+			brother = brother->next;
+		} while (brother != NULL);
+	}
+
 	element->key = key;
 	element->value = (JSNumber *)value;
-	element->hash = dictGenHashFunction(key, strlen(key));
+	element->hash = hash;
 
-	int index = element->hash%max_size;
 	if (elements[index] == NULL){
 		elements[index] = element;
 	}
 
 	else{
 		int level = 1;
-		HashEntry** brother = elements+index;
-		do {
-			if (strcmp((*brother)->key, key) == 0){
-
-				element->next = (*brother)->next;
-				element->level = level;
-				(*brother) = element;
-				//free the old element "brother", put it in a pool.
-				break;
-			}
-			else if ((*brother)->next != NULL){
-				level++;
-				brother = &((*brother)->next);
-			}
-			else{
-				(*brother)->next = element;
-				element->level = level;
-				break;
-			}
-		} while ((*brother) != NULL);
-
+		HashEntry* brother = elements[index];
+		while (brother->next != NULL) {
+			level++;
+			brother = brother->next;
+		}
+		brother->next = element;
+		element->level = level;
 	}
 
 	this->length++;
