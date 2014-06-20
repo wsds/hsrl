@@ -1,9 +1,14 @@
 #include "JSON.h"
 
+JSON::JSON(){
+	this->type = JSJSON;
+	this->initialize();
+}
+
 
 bool JSON::initialize()
 {
-	this->list = new LIST();
+	this->list = new LIST();//to optimize the memory use, get it from a managed pool instead of new it.//to do
 	this->list->initialize();
 	this->hashTable = new HashTable();
 	this->hashTable->initialize();

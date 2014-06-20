@@ -12,6 +12,10 @@
 
 class JSON : JSObject
 {
+public:
+	JSON();
+	~JSON();
+
 	LIST *list;
 	HashTable *hashTable;
 

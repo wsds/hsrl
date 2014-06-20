@@ -12,6 +12,7 @@ class JSNumber : JSObject
 {
 
 public:
+	JSNumber();
     int number;
     void test()
     {
