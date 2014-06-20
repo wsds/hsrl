@@ -69,15 +69,17 @@ bool HashTable::del(char* key)
 	unsigned int hash = dictGenHashFunction(key, strlen(key));
 	int index = hash%max_size;
 	if (elements[index] != NULL){
-		HashEntry* brother = elements[index];
+		HashEntry** brother = elements+index;
 		do{
-			if (strcmp(brother->key, key) == 0){
+			if (strcmp((*brother)->key, key) == 0){
+				HashEntry* old_element = *brother;
+				//free the old element, put them into a pool to reuse them.
 
-				//free the old element
+				(*brother) = (*brother)->next;
 				return true;
 			}
-			brother = brother->next;
-		} while (brother != NULL);
+			brother = &((*brother)->next);
+		} while ((*brother) != NULL);
 	}
 
 

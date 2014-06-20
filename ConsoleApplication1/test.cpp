@@ -108,6 +108,10 @@ void test3(){
 
 	hashTable->set(key, (JSObject*)number);
 
+	hashTable->del("ab4");
+	hashTable->del("abG");
+	hashTable->del("abA");
+
 	for (int i = 0; i < 31; i++)
 	{
 
