@@ -17,11 +17,11 @@
 class JSONIndicator
 {
 public:
-	int head = -1;
-	int tail = -1;
+	int head;
+	int tail;
 
 
-	JSON* json = NULL;
+	JSObject* json;
 };
 
 class JSON : JSObject
@@ -68,7 +68,7 @@ bool checkJSON(char* string);
 bool checkParenthesesMatching(char* string);
 
 void testJSONParse();
-int parseJSON(char* string, JSONIndicator* json_indicator);
+JSON* parseJSON(char* string, JSONIndicator* json_indicator);
 
 #endif /* JSON_H */
 

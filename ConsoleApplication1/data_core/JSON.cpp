@@ -179,15 +179,21 @@ void testJSONParse(){
 
 	char * json_str = "[a:1,'''abc''',123,[1,2,[a:1,b:[123,[1,12],456],123],'a':2,'b:3':\"123456\"],'''a''', '''''']";
 
-
 	JSONIndicator* root_json_indicator = new JSONIndicator();
 	root_json_indicator->head = 0;
 	root_json_indicator->tail = strlen(json_str);
+
+	JSON* json = new JSON();
+	json->initialize();
+
+	root_json_indicator->json = (JSObject*)json;
+
 	JSON* josn = parseJSON(json_str, root_json_indicator);
 
 }
 int parsingStatus = 1;//[1:normal,2:quote_start,3:string,4:second_quote_start,5:quote_stop,6:second_quote_stop],[1-2,2-3,3-1,2-4,4-5,5-3,4-1]
 int QuoteStatus = 11;//[ 11 = ' , 13 = ''' , 21 = " , 23 = """]
+int last_COMMA_index = 0;
 
 char LEFTBRACKET = '[';
 char RIGHTBRACKET = ']';
@@ -199,16 +205,33 @@ char COMMA = ',';
 int json_indicators_stack_size = 10;
 int json_indicators_stack_top = 0;
 
-JSON* parseJSON(char* string, JSONIndicator* json_indicator){
+JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 
 	char localChar;
+	last_COMMA_index = 0;
+
+	JSONIndicator* json_indicator = root_json_indicator;
+
 	int mem_size = json_indicators_stack_size*sizeof(JSONIndicator*);
 	JSONIndicator** json_indicators = (JSONIndicator**)JSMalloc(mem_size);
 
-	for (int i = json_indicator->head; i < json_indicator->tail; i++){
+	for (int i = json_indicator->head; i < root_json_indicator->tail; i++){
 		localChar = string[i];
 		if (parsingStatus == 1){
-			if (localChar == SINGLEQUOTE){
+			//*************************************parsingStatus == 1*****************************************************************************************************
+			if (localChar == COMMA){
+
+				JSON* json = new JSON();
+				json->json_indicator = new JSONIndicator();//get from pool//to do
+				json->json_indicator->head = last_COMMA_index;
+				json->json_indicator->tail = i;
+				json->json_indicator->json = (JSObject*)json;
+
+				((JSON*)(json_indicator->json))->push((JSObject*)json);
+				//resolve elememt
+
+			}
+			else if (localChar == SINGLEQUOTE){
 				QuoteStatus = 11;
 				parsingStatus = 2;
 			}
@@ -218,18 +241,21 @@ JSON* parseJSON(char* string, JSONIndicator* json_indicator){
 			}
 			else if (localChar == LEFTBRACKET){
 				if (json_indicators_stack_top < json_indicators_stack_size){
+
+
 					JSON* json = new JSON();
 					json->initialize();
+
 					json->json_indicator = new JSONIndicator();//get from pool//to do
-					json_indicator->head = i;
-					json->json_indicator->json = json;
+					json->json_indicator->head = i;
+					json->json_indicator->json = (JSObject*)json;
+
+					((JSON*)(json_indicator->json))->push((JSObject*)json);
 
 					json_indicators[json_indicators_stack_top] = json->json_indicator;
 					json_indicators_stack_top++;
 
-					//parseJSON(string, json_indicator);
-
-
+					json_indicator = json->json_indicator;
 				}
 				else{
 					//report error
@@ -237,7 +263,7 @@ JSON* parseJSON(char* string, JSONIndicator* json_indicator){
 			}
 			else if (localChar == RIGHTBRACKET){
 				if (json_indicators_stack_top > 0){
-					JSONIndicator* json_indicator = json_indicators[json_indicators_stack_top - 1];
+					json_indicator = json_indicators[json_indicators_stack_top - 1];
 					json_indicator->tail = i;
 					//json_indicator->json = parseJSON(string, json_indicator);
 					json_indicators_stack_top--;
@@ -246,6 +272,8 @@ JSON* parseJSON(char* string, JSONIndicator* json_indicator){
 					//report error
 				}
 			}
+			//*************************************parsingStatus == 1*****************************************************************************************************
+
 		}
 		else if (parsingStatus == 3){
 
@@ -299,9 +327,10 @@ JSON* parseJSON(char* string, JSONIndicator* json_indicator){
 
 	JSONIndicator* e[7];
 
-
+	JSON* j[7];
 	for (int i = 0; i < 7; i++){
 		e[i] = json_indicators[i];
+		j[i] = (JSON*)json_indicators[i]->json;
 	}
 	return NULL;
 
