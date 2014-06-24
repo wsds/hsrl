@@ -7,10 +7,22 @@
 #include "base/HashTable.h"
 
 #include "JSKeyValue.h"
+//#include "JSParsingObject.h"
 
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
+
+
+class JSONIndicator
+{
+public:
+	int head = -1;
+	int tail = -1;
+
+
+	JSON* json = NULL;
+};
 
 class JSON : JSObject
 {
@@ -20,6 +32,8 @@ public:
 
 	LIST *list;
 	HashTable *hashTable;
+
+	JSONIndicator* json_indicator;
 
 	int length;
 	bool is_initialized = false;
@@ -47,6 +61,14 @@ public:
 	bool parse(char* string);
 };
 
+
+
+int checkJSONGrammar(char* string, int from);
+bool checkJSON(char* string);
+bool checkParenthesesMatching(char* string);
+
+void testJSONParse();
+int parseJSON(char* string, JSONIndicator* json_indicator);
 
 #endif /* JSON_H */
 

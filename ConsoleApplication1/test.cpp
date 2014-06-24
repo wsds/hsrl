@@ -180,7 +180,10 @@ void test3(){
 
 
 
-
+//test JSON
+void test4(){
+	testJSONParse();
+}
 
 
 //Entry
@@ -188,6 +191,6 @@ void testEntry()
 {
 
 	std::cout << "test entry." << std::endl;
-	test3();
+	test4();
 	std::cout << "test end." << std::endl;
 }

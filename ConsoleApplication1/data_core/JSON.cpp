@@ -150,18 +150,167 @@ char decimalPoint = '.';
 char numberFrom = '0';
 char numberEnd = '9';
 
-bool checkJSON(char* string);
-bool checkParenthesesMatching(char* string);
-int checkJSONGrammar(char* string, int* from);
+
+
+
+
+
+
 
 bool JSON::parse(char* string)
 {
-	bool parseFlag = checkJSON(string);
-	if (parseFlag){
+
+	JSONIndicator* root_json_indicator = new JSONIndicator();
+	root_json_indicator->head = 0;
+	root_json_indicator->tail = strlen(string);
+
+	parseJSON(string, root_json_indicator);
+	//bool parseFlag = checkJSON(string);
+	//if (parseFlag){
+
+	//}
+	//return parseFlag;
+	return true;
+}
+
+
+
+void testJSONParse(){
+
+	char * json_str = "[a:1,'''abc''',123,[1,2,[a:1,b:[123,[1,12],456],123],'a':2,'b:3':\"123456\"],'''a''', '''''']";
+
+
+	JSONIndicator* root_json_indicator = new JSONIndicator();
+	root_json_indicator->head = 0;
+	root_json_indicator->tail = strlen(json_str);
+	JSON* josn = parseJSON(json_str, root_json_indicator);
+
+}
+int parsingStatus = 1;//[1:normal,2:quote_start,3:string,4:second_quote_start,5:quote_stop,6:second_quote_stop],[1-2,2-3,3-1,2-4,4-5,5-3,4-1]
+int QuoteStatus = 11;//[ 11 = ' , 13 = ''' , 21 = " , 23 = """]
+
+char LEFTBRACKET = '[';
+char RIGHTBRACKET = ']';
+char SINGLEQUOTE = '\'';
+char DOUBLEQUOTES = '"';
+
+char COMMA = ',';
+
+int json_indicators_stack_size = 10;
+int json_indicators_stack_top = 0;
+
+JSON* parseJSON(char* string, JSONIndicator* json_indicator){
+
+	char localChar;
+	int mem_size = json_indicators_stack_size*sizeof(JSONIndicator*);
+	JSONIndicator** json_indicators = (JSONIndicator**)JSMalloc(mem_size);
+
+	for (int i = json_indicator->head; i < json_indicator->tail; i++){
+		localChar = string[i];
+		if (parsingStatus == 1){
+			if (localChar == SINGLEQUOTE){
+				QuoteStatus = 11;
+				parsingStatus = 2;
+			}
+			else if (localChar == DOUBLEQUOTES){
+				QuoteStatus = 21;
+				parsingStatus = 2;
+			}
+			else if (localChar == LEFTBRACKET){
+				if (json_indicators_stack_top < json_indicators_stack_size){
+					JSON* json = new JSON();
+					json->initialize();
+					json->json_indicator = new JSONIndicator();//get from pool//to do
+					json_indicator->head = i;
+					json->json_indicator->json = json;
+
+					json_indicators[json_indicators_stack_top] = json->json_indicator;
+					json_indicators_stack_top++;
+
+					//parseJSON(string, json_indicator);
+
+
+				}
+				else{
+					//report error
+				}
+			}
+			else if (localChar == RIGHTBRACKET){
+				if (json_indicators_stack_top > 0){
+					JSONIndicator* json_indicator = json_indicators[json_indicators_stack_top - 1];
+					json_indicator->tail = i;
+					//json_indicator->json = parseJSON(string, json_indicator);
+					json_indicators_stack_top--;
+				}
+				else{
+					//report error
+				}
+			}
+		}
+		else if (parsingStatus == 3){
+
+			if ((localChar == SINGLEQUOTE && QuoteStatus == 11) || (localChar == DOUBLEQUOTES && QuoteStatus == 21)){
+				parsingStatus = 1;
+			}
+			else if ((localChar == SINGLEQUOTE && QuoteStatus == 13) || (localChar == DOUBLEQUOTES && QuoteStatus == 23)){
+				parsingStatus = 5;
+			}
+		}
+		else if (parsingStatus == 2){
+			if ((localChar == SINGLEQUOTE && QuoteStatus == 11) || (localChar == DOUBLEQUOTES && QuoteStatus == 21)){
+				parsingStatus = 4;
+			}
+			else{
+				parsingStatus = 3;
+			}
+		}
+		else if (parsingStatus == 4){
+			if (localChar == SINGLEQUOTE && QuoteStatus == 11){
+				parsingStatus = 3;
+				QuoteStatus = 13;
+			}
+			else 	if (localChar == DOUBLEQUOTES && QuoteStatus == 21){
+				parsingStatus = 3;
+				QuoteStatus = 23;
+			}
+			else{
+				parsingStatus = 1;
+			}
+		}
+		else if (parsingStatus == 5){
+			if ((localChar == SINGLEQUOTE && QuoteStatus == 13) || (localChar == DOUBLEQUOTES && QuoteStatus == 23)){
+				parsingStatus = 6;
+			}
+			else{
+				parsingStatus = 3;
+			}
+		}
+		else if (parsingStatus == 6){
+			if ((localChar == SINGLEQUOTE && QuoteStatus == 13) || (localChar == DOUBLEQUOTES && QuoteStatus == 23)){
+				parsingStatus = 1;
+			}
+			else{
+				parsingStatus = 3;
+			}
+		}
+
 
 	}
-	return parseFlag;
+
+	JSONIndicator* e[7];
+
+
+	for (int i = 0; i < 7; i++){
+		e[i] = json_indicators[i];
+	}
+	return NULL;
+
 }
+
+
+
+
+
 
 bool checkJSON(char* string){
 	bool checkFlag = checkParenthesesMatching(string);
