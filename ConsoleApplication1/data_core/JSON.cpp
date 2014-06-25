@@ -442,11 +442,6 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 		std::cout << "JSKey: ";
 		std::cout << tartget_string << std::endl;
 		((JSKeyValue*)object)->key = tartget_string;
-
-		JSString * js_string = new JSString();
-		js_string->char_string = tartget_string;
-		js_string->length = length;
-		object = (JSObject *)js_string;
 	}
 	return object;
 }
