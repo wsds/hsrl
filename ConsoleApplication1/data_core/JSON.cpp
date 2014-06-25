@@ -1,4 +1,5 @@
 #include "JSON.h"
+#include <iostream>
 
 JSON::JSON(){
 	this->type = JSJSON;
@@ -175,23 +176,6 @@ bool JSON::parse(char* string)
 
 
 
-void testJSONParse(){
-
-	char * json_str = "[a:1,'''abc''',123,[1,2,[a:1,b:[123,[1,12],456],123],'a':2,'b:3':\"123456\"],'''a''', '''''']";
-	char * json_str1 = "[123,[1,12,13,[123,[1,12],456],14,15,16,17],456,789,101112]";
-
-	JSONIndicator* root_json_indicator = new JSONIndicator();
-	root_json_indicator->head = 0;
-	root_json_indicator->tail = strlen(json_str1);
-
-	JSON* json = new JSON();
-	json->initialize();
-
-	root_json_indicator->json = (JSObject*)json;
-
-	JSON* josn = parseJSON(json_str1, root_json_indicator);
-
-}
 int parsingStatus = 1;//[1:normal,2:quote_start,3:string,4:second_quote_start,5:quote_stop,6:second_quote_stop],[1-2,2-3,3-1,2-4,4-5,5-3,4-1]
 int QuoteStatus = 11;//[ 11 = ' , 13 = ''' , 21 = " , 23 = """]
 int last_COMMA_index = 0;
@@ -202,37 +186,68 @@ char SINGLEQUOTE = '\'';
 char DOUBLEQUOTES = '"';
 
 char COMMA = ',';
+char COLON = ':';
 
 int json_indicators_stack_size = 10;
 int json_indicators_stack_top = 0;
 
-JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
+JSON* parseJSON(char* string, JSONIndicator* root_json_indicator1212){
 
 	char localChar;
+	int string_length = strlen(string);
 	last_COMMA_index = 0;
 
 	JSONIndicator* json_indicator = NULL;
+	JSONIndicator* object_indicator = NULL;
 	JSON* result_json = NULL;
+
+	JSKeyValue * jsKeyValue = NULL;
 
 	int mem_size = json_indicators_stack_size*sizeof(JSONIndicator*);
 	JSONIndicator** json_indicators = (JSONIndicator**)JSMalloc(mem_size);
 
-	for (int i = root_json_indicator->head; i < root_json_indicator->tail; i++){
+	for (int i = 0; i< string_length; i++){
 		localChar = string[i];
 		if (parsingStatus == 1){
 			//*************************************parsingStatus == 1*****************************************************************************************************
 			if (localChar == COMMA){
 				if (i>last_COMMA_index){
-					JSON* json = new JSON();
-					json->json_indicator = new JSONIndicator();//get from pool//to do
-					json->json_indicator->head = last_COMMA_index;
-					json->json_indicator->tail = i;
-					json->json_indicator->json = (JSObject*)json;
-
-					((JSON*)(json_indicator->json))->push((JSObject*)json);
+					object_indicator = new JSONIndicator();//get from pool//to do
+					object_indicator->head = last_COMMA_index;
+					object_indicator->tail = i;
+					object_indicator->quotes_count = json_indicator->quotes_count;
+					json_indicator->quotes_count = 0;
 
 					last_COMMA_index = i + 1;
-					//resolve elememt
+
+					JSObject* object = parseObject(string, object_indicator, false);
+					if (jsKeyValue != NULL){
+						jsKeyValue->value = object;
+						jsKeyValue = NULL;
+					}
+					else{
+						((JSON*)(json_indicator->json))->push(object);
+					}
+				}
+			}
+			else if (localChar == COLON){
+				if (i > last_COMMA_index){
+					object_indicator = new JSONIndicator();//get from pool//to do
+					object_indicator->head = last_COMMA_index;
+					object_indicator->tail = i;
+					object_indicator->quotes_count = json_indicator->quotes_count;
+					json_indicator->quotes_count = 0;
+
+					last_COMMA_index = i + 1;
+
+					JSObject* object = parseObject(string, object_indicator, true);
+					if (jsKeyValue == NULL){
+						jsKeyValue = (JSKeyValue *)object;
+						((JSON*)(json_indicator->json))->push(object);
+					}
+					else{
+						//report error;
+					}
 				}
 			}
 			else if (localChar == SINGLEQUOTE){
@@ -253,6 +268,7 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 					json->json_indicator = new JSONIndicator();//get from pool//to do
 					json->json_indicator->head = i;
 					json->json_indicator->json = (JSObject*)json;
+					json->json_indicator->quotes_count = 0;
 
 					if (i == 0 && json_indicator == NULL){
 						result_json = json;
@@ -274,14 +290,24 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 				}
 			}
 			else if (localChar == RIGHTBRACKET){
-				JSON* json = new JSON();
-				json->json_indicator = new JSONIndicator();//get from pool//to do
-				json->json_indicator->head = last_COMMA_index;
-				json->json_indicator->tail = i;
-				json->json_indicator->json = (JSObject*)json;
 
-				((JSON*)(json_indicator->json))->push((JSObject*)json);
-				if (i + 1 == root_json_indicator->tail || string[i + 1] == COMMA){
+				object_indicator = new JSONIndicator();//get from pool//to do
+				object_indicator->head = last_COMMA_index;
+				object_indicator->tail = i;
+				object_indicator->quotes_count = json_indicator->quotes_count;
+				json_indicator->quotes_count = 0;
+
+				JSObject* object = parseObject(string, object_indicator, false);
+				if (jsKeyValue != NULL){
+					jsKeyValue->value = object;
+					jsKeyValue = NULL;
+				}
+				else{
+					((JSON*)(json_indicator->json))->push(object);
+				}
+
+
+				if (i + 1 == string_length || string[i + 1] == COMMA){
 					last_COMMA_index = i + 2;
 				}
 
@@ -296,7 +322,7 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 					json_indicators_stack_top--;
 				}
 				else if (json_indicators_stack_top = 1){
-					if (i + 1 == root_json_indicator->tail){
+					if (i + 1 == string_length){
 						//resolve the last element spited by COMMA
 						int p = 10;
 						p++;
@@ -317,6 +343,7 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 		else if (parsingStatus == 3){
 
 			if ((localChar == SINGLEQUOTE && QuoteStatus == 11) || (localChar == DOUBLEQUOTES && QuoteStatus == 21)){
+				json_indicator->quotes_count = 1;
 				parsingStatus = 1;
 			}
 			else if ((localChar == SINGLEQUOTE && QuoteStatus == 13) || (localChar == DOUBLEQUOTES && QuoteStatus == 23)){
@@ -341,6 +368,7 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 				QuoteStatus = 23;
 			}
 			else{
+				json_indicator->quotes_count = 1;
 				parsingStatus = 1;
 			}
 		}
@@ -354,6 +382,7 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 		}
 		else if (parsingStatus == 6){
 			if ((localChar == SINGLEQUOTE && QuoteStatus == 13) || (localChar == DOUBLEQUOTES && QuoteStatus == 23)){
+				json_indicator->quotes_count = 3;
 				parsingStatus = 1;
 			}
 			else{
@@ -375,315 +404,43 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator){
 
 }
 
-
-
-
-
-
-bool checkJSON(char* string){
-	bool checkFlag = checkParenthesesMatching(string);
-	if (checkFlag){
-		checkFlag = (checkJSONGrammar(string, 0) >= 0);
+JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue){
+	JSObject* object;
+	char *tartget_string = (char*)JSMalloc(50);
+	for (int i = object_indicator->head + object_indicator->quotes_count; i < object_indicator->tail - object_indicator->quotes_count; i++){
+		tartget_string[i - (object_indicator->head + object_indicator->quotes_count)] = string[i];
 	}
-	return checkFlag;
+	tartget_string[object_indicator->tail - object_indicator->quotes_count] = '\0';
+
+	if (isJSKeyValue == false){
+
+		object = new JSObject();
+
+		if (object_indicator->quotes_count != 0){
+			std::cout << "string: ";
+		}
+		std::cout << tartget_string << std::endl;
+
+	}
+	else{
+		object = (JSObject*)new JSKeyValue();
+
+		std::cout << "JSKey: ";
+		std::cout << tartget_string << std::endl;
+		((JSKeyValue*)object)->key = tartget_string;
+	}
+	return object;
 }
 
-const int depthCapacity = 100;
 
-class JSONValue{
-public:
-	int head = -1;
-	int colon = -1;
-	int tail = -1;
-};
 
-class QuotationMark{
-public:
-	int head = -1;
-	int tail = -1;
-	int type = 0; // 11 = ' , 13 = ''' , 21 = " , 23 = """
-};
+void testJSONParse(){
 
-bool checkParenthesesMatching(char* string){
-	bool checkFlag = false;
-	if (string[0] == leftBracket){
-		int leftBracketsIndex = 0;
-		int leftBracketsPositions[depthCapacity];
-		bool parseQuotationMark = false;
-		int quotationMarkType = 0; //11 = ',13 = ''',21 = ",23 = """
-		int i;
-		char ch;
-		for (i = 0; ch = string[i]; i++){
-			if (ch == singleQuotes){
-				if (!parseQuotationMark&&!quotationMarkType){
-					parseQuotationMark = true;
-					if (string[i + 1] == singleQuotes && string[i + 2] == singleQuotes){
-						quotationMarkType = 13;
-						i += 2;
-					}
-					else{
-						quotationMarkType = 11;
-					}
-				}
-				else if (quotationMarkType == 13){
-					if (string[i + 1] == singleQuotes && string[i + 2] == singleQuotes){
-						parseQuotationMark = false;
-						quotationMarkType = 0;
-					}
-				}
-				else if (quotationMarkType == 11){
-					parseQuotationMark = false;
-					quotationMarkType = 0;
-				}
-			}
-			else if (ch == doubleQuotes){
-				if (!parseQuotationMark&&!quotationMarkType){
-					parseQuotationMark = true;
-					if (string[i + 1] == doubleQuotes && string[i + 2] == doubleQuotes){
-						quotationMarkType = 23;
-						i += 2;
-					}
-					else{
-						quotationMarkType = 21;
-					}
-				}
-				else if (quotationMarkType == 23){
-					if (string[i + 1] == doubleQuotes && string[i + 2] == doubleQuotes){
-						parseQuotationMark = false;
-						quotationMarkType = 0;
-					}
-				}
-				else if (quotationMarkType == 21){
-					parseQuotationMark = false;
-					quotationMarkType = 0;
-				}
-			}
-			else if (!parseQuotationMark&&ch == leftBracket){
-				leftBracketsPositions[leftBracketsIndex++] = i;
-			}
-			else if (!parseQuotationMark&&ch == rightBracket){
-				int from = leftBracketsPositions[leftBracketsIndex--];
-			}
-		}
-		if (!leftBracketsIndex && !ch && string[i - 1] == rightBracket){
-			checkFlag = true;
-		}
-	}
-	return checkFlag;
-}
+	char * json_str = "[a:1,'''abc''',123,[1,2,[a:1,b:[123,[1,12],456],123],'a':2,'b:3':\"123456\"],'''a''', '''''']";
+	char * json_str1 = "[123,[1,12,13,[123,[1,12],456],14,15,16,17],456,789,101112]";
+	char * json_str2 = "[123,[1,'''abc'''],456,\"def\"]";
+	char * json_str3 = "[123,[1,'''abc'''],\"a\":\"\"\"456\"\"\",\"def\"]";
 
-int checkJSONGrammar(char* string, int from){
-	int checkLength = -1;
-	bool parseQuotationMark = false;
-	int quotationMarkType = 0; //11 = ',13 = ''',21 = ",23 = """
-	char ch;
-	JSONValue value;
-	QuotationMark keyMark;
-	QuotationMark valueMark;
-	for (int i = from; ch = string[i]; i++){
-		if (value.head == -1){
-			value.head = i;
-		}
-		if (ch == singleQuotes){
-			if (!parseQuotationMark){
-				parseQuotationMark = true;
-				if (valueMark.head == -1){
-					valueMark.head = i;
-				}
-				else{
-					break;
-				}
-				if (string[i + 1] == singleQuotes && string[i + 2] == singleQuotes){
-					valueMark.type = 13;
-					quotationMarkType = 13;
-					i += 2;
-				}
-				else{
-					valueMark.type = 11;
-					quotationMarkType = 11;
-				}
-			}
-			else{
-				if (quotationMarkType == 13 && string[i + 1] == singleQuotes && string[i + 2] == singleQuotes){
-					parseQuotationMark = false;
-					quotationMarkType = 0;
-					i += 2;
-					valueMark.tail = i;
-				}
-				else if (quotationMarkType == 11){
-					parseQuotationMark = false;
-					quotationMarkType = 0;
-					valueMark.tail = i;
-				}
-			}
-		}
-		else if (ch == doubleQuotes){
-			if (!parseQuotationMark){
-				parseQuotationMark = true;
-				if (valueMark.head == -1){
-					valueMark.head = i;
-				}
-				else{
-					break;
-				}
-				if (string[i + 1] == doubleQuotes && string[i + 2] == doubleQuotes){
-					quotationMarkType = 23;
-					i += 2;
-				}
-				else{
-					quotationMarkType = 21;
-				}
-			}
-			else{
-				if (quotationMarkType == 23 && string[i + 1] == doubleQuotes && string[i + 2] == doubleQuotes){
-					parseQuotationMark = false;
-					quotationMarkType = 0;
-					i += 2;
-					valueMark.tail = i;
-				}
-				else if (quotationMarkType == 21){
-					parseQuotationMark = false;
-					quotationMarkType = 0;
-					valueMark.tail = i;
-				}
-			}
+	JSON* josn = parseJSON(json_str3, NULL);
 
-		}
-		else if (!parseQuotationMark&&ch == colon){
-			if (value.colon != -1){
-				break;
-			}
-
-			if (keyMark.head == -1 && value.colon == -1){
-				keyMark.head = valueMark.head;
-				keyMark.tail = valueMark.tail;
-				keyMark.type = valueMark.type;
-				value.colon = i;
-				valueMark.head = valueMark.tail = -1;
-				valueMark.type = 0;
-			}
-
-			if (value.head == value.colon){
-				break;
-			}
-		}
-		else if (!parseQuotationMark&&ch == comma){
-			value.tail = i;
-			if (value.head != value.tail){
-				if (value.colon != -1){
-					if (value.colon == value.tail){
-						break;
-					}
-					if (valueMark.head != -1){
-
-					}
-					else{
-						char valueChar;
-						bool checkValueChar = true;
-						bool hasDecimalPoint = false;
-						for (int j = value.colon + 1; j < value.tail; j++){
-							valueChar = string[j];
-							if (!hasDecimalPoint&&valueChar == decimalPoint){
-								hasDecimalPoint = true;
-							}
-							else if (!(valueChar >= numberFrom &&valueChar <= numberEnd)){
-								checkValueChar = false;
-								break;
-							}
-						}
-						if (!checkValueChar){
-							break;
-						}
-					}
-				}
-				else{
-					if (valueMark.head != -1){
-
-					}
-					else{
-						char valueChar;
-						bool checkValueChar = true;
-						bool hasDecimalPoint = false;
-						for (int j = value.head; j < value.tail; j++){
-							valueChar = string[j];
-							if (!hasDecimalPoint&&valueChar == decimalPoint){
-								hasDecimalPoint = true;
-							}
-							else if (!(valueChar >= numberFrom &&valueChar <= numberEnd)){
-								checkValueChar = false;
-								break;
-							}
-						}
-						if (!checkValueChar){
-							break;
-						}
-					}
-				}
-			}
-			value.colon = value.head = value.tail = valueMark.head = valueMark.tail = keyMark.head = keyMark.tail = -1;
-			valueMark.type = keyMark.type = 0;
-		}
-		else if (!parseQuotationMark&&ch == leftBracket){
-			i += (checkJSONGrammar(string, i + 1) - 1);
-		}
-		else if (!parseQuotationMark&&ch == rightBracket){
-			value.tail = i;
-			if (string[value.head] != leftBracket && string[value.tail] != rightBracket){
-				if (value.head != value.tail){
-					if (value.colon != -1){
-						if (value.colon == value.tail){
-							break;
-						}
-						if (valueMark.head != -1){
-
-						}
-						else{
-							char valueChar;
-							bool checkValueChar = true;
-							bool hasDecimalPoint = false;
-							for (int j = value.colon + 1; j < value.tail; j++){
-								valueChar = string[j];
-								if (!hasDecimalPoint&&valueChar == decimalPoint){
-									hasDecimalPoint = true;
-								}
-								else if (!(valueChar >= numberFrom &&valueChar <= numberEnd)){
-									checkValueChar = false;
-									break;
-								}
-							}
-							if (!checkValueChar){
-								break;
-							}
-						}
-					}
-					else{
-						if (valueMark.head != -1){
-
-						}
-						else{
-							char valueChar;
-							bool checkValueChar = true;
-							bool hasDecimalPoint = false;
-							for (int j = value.head; j < value.tail; j++){
-								valueChar = string[j];
-								if (!hasDecimalPoint&&valueChar == decimalPoint){
-									hasDecimalPoint = true;
-								}
-								else if (!(valueChar >= numberFrom &&valueChar <= numberEnd)){
-									checkValueChar = false;
-									break;
-								}
-							}
-							if (!checkValueChar){
-								break;
-							}
-						}
-					}
-				}
-			}
-			checkLength = i + 1 - from;
-			break;
-		}
-	}
-	return checkLength;
 }

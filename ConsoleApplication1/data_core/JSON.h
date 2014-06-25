@@ -19,7 +19,7 @@ class JSONIndicator
 public:
 	int head;
 	int tail;
-
+	int quotes_count;//[0,1,3]
 
 	JSObject* json;
 };
@@ -69,6 +69,7 @@ bool checkParenthesesMatching(char* string);
 
 void testJSONParse();
 JSON* parseJSON(char* string, JSONIndicator* json_indicator);
+JSObject*  parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue);
 
 #endif /* JSON_H */
 

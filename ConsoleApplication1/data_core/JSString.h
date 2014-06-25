@@ -13,6 +13,9 @@
 class JSString : JSObject
 {
 public:
+	char* char_string; 
+	int length;
+
 	JSString();
 	~JSString();
 
