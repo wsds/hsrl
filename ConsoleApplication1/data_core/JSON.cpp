@@ -141,23 +141,6 @@ char* JSON::stringify()
 	return NULL;
 }
 
-char leftBracket = '[';
-char rightBracket = ']';
-char comma = ',';
-char colon = ':';
-char singleQuotes = '\'';
-char doubleQuotes = '"';
-char decimalPoint = '.';
-char numberFrom = '0';
-char numberEnd = '9';
-
-
-
-
-
-
-
-
 bool JSON::parse(char* string)
 {
 
@@ -174,8 +157,6 @@ bool JSON::parse(char* string)
 	return true;
 }
 
-
-
 int parsingStatus = 1;//[1:normal,2:quote_start,3:string,4:second_quote_start,5:quote_stop,6:second_quote_stop],[1-2,2-3,3-1,2-4,4-5,5-3,4-1]
 int QuoteStatus = 11;//[ 11 = ' , 13 = ''' , 21 = " , 23 = """]
 int last_COMMA_index = 0;
@@ -187,6 +168,9 @@ char DOUBLEQUOTES = '"';
 
 char COMMA = ',';
 char COLON = ':';
+
+char NUMBERCHARSTART = '0';
+char NUMBERCHAREND = '9';
 
 int json_indicators_stack_size = 10;
 int json_indicators_stack_top = 0;
@@ -404,9 +388,27 @@ JSON* parseJSON(char* string, JSONIndicator* root_json_indicator1212){
 
 }
 
+
+
+int parseStringToNubmer(char* string, int length){
+	char number_char;
+	int result = 0;
+	for (int i = 0; i < length; i++){
+		number_char = string[i];
+		if (number_char >= NUMBERCHARSTART&&number_char <= NUMBERCHAREND){
+			result = number_char - NUMBERCHARSTART + result * 10;
+		}
+		else{
+			//parse error
+		}
+	}
+	return result;
+}
+
 JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue){
 	JSObject* object;
-	char *tartget_string = (char*)JSMalloc(50);
+	int length = object_indicator->tail - object_indicator->head;
+	char *tartget_string = (char*)JSMalloc(length+1);
 	for (int i = object_indicator->head + object_indicator->quotes_count; i < object_indicator->tail - object_indicator->quotes_count; i++){
 		tartget_string[i - (object_indicator->head + object_indicator->quotes_count)] = string[i];
 	}
@@ -418,7 +420,19 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 
 		if (object_indicator->quotes_count != 0){
 			std::cout << "string: ";
+			JSString * js_string = new JSString();
+			js_string->char_string = tartget_string;
+			js_string->length = length;
+			object = (JSObject *)js_string;
 		}
+		else{
+			JSNumber * js_nubmer = new JSNumber();
+			js_nubmer->number = parseStringToNubmer(tartget_string, length);
+			object = (JSObject *)js_nubmer;
+
+			std::cout << "number: " << js_nubmer->number << std::endl;
+		}
+
 		std::cout << tartget_string << std::endl;
 
 	}
@@ -428,6 +442,11 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 		std::cout << "JSKey: ";
 		std::cout << tartget_string << std::endl;
 		((JSKeyValue*)object)->key = tartget_string;
+
+		JSString * js_string = new JSString();
+		js_string->char_string = tartget_string;
+		js_string->length = length;
+		object = (JSObject *)js_string;
 	}
 	return object;
 }

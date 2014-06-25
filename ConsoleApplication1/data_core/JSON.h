@@ -9,6 +9,9 @@
 #include "JSKeyValue.h"
 //#include "JSParsingObject.h"
 
+#include "JSString.h"
+#include "JSNumber.h"
+
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
@@ -61,11 +64,7 @@ public:
 	bool parse(char* string);
 };
 
-
-
-int checkJSONGrammar(char* string, int from);
-bool checkJSON(char* string);
-bool checkParenthesesMatching(char* string);
+int parseStringToNubmer(char* string, int length);
 
 void testJSONParse();
 JSON* parseJSON(char* string, JSONIndicator* json_indicator);
