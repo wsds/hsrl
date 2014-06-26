@@ -68,7 +68,7 @@ int parseStringToNubmer(char* string, int length);
 int parseNubmerToString(int number, char * target);
 
 void testJSONParse();
-JSON* parseJSON(char* string, JSONIndicator* json_indicator);
+JSON* parseJSON(char* string);
 JSObject*  parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue);
 
 #endif /* JSON_H */

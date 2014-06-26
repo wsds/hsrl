@@ -3,7 +3,7 @@
 
 JSON::JSON(){
 	this->type = JSJSON;
-	this->initialize();
+	//this->initialize();
 }
 
 
