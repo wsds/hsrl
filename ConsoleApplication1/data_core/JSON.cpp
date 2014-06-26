@@ -282,7 +282,7 @@ int last_COMMA_index = 0;
 int json_indicators_stack_size = 10;
 int json_indicators_stack_top = 0;
 
-JSON* parseJSON(char* string, JSONIndicator* root_json_indicator1212){
+JSON* parseJSON(char* string){
 
 	char localChar;
 	int string_length = strlen(string);
