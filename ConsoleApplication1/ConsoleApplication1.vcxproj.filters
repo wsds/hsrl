@@ -13,6 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\data_core">
+      <UniqueIdentifier>{4502998b-39ca-4044-857e-5974c59fca01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\data_core\base">
+      <UniqueIdentifier>{1d54c417-bc3a-42d4-b583-184171abf00c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\swift">
+      <UniqueIdentifier>{e9751e6f-d5ec-47ad-90e7-2a35529b31e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\swift\FunctionsClosures">
+      <UniqueIdentifier>{4746c22c-b717-4730-a1cf-958143c1925f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\data_core">
+      <UniqueIdentifier>{b7622750-e6d8-4433-9466-2b2dd7b2b733}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\data_core\base">
+      <UniqueIdentifier>{2c42b2e5-5243-43df-af80-53eaa2967d1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\swift">
+      <UniqueIdentifier>{e222f274-1b7f-47cd-b50e-b55cab473c3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\swift\FunctionsClosures">
+      <UniqueIdentifier>{0159d6b0-5431-4280-bbb9-4b9933147018}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,29 +51,32 @@
     <ClInclude Include="test.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="data_core\JSKeyValue.h">
+      <Filter>头文件\data_core</Filter>
+    </ClInclude>
     <ClInclude Include="data_core\JSNumber.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\data_core</Filter>
     </ClInclude>
     <ClInclude Include="data_core\JSON.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="data_core\base\HashTable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="data_core\base\JSObject.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="data_core\base\List.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="data_core\base\MemoryManagement.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="data_core\JSKeyValue.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\data_core</Filter>
     </ClInclude>
     <ClInclude Include="data_core\JSString.h">
-      <Filter>头文件</Filter>
+      <Filter>头文件\data_core</Filter>
+    </ClInclude>
+    <ClInclude Include="data_core\base\HashTable.h">
+      <Filter>头文件\data_core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="data_core\base\JSObject.h">
+      <Filter>头文件\data_core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="data_core\base\MemoryManagement.h">
+      <Filter>头文件\data_core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="data_core\base\List.h">
+      <Filter>头文件\data_core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\FunctionsClosures\Closure.h">
+      <Filter>头文件\swift\FunctionsClosures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,29 +89,32 @@
     <ClCompile Include="test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="data_core\JSKeyValue.cpp">
+      <Filter>源文件\data_core</Filter>
+    </ClCompile>
     <ClCompile Include="data_core\JSNumber.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\data_core</Filter>
     </ClCompile>
     <ClCompile Include="data_core\JSON.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="data_core\base\HashTable.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="data_core\base\JSObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="data_core\base\List.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="data_core\base\MemoryManagement.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="data_core\JSKeyValue.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\data_core</Filter>
     </ClCompile>
     <ClCompile Include="data_core\JSString.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\data_core</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\base\List.cpp">
+      <Filter>源文件\data_core\base</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\base\HashTable.cpp">
+      <Filter>源文件\data_core\base</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\base\MemoryManagement.cpp">
+      <Filter>源文件\data_core\base</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\base\JSObject.cpp">
+      <Filter>源文件\data_core\base</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\FunctionsClosures\Closure.cpp">
+      <Filter>源文件\swift\FunctionsClosures</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
