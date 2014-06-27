@@ -274,7 +274,7 @@ bool JSON::parse(char* string)
 	root_json_indicator->head = 0;
 	root_json_indicator->tail = strlen(string);
 
-	parseJSON(string, root_json_indicator);
+	parseJSON(string);
 	//bool parseFlag = checkJSON(string);
 	//if (parseFlag){
 
@@ -300,7 +300,7 @@ public:
 	JSKeyValue* key_value;
 };
 
-JSON* parseJSON(char* string, JSONIndicator* root_json_indicator1212){
+JSON* parseJSON(char* string){
 
 	char localChar;
 	int string_length = strlen(string);
@@ -714,7 +714,7 @@ void testJSONParse(){
 	char * json_str4 = "[123,567:[012,456,'123123123'],567]";
 	char * json_str5 = "[123,567:[012,[\"hello\"],456,'''''',123:[123,'123123'],123],567]";
 
-	JSON* json = parseJSON(json_str5, NULL);
+	JSON* json = parseJSON(json_str5);
 
 	std::cout << stringifyJSON(json) << std::endl;
 
