@@ -15,7 +15,7 @@ public:
 	JSNumber();
 	JSNumber(int number);
 
-    int number;
+    //int number;
     void test()
     {
 

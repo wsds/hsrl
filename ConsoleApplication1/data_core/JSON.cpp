@@ -104,16 +104,22 @@ bool JSON::set(char* key, JSObject* value)
 	object->key = key;
 	object->value = value;
 
-	int status = this->hashTable->set(((JSKeyValue*)object)->key, (JSObject*)object);
+	JSObject* oldObject = this->hashTable->set(((JSKeyValue*)object)->key, (JSObject*)object);
 
-	if (status == 2)//new entry
+	if (oldObject == NULL)//new entry
 	{
 		this->list->push((JSObject*)object);
 		this->length++;
 	}
-	else if (status == 1)//replace entry
+	else//replace entry
 	{
-		int index = this->list->findValue((JSObject*)object);
+		object->free();
+		object = (JSKeyValue*)this->hashTable->get(key);
+		int index = this->list->findValue((JSObject*)oldObject);
+		//free the old object //to do
+		if (index == -1){
+			return false;
+		}
 		this->list->replace((JSObject*)object, index);
 	}
 
@@ -159,7 +165,7 @@ int stringifyJSObject(JSObject* object, char* string1, int index){
 
 	if (object->type == JSNUMBER){
 		JSNumber * js_number = (JSNumber*)object;
-		offset = parseNubmerToString(js_number->number, string1 + index);
+		offset = parseNubmerToString(((JSObject*)js_number)->number, string1 + index);
 	}
 	else if (object->type == JSSTRING){
 		JSString * js_string = (JSString*)object;
@@ -172,7 +178,7 @@ int stringifyJSObject(JSObject* object, char* string1, int index){
 		else{
 			bool hasQuote = false;
 			for (int j = 0; j < js_string->length; j++){
-				if (js_string->char_string[j] == SINGLEQUOTE || js_string->char_string[j] == DOUBLEQUOTES){
+				if (((JSObject*)js_string)->char_string[j] == SINGLEQUOTE || ((JSObject*)js_string)->char_string[j] == DOUBLEQUOTES){
 					hasQuote = true;
 					break;
 				}
@@ -190,7 +196,7 @@ int stringifyJSObject(JSObject* object, char* string1, int index){
 				offset = offset + 1;
 			}
 			for (int j = 0; j < js_string->length; j++){
-				string1[index + j] = js_string->char_string[j];
+				string1[index + j] = ((JSObject*)js_string)->char_string[j];
 			}
 			index = index + js_string->length;
 			offset = offset + js_string->length;
@@ -260,11 +266,11 @@ char* stringifyJSON(JSON* json){
 char* JSON::stringify()
 {
 	JSString * js_string = new JSString();
-	js_string->char_string = new char[100];
+	((JSObject*)js_string)->char_string = new char[100];
 	js_string->length = 0;
 	//stringifyJSON(this, js_string);
-	js_string->char_string[js_string->length] = '\0';
-	return js_string->char_string;
+	((JSObject*)js_string)->char_string[js_string->length] = '\0';
+	return ((JSObject*)js_string)->char_string;
 }
 
 bool JSON::parse(char* string)
@@ -300,7 +306,7 @@ JSON* parseJSON(char* string){
 	JSONIndicator* object_indicator = NULL;
 	JSON* result_json = NULL;
 
-	json_indicators_stack_top = 0; 
+	json_indicators_stack_top = 0;
 	key_value_stack_top = 0;
 
 	//JSKeyValue * jsKeyValue = NULL;
@@ -669,14 +675,14 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 		if (object_indicator->quotes_count != 0){
 			//std::cout << "string: ";
 			JSString * js_string = new JSString();
-			js_string->char_string = tartget_string;
+			((JSObject*)js_string)->char_string = tartget_string;
 			js_string->length = length;
 			object = (JSObject *)js_string;
 		}
 		else{
-			JSNumber * js_nubmer = new JSNumber();
-			js_nubmer->number = parseStringToNubmer(tartget_string, length);
-			object = (JSObject *)js_nubmer;
+			JSNumber * js_number = new JSNumber();
+			((JSObject*)js_number)->number = parseStringToNubmer(tartget_string, length);
+			object = (JSObject *)js_number;
 
 			//std::cout << "number: " << js_nubmer->number << std::endl;
 		}

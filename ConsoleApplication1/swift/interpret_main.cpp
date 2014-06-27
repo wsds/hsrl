@@ -33,6 +33,9 @@ void interpret_test_Simple_Value(){
 	char* keyStr = "Jayne";
 	occupations->set(keyStr, (JSObject*)valueStr1002);
 
+	JSString* valueStr1003 = new JSString("private Relations");
+	occupations->set(keyStr, (JSObject*)valueStr1003);
+
 	log((JSObject*)occupations);
 
 }

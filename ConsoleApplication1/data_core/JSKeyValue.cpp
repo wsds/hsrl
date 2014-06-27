@@ -5,3 +5,6 @@ JSKeyValue::JSKeyValue(){
 	this->type = JSKEYVALUE;
 }
 
+void JSKeyValue::free(){
+
+}

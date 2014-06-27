@@ -17,7 +17,7 @@ JSObject* HashTable::get(char* key)
 	return NULL;
 }
 
-int HashTable::set(char* key, JSObject* value)
+JSObject* HashTable::set(char* key, JSObject* value)
 {
 	HashEntry* element = new HashEntry();//get from HashEntry pool//to do
 
@@ -30,8 +30,9 @@ int HashTable::set(char* key, JSObject* value)
 			if (strcmp(brother->key, key) == 0){
 				//free the old value "brother->value"
 				//todo
+				JSObject* oldObject = brother->value;
 				brother->value = value;
-				return 1;//replace entry
+				return oldObject;//replace entry
 			}
 			brother = brother->next;
 		} while (brother != NULL);
@@ -62,7 +63,7 @@ int HashTable::set(char* key, JSObject* value)
 		this->resize();//asynchronous//todo
 	}
 
-	return 2;//new entry
+	return NULL;//new entry
 }
 
 JSObject*  HashTable::del(char* key)
@@ -105,7 +106,7 @@ bool HashTable::resize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	this->elements = (HashEntry**)JSMalloc(mem_size);
+	//this->elements = (HashEntry**)JSMalloc(mem_size);
 
 	for (old_index = 0; old_index < old_max_size; old_index++)
 	{
@@ -150,7 +151,10 @@ bool HashTable::initialize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	this->elements = (HashEntry**)JSMalloc(mem_size);
+	//this->elements = (HashEntry**)JSMalloc(mem_size);
+	for (int i = 0; i < 50; i++){
+		this->elements[i] = NULL;
+	}
 
 	this->is_initialized = true;
 

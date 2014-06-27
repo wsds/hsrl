@@ -9,7 +9,14 @@ JSObject* LIST::find(int index)
 
 int LIST::findValue(JSObject* object)
 {
-	return 0;
+	int i = 0;//~~~~~~~~~~~~~~~Need Memory Management~~~~~~~~~~~~~~~~~
+	for (i = 0; i <= this->length; i++)
+	{
+		if (this->elements[i] == object){
+			return i;
+		}
+	}
+	return -1;
 
 }
 
@@ -119,7 +126,7 @@ bool LIST::resize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	this->elements = (JSObject**)JSMalloc(mem_size);
+	//this->elements = (JSObject**)JSMalloc(mem_size);
 
 	int i = 0;//~~~~~~~~~~~~~~~Need Memory Management~~~~~~~~~~~~~~~~~
 	for (i = 0; i <= this->length; i++)
@@ -139,7 +146,7 @@ bool LIST::initialize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	this->elements = (JSObject**)JSMalloc(mem_size);
+	//this->elements = (JSObject**)JSMalloc(mem_size);
 
 	this->is_initialized = true;
 

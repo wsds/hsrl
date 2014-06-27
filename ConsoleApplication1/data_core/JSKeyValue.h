@@ -14,6 +14,8 @@ public:
 	JSKeyValue();
 	char* key;
 	JSObject* value;
+
+	void free();
 };
 
 

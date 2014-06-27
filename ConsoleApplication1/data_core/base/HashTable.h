@@ -27,7 +27,8 @@ class HashTable
 {
 public:
 
-	HashEntry** elements;//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~
+	//JSObject** elements;//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~
+	HashEntry* elements[50];//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~//for debug
 
 	int length;
 
@@ -41,7 +42,7 @@ public:
 	JSObject* get(char* key);
 
 	//set O(1)
-	int set(char* key, JSObject* value);
+	JSObject* set(char* key, JSObject* value);
 
 	//del O(1)
 	JSObject*  del(char* key);

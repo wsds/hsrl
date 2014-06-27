@@ -18,6 +18,8 @@ class JSObject
 {
 public:
 	char type;
+	int number;//for debug
+	char* char_string;//for debug
 };
 
 

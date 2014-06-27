@@ -32,7 +32,7 @@ void showList(LIST *list)
 	{
 		JSNumber * number = (JSNumber*)list->find(i);
 
-		std::cout << number->number << std::endl;
+		std::cout << ((JSObject*)number)->number << std::endl;
 	}
 }
 
@@ -45,8 +45,8 @@ void showJSObject(JSObject *object, int indent)
 	}
 
 	if (object->type == JSNUMBER){
-		JSNumber * number = (JSNumber*)object;
-		std::cout << "JSNumber: " << number->number << std::endl;
+		JSNumber * js_number = (JSNumber*)object;
+		std::cout << "JSNumber: " << ((JSObject*)js_number)->number << std::endl;
 	}
 	else if (object->type == JSKEYVALUE){
 		JSKeyValue * keyValue = (JSKeyValue*)object;
@@ -78,19 +78,19 @@ void test2()
 
 	for (int i = 0; i < 31; i++)
 	{
-		JSNumber * number = new JSNumber();
-		number->number = 1000 + i;
-		list->push((JSObject*)number);
+		JSNumber * js_number = new JSNumber();
+		((JSObject*)js_number)->number = 1000 + i;
+		list->push((JSObject*)js_number);
 	}
-	JSNumber * number = new JSNumber();
-	number->number = 500001;
-	list->insert((JSObject*)number, 5);
+	JSNumber * js_number = new JSNumber();
+	((JSObject*)js_number)->number = 500001;
+	list->insert((JSObject*)js_number, 5);
 
 	list->del(14);
 
 
 	JSNumber * number1 = new JSNumber();
-	number1->number = 800001;
+	((JSObject*)number1)->number = 800001;
 	list->replace((JSObject*)number1, 20);
 
 	showList(list);
@@ -120,7 +120,7 @@ void test3(){
 	for (int i = 0; i < 43; i++)
 	{
 		JSNumber * number = new JSNumber();
-		number->number = 1000 + i;
+		((JSObject*)number)->number = 1000 + i;
 		char* key = (char*)JSMalloc(4);
 		key[0] = 97;
 		key[1] = 98;
@@ -131,7 +131,7 @@ void test3(){
 	}
 
 	JSNumber * number = new JSNumber();
-	number->number = 888006;
+	((JSObject*)number)->number = 888006;
 	char* key = "ab5";
 	hashTable->set(key, (JSObject*)number);
 
@@ -155,7 +155,7 @@ void test3(){
 			std::cout << "key:" << key << " ц╩сп" << std::endl;
 		}
 		else{
-			std::cout << "key:" << key << "    value:" << number->number << std::endl;
+			std::cout << "key:" << key << "    value:" << ((JSObject*)number)->number << std::endl;
 
 		}
 	}
