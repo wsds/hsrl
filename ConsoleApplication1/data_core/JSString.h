@@ -17,6 +17,7 @@ public:
 	int length;
 
 	JSString();
+	JSString(char* char_string);
 	~JSString();
 
 };

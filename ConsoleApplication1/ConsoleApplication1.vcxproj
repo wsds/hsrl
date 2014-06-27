@@ -83,12 +83,16 @@
     <ClInclude Include="data_core\base\JSObject.h" />
     <ClInclude Include="data_core\base\List.h" />
     <ClInclude Include="data_core\base\MemoryManagement.h" />
+    <ClInclude Include="data_core\data_core.h" />
+    <ClInclude Include="data_core\JSInstance.h" />
     <ClInclude Include="data_core\JSKeyValue.h" />
     <ClInclude Include="data_core\JSNumber.h" />
     <ClInclude Include="data_core\JSON.h" />
     <ClInclude Include="data_core\JSString.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="swift\FunctionsClosures\Closure.h" />
+    <ClInclude Include="swift\interface\log.h" />
+    <ClInclude Include="swift\interpret_main.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="test.h" />
   </ItemGroup>
@@ -98,12 +102,15 @@
     <ClCompile Include="data_core\base\JSObject.cpp" />
     <ClCompile Include="data_core\base\List.cpp" />
     <ClCompile Include="data_core\base\MemoryManagement.cpp" />
+    <ClCompile Include="data_core\JSInstance.cpp" />
     <ClCompile Include="data_core\JSKeyValue.cpp" />
     <ClCompile Include="data_core\JSNumber.cpp" />
     <ClCompile Include="data_core\JSON.cpp" />
     <ClCompile Include="data_core\JSString.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="swift\FunctionsClosures\Closure.cpp" />
+    <ClCompile Include="swift\interface\log.cpp" />
+    <ClCompile Include="swift\interpret_main.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -71,5 +71,7 @@ void testJSONParse();
 JSON* parseJSON(char* string);
 JSObject*  parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue);
 
+char* stringifyJSON(JSON* json);
+
 #endif /* JSON_H */
 

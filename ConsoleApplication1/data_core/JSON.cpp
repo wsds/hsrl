@@ -269,17 +269,7 @@ char* JSON::stringify()
 
 bool JSON::parse(char* string)
 {
-
-	JSONIndicator* root_json_indicator = new JSONIndicator();
-	root_json_indicator->head = 0;
-	root_json_indicator->tail = strlen(string);
-
 	parseJSON(string);
-	//bool parseFlag = checkJSON(string);
-	//if (parseFlag){
-
-	//}
-	//return parseFlag;
 	return true;
 }
 
@@ -309,6 +299,9 @@ JSON* parseJSON(char* string){
 	JSONIndicator* json_indicator = NULL;
 	JSONIndicator* object_indicator = NULL;
 	JSON* result_json = NULL;
+
+	json_indicators_stack_top = 0; 
+	key_value_stack_top = 0;
 
 	//JSKeyValue * jsKeyValue = NULL;
 
@@ -662,7 +655,7 @@ int parseStringToNubmer(char* string, int length){
 JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue){
 	JSObject* object;
 	int length = object_indicator->tail - object_indicator->head - object_indicator->quotes_count * 2;
-	std::cout << length << std::endl;
+	//std::cout << length << std::endl;
 	char *tartget_string = (char*)JSMalloc(length + 1);
 	for (int i = object_indicator->head + object_indicator->quotes_count; i < object_indicator->tail - object_indicator->quotes_count; i++){
 		tartget_string[i - (object_indicator->head + object_indicator->quotes_count)] = string[i];
@@ -674,7 +667,7 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 		//object = new JSObject();
 
 		if (object_indicator->quotes_count != 0){
-			std::cout << "string: ";
+			//std::cout << "string: ";
 			JSString * js_string = new JSString();
 			js_string->char_string = tartget_string;
 			js_string->length = length;
@@ -685,7 +678,7 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 			js_nubmer->number = parseStringToNubmer(tartget_string, length);
 			object = (JSObject *)js_nubmer;
 
-			std::cout << "number: " << js_nubmer->number << std::endl;
+			//std::cout << "number: " << js_nubmer->number << std::endl;
 		}
 
 
@@ -693,12 +686,12 @@ JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKe
 	else{
 		object = (JSObject*)new JSKeyValue();
 
-		std::cout << "JSKey: ";
-		std::cout << tartget_string << std::endl;
+		//std::cout << "JSKey: ";
+		//std::cout << tartget_string << std::endl;
 		((JSKeyValue*)object)->key = tartget_string;
 	}
 
-	std::cout << "target_string:" << tartget_string << std::endl;
+	//std::cout << "target_string:" << tartget_string << std::endl;
 
 	return object;
 }

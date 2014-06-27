@@ -37,6 +37,12 @@
     <Filter Include="源文件\swift\FunctionsClosures">
       <UniqueIdentifier>{0159d6b0-5431-4280-bbb9-4b9933147018}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\swift\interface">
+      <UniqueIdentifier>{e8b37fe4-1c51-432f-97a5-3d0f953e7e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\swift\interface">
+      <UniqueIdentifier>{97df4e38-61ba-4fd5-87d4-5d47a0763091}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -78,6 +84,18 @@
     <ClInclude Include="swift\FunctionsClosures\Closure.h">
       <Filter>头文件\swift\FunctionsClosures</Filter>
     </ClInclude>
+    <ClInclude Include="data_core\JSInstance.h">
+      <Filter>头文件\data_core</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\interpret_main.h">
+      <Filter>头文件\swift</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\interface\log.h">
+      <Filter>头文件\swift\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="data_core\data_core.h">
+      <Filter>头文件\data_core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -115,6 +133,15 @@
     </ClCompile>
     <ClCompile Include="swift\FunctionsClosures\Closure.cpp">
       <Filter>源文件\swift\FunctionsClosures</Filter>
+    </ClCompile>
+    <ClCompile Include="data_core\JSInstance.cpp">
+      <Filter>源文件\data_core</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interpret_main.cpp">
+      <Filter>源文件\swift</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interface\log.cpp">
+      <Filter>源文件\swift\interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

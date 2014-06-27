@@ -15,12 +15,13 @@ char myVariable = 50;
 *number
 ***************************************/
 var myVariable = 42
+a:=myVariable
 myVariable = 50
 
 //-------------------------------------
-JSNumber* myVariable=new JSNumber();
+JSNumber* myVariable=new JSNumber(42);
 myVariable->number=42;
-
+JSNumber* a=myVariable;
 myVariable->number=50;
 
 /***************************************
@@ -29,9 +30,7 @@ myVariable->number=50;
 var label = "The width is"
 
 //-------------------------------------
-JSString* label=new JSString();
-label->char_string="The width is";
-
+JSString* label=new JSString("The width is");
 
 /***************************************
 *json
@@ -47,24 +46,21 @@ occupations["Jayne"] = "Public Relations"
 
 //-------------------------------------
 
-JSON* shoppingList=new JSON();
-char* shoppingListStr="[\"catfish\", \"water\", \"tulips\", \"blue paint\"]"
-shoppingList=parseJSON(shoppingListStr);
+char* shoppingListStr = "[\"catfish\",\"water\",\"tulips\",\"blue paint\"]";
+JSON* shoppingList = shoppingList = parseJSON(shoppingListStr);
 
-JSString* valueStr=new JSString();
-valueStr->char_string="bottle of water";
-shoppingList->replace(JSObject*(valueStr), 1);
+JSString* valueStr1001 = new JSString("bottle of water");
+shoppingList->replace((JSObject*)valueStr1001, 1);
+log((JSObject*)shoppingList);
 
+char* occupationsStr = "[123,\"Malcolm\":\"Captain\",\"Kaylee\":\"Mechanic\",456]";
+JSON* occupations = parseJSON(occupationsStr);
 
-JSON* occupations=new JSON();
-char* occupationsStr="[\"Malcolm\": \"Captain\",\"Kaylee\": \"Mechanic\",]"
-occupations=parseJSON(occupationsStr);
+JSString* valueStr1002 = new JSString("Public Relations");
+char* keyStr = "Jayne";
+occupations->set(keyStr, (JSObject*)valueStr1002);
 
-JSString* valueStr=new JSString();
-valueStr->char_string="Public Relations";
-
-char* keyStr="Jayne";
-occupations->set(keyStr, JSObject*(valueStr));
+log((JSObject*)occupations);
 
 
 

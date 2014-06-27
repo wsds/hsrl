@@ -6,6 +6,8 @@
 #include "data_core/JSKeyValue.h"
 #include "data_core/JSON.h"
 
+#include "swift\interpret_main.h"
+
 //test base list
 void testMM(){
 	int size = 10;
@@ -190,7 +192,9 @@ void test4(){
 void testEntry()
 {
 
-	std::cout << "test entry." << std::endl;
-	test4();
-	std::cout << "test end." << std::endl;
+	//std::cout << "test entry." << std::endl;
+	//test4();
+	//std::cout << "test end." << std::endl;
+
+	interpret_test();
 }
