@@ -9,7 +9,7 @@ import=
 	"log":function,
 	"http":instance,
 
-	"Message":class
+	"Message":class,
 
 	"Math":
 	[

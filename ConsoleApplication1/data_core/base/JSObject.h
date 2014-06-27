@@ -12,6 +12,8 @@
 #define JSKEYVALUE 3
 #define JSSTRING 4
 
+#define JSINSTANCE 5
+
 class JSObject
 {
 public:

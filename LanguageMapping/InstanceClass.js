@@ -78,7 +78,6 @@ void test(){
 *
 ***************************************/
 
-
 instance namedShape {
     var numberOfSides = 0
     var name
@@ -156,3 +155,37 @@ void test(){
 	JSString* resultString=result->pop();
 
 }
+
+/***************************************
+*instance
+*namedShape.sayHello=func(who){}
+***************************************/
+
+instance namedShape {
+    var numberOfSides = 0
+    var name
+    
+    func init(name) {
+        self.name = name
+		this.numberOfSides=3
+    }
+    
+    func simpleDescription() {
+        return "A @name@ shape with @numberOfSides@ sides."
+    }
+}
+
+func test() {
+	namedShape.init();
+	namedShape.numberOfSides = 7
+	var shapeDescription = namedShape.simpleDescription()
+	namedShape.sayHello=func(who){
+		return "Hello @who@! I am @name@."
+	}
+	namedShape.sayHello("小明")
+}
+//-------------------------------------
+
+//How to specific it need design
+
+
