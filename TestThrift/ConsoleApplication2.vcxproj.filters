@@ -1,0 +1,475 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\thrift">
+      <UniqueIdentifier>{64e41b65-d684-463b-a791-1f127b6810c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp">
+      <UniqueIdentifier>{a3a2f4ce-7a20-46f4-84d5-7b68fc075e50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift">
+      <UniqueIdentifier>{eed732f7-2fd8-494d-971c-b07b2a53376c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp">
+      <UniqueIdentifier>{cecc38f7-49c4-4a9e-bda1-65cb562f89dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\open_boost">
+      <UniqueIdentifier>{6e6ff381-dffe-4975-8358-126bc05cc51b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp\thrift">
+      <UniqueIdentifier>{82601571-74f3-4d8e-98d0-89e98a787234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\thrift">
+      <UniqueIdentifier>{5d02bd5b-4332-4850-8128-ac2c05d57927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\thrift\concurrency">
+      <UniqueIdentifier>{465eb411-abce-4215-9a74-5240fe93a007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\test">
+      <UniqueIdentifier>{63f16174-8533-4f19-9697-95b6caf905e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\test">
+      <UniqueIdentifier>{31457947-6aa7-4e86-be7c-53efe3d1bb7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp\thrift\concurrency">
+      <UniqueIdentifier>{4ac0519b-e28f-430e-8f17-470b472fcca1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp\thrift\protocol">
+      <UniqueIdentifier>{86ac41bf-583c-4feb-a85c-311474359ab5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\thrift\protocol">
+      <UniqueIdentifier>{2b74f415-28f5-4966-b648-7fd06be6e658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp\thrift\server">
+      <UniqueIdentifier>{2c9c16f7-44ec-49ce-8f68-b221ce85ce6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\thrift\server">
+      <UniqueIdentifier>{22696e33-482e-41ba-bb97-3c56b57e4e5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\thrift\transport">
+      <UniqueIdentifier>{ab66023a-b4bd-4d70-8bc0-f8761cad663c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp\thrift\transport">
+      <UniqueIdentifier>{47ba754e-6f4a-42cc-b500-b219ff5de56c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\thrift\gen-cpp\thrift\windows">
+      <UniqueIdentifier>{a087dba5-889b-4ba3-94a1-68143126636a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\thrift\gen-cpp\thrift\windows">
+      <UniqueIdentifier>{9db4833a-9428-4078-b9d3-a25f5973625a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="thrift\gen-cpp\test_types.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\test_constants.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\shell.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\shell_server.skeleton.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\open_boost\scoped_array.hpp">
+      <Filter>头文件\thrift\gen-cpp\open_boost</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\cxxfunctional.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\TApplicationException.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\TDispatchProcessor.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\Thrift.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\thrift-config.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\TLogging.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\TProcessor.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\TReflectionLocal.h">
+      <Filter>头文件\thrift\gen-cpp\thrift</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件\test</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件\test</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>头文件\test</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\BoostThreadFactory.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\Exception.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\FunctionRunner.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\Monitor.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\Mutex.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\PlatformThreadFactory.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\PosixThreadFactory.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\StdThreadFactory.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\Thread.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\ThreadManager.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\TimerManager.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\concurrency\Util.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TBase64Utils.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TBinaryProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TCompactProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TDebugProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TDenseProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TJSONProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TMultiplexedProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TProtocolDecorator.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TProtocolException.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TProtocolTap.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\protocol\TVirtualProtocol.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\server\TNonblockingServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\server\TServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\server\TSimpleServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\server\TThreadedServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\server\TThreadPoolServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\PlatformSocket.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TBufferTransports.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TFDTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TFileTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\THttpClient.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\THttpServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\THttpTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TPipe.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TPipeServer.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TServerSocket.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TServerTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TShortReadTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TSimpleFileTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TSocket.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TSocketPool.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TSSLServerSocket.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TSSLSocket.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TTransportException.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TTransportUtils.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TVirtualTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\transport\TZlibTransport.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\config.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\force_inc.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\GetTimeOfDay.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\Operators.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\SocketPair.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\StdAfx.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\TargetVersion.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\TWinsockSingleton.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\thrift\windows\WinFcntl.h">
+      <Filter>头文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="thrift\gen-cpp\shell_server.skeleton.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\shell.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\test_constants.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\test_types.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\TApplicationException.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\Thrift.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\VirtualProfiling.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleApplication2.cpp">
+      <Filter>源文件\test</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件\test</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>源文件\test</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\BoostMonitor.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\BoostMutex.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\BoostThreadFactory.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\Monitor.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\Mutex.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\PosixThreadFactory.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\StdMonitor.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\StdMutex.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\StdThreadFactory.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\ThreadManager.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\TimerManager.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\concurrency\Util.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\protocol\TBase64Utils.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\protocol\TDebugProtocol.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\protocol\TDenseProtocol.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\protocol\TJSONProtocol.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\protocol\TMultiplexedProtocol.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\server\TNonblockingServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\server\TServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\server\TSimpleServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\server\TThreadedServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\server\TThreadPoolServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\server</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TBufferTransports.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TFDTransport.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TFileTransport.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\THttpClient.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\THttpServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\THttpTransport.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TPipe.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TPipeServer.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TServerSocket.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TSimpleFileTransport.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TSocket.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TSocketPool.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TSSLServerSocket.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TSSLSocket.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TTransportException.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TTransportUtils.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\transport\TZlibTransport.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\windows\GetTimeOfDay.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\windows\SocketPair.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\windows\StdAfx.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\windows\TWinsockSingleton.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\thrift\windows\WinFcntl.cpp">
+      <Filter>源文件\thrift\gen-cpp\thrift\windows</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="thrift\gen-cpp\thrift\protocol\TBinaryProtocol.tcc" />
+    <None Include="thrift\gen-cpp\thrift\protocol\TCompactProtocol.tcc" />
+  </ItemGroup>
+</Project>
