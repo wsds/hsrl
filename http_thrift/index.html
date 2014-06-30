@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+ <html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+     <title></title>
+     <script type="text/javascript" src="static/js/jquery.min.js"></script>
+     <script type="text/javascript" src="static/js/test_types.js"></script>
+     <script type="text/javascript" src="static/js/thrift.js"></script>
+     <script type="text/javascript" src="static/js/shell.js"></script>
+
+     <script>
+         $(document).ready(function ()
+         {
+             var debugPosation = 0;
+
+                 var transport = new Thrift.Transport("http://www.thriftclient.com/thrift/");
+                 var protocol = new Thrift.Protocol(transport);
+                 var client = new shellClient(protocol);
+
+                client.shell("Hello tetert");
+       
+         });
+		 
+		 function test(){
+			client.shell("Hello 123456");
+		 };
+     </script>
+ </head>
+ <body>
+ </body>
+ </html>
