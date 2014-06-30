@@ -21,10 +21,7 @@
 #define _THRIFT_TRANSPORT_TBUFFERTRANSPORTS_H_ 1
 
 #include <cstring>
-
-#include <memory> 
-
-#include "../../open_boost/scoped_array.hpp"
+#include <boost/scoped_array.hpp>
 
 #include <thrift/transport/TTransport.h>
 #include <thrift/transport/TVirtualTransport.h>
@@ -198,7 +195,7 @@ class TBufferedTransport
   static const int DEFAULT_BUFFER_SIZE = 512;
 
   /// Use default buffer sizes.
-  TBufferedTransport(std::shared_ptr<TTransport> transport)
+  TBufferedTransport(boost::shared_ptr<TTransport> transport)
     : transport_(transport)
     , rBufSize_(DEFAULT_BUFFER_SIZE)
     , wBufSize_(DEFAULT_BUFFER_SIZE)
@@ -209,7 +206,7 @@ class TBufferedTransport
   }
 
   /// Use specified buffer sizes.
-  TBufferedTransport(std::shared_ptr<TTransport> transport, uint32_t sz)
+  TBufferedTransport(boost::shared_ptr<TTransport> transport, uint32_t sz)
     : transport_(transport)
     , rBufSize_(sz)
     , wBufSize_(sz)
@@ -220,7 +217,7 @@ class TBufferedTransport
   }
 
   /// Use specified read and write buffer sizes.
-  TBufferedTransport(std::shared_ptr<TTransport> transport, uint32_t rsz, uint32_t wsz)
+  TBufferedTransport(boost::shared_ptr<TTransport> transport, uint32_t rsz, uint32_t wsz)
     : transport_(transport)
     , rBufSize_(rsz)
     , wBufSize_(wsz)
@@ -270,7 +267,7 @@ class TBufferedTransport
    */
   virtual const uint8_t* borrowSlow(uint8_t* buf, uint32_t* len);
 
-  std::shared_ptr<TTransport> getUnderlyingTransport() {
+  boost::shared_ptr<TTransport> getUnderlyingTransport() {
     return transport_;
   }
 
@@ -289,12 +286,12 @@ class TBufferedTransport
     // Write size never changes.
   }
 
-  std::shared_ptr<TTransport> transport_;
+  boost::shared_ptr<TTransport> transport_;
 
   uint32_t rBufSize_;
   uint32_t wBufSize_;
-  open_boost::scoped_array<uint8_t> rBuf_;
-  open_boost::scoped_array<uint8_t> wBuf_;
+  boost::scoped_array<uint8_t> rBuf_;
+  boost::scoped_array<uint8_t> wBuf_;
 };
 
 
@@ -311,8 +308,8 @@ class TBufferedTransportFactory : public TTransportFactory {
   /**
    * Wraps the transport into a buffered one.
    */
-  virtual std::shared_ptr<TTransport> getTransport(std::shared_ptr<TTransport> trans) {
-    return std::shared_ptr<TTransport>(new TBufferedTransport(trans));
+  virtual boost::shared_ptr<TTransport> getTransport(boost::shared_ptr<TTransport> trans) {
+    return boost::shared_ptr<TTransport>(new TBufferedTransport(trans));
   }
 
 };
@@ -332,7 +329,7 @@ class TFramedTransport
   static const int DEFAULT_BUFFER_SIZE = 512;
 
   /// Use default buffer sizes.
-  TFramedTransport(std::shared_ptr<TTransport> transport)
+  TFramedTransport(boost::shared_ptr<TTransport> transport)
     : transport_(transport)
     , rBufSize_(0)
     , wBufSize_(DEFAULT_BUFFER_SIZE)
@@ -342,7 +339,7 @@ class TFramedTransport
     initPointers();
   }
 
-  TFramedTransport(std::shared_ptr<TTransport> transport, uint32_t sz)
+  TFramedTransport(boost::shared_ptr<TTransport> transport, uint32_t sz)
     : transport_(transport)
     , rBufSize_(0)
     , wBufSize_(sz)
@@ -381,7 +378,7 @@ class TFramedTransport
 
   const uint8_t* borrowSlow(uint8_t* buf, uint32_t* len);
 
-  std::shared_ptr<TTransport> getUnderlyingTransport() {
+  boost::shared_ptr<TTransport> getUnderlyingTransport() {
     return transport_;
   }
 
@@ -411,12 +408,12 @@ class TFramedTransport
     this->write((uint8_t*)&pad, sizeof(pad));
   }
 
-  std::shared_ptr<TTransport> transport_;
+  boost::shared_ptr<TTransport> transport_;
 
   uint32_t rBufSize_;
   uint32_t wBufSize_;
-  open_boost::scoped_array<uint8_t> rBuf_;
-  open_boost::scoped_array<uint8_t> wBuf_;
+  boost::scoped_array<uint8_t> rBuf_;
+  boost::scoped_array<uint8_t> wBuf_;
 };
 
 /**
@@ -432,8 +429,8 @@ class TFramedTransportFactory : public TTransportFactory {
   /**
    * Wraps the transport into a framed one.
    */
-  virtual std::shared_ptr<TTransport> getTransport(std::shared_ptr<TTransport> trans) {
-    return std::shared_ptr<TTransport>(new TFramedTransport(trans));
+  virtual boost::shared_ptr<TTransport> getTransport(boost::shared_ptr<TTransport> trans) {
+    return boost::shared_ptr<TTransport>(new TFramedTransport(trans));
   }
 
 };

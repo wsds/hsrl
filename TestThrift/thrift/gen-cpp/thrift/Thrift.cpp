@@ -20,7 +20,7 @@
 #include <thrift/Thrift.h>
 #include <cstring>
 #include <cstdlib>
-//#include <boost/lexical_cast.hpp>
+#include <boost/lexical_cast.hpp>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -99,7 +99,7 @@ void TOutput::perror(const char *message, int errno_copy) {
 
 std::string TOutput::strerror_s(int errno_copy) {
 #ifndef HAVE_STRERROR_R
-  return "errno = e10";
+  return "errno = " + boost::lexical_cast<std::string>(errno_copy);
 #else  // HAVE_STRERROR_R
 
   char b_errbuf[1024] = { '\0' };

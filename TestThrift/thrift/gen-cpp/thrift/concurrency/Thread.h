@@ -21,8 +21,8 @@
 #define _THRIFT_CONCURRENCY_THREAD_H_ 1
 
 #include <stdint.h>
-
-#include <memory> 
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 #include <thrift/thrift-config.h>
 
@@ -53,18 +53,18 @@ class Runnable {
 
   /**
    * Gets the thread object that is hosting this runnable object  - can return
-   * an empty std::shared pointer if no references remain on thet thread  object
+   * an empty boost::shared pointer if no references remain on thet thread  object
    */
-  virtual std::shared_ptr<Thread> thread() { return thread_.lock(); }
+  virtual boost::shared_ptr<Thread> thread() { return thread_.lock(); }
 
   /**
    * Sets the thread that is executing this object.  This is only meant for
    * use by concrete implementations of Thread.
    */
-  virtual void thread(std::shared_ptr<Thread> value) { thread_ = value; }
+  virtual void thread(boost::shared_ptr<Thread> value) { thread_ = value; }
 
  private:
-  std::weak_ptr<Thread> thread_;
+  boost::weak_ptr<Thread> thread_;
 };
 
 /**
@@ -81,10 +81,10 @@ class Thread {
  public:
 
 #if USE_BOOST_THREAD
-  typedef std::thread::id id_t;
+  typedef boost::thread::id id_t;
 
-  static inline bool is_current(id_t t) { return t == std::this_thread::get_id(); }
-  static inline id_t get_current() { return std::this_thread::get_id(); }
+  static inline bool is_current(id_t t) { return t == boost::this_thread::get_id(); }
+  static inline id_t get_current() { return boost::this_thread::get_id(); }
 #elif USE_STD_THREAD
   typedef std::thread::id id_t;
 
@@ -120,13 +120,13 @@ class Thread {
   /**
    * Gets the runnable object this thread is hosting
    */
-  virtual std::shared_ptr<Runnable> runnable() const { return _runnable; }
+  virtual boost::shared_ptr<Runnable> runnable() const { return _runnable; }
 
  protected:
-  virtual void runnable(std::shared_ptr<Runnable> value) { _runnable = value; }
+  virtual void runnable(boost::shared_ptr<Runnable> value) { _runnable = value; }
 
  private:
-  std::shared_ptr<Runnable> _runnable;
+  boost::shared_ptr<Runnable> _runnable;
 
 };
 
@@ -138,7 +138,7 @@ class ThreadFactory {
 
  public:
   virtual ~ThreadFactory() {}
-  virtual std::shared_ptr<Thread> newThread(std::shared_ptr<Runnable> runnable) const = 0;
+  virtual boost::shared_ptr<Thread> newThread(boost::shared_ptr<Runnable> runnable) const = 0;
 
   /** Gets the current thread id or unknown_thread_id if the current thread is not a thrift thread */
 

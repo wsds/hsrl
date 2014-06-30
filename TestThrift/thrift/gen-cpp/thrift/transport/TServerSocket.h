@@ -22,8 +22,7 @@
 
 #include <thrift/transport/TServerTransport.h>
 #include <thrift/transport/PlatformSocket.h>
-
-#include <memory> 
+#include <boost/shared_ptr.hpp>
 
 namespace apache { namespace thrift { namespace transport {
 
@@ -62,8 +61,8 @@ class TServerSocket : public TServerTransport {
   void interrupt();
 
  protected:
-  std::shared_ptr<TTransport> acceptImpl();
-  virtual std::shared_ptr<TSocket> createSocket(THRIFT_SOCKET client);
+  boost::shared_ptr<TTransport> acceptImpl();
+  virtual boost::shared_ptr<TSocket> createSocket(THRIFT_SOCKET client);
 
  private:
   int port_;

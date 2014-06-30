@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#include <memory> 
+
 #ifndef _THRIFT_TRANSPORT_WINDOWS_TWINSOCKSINGLETON_H_
 #define _THRIFT_TRANSPORT_WINDOWS_TWINSOCKSINGLETON_H_ 1
 
@@ -30,9 +30,9 @@
 
 #include <thrift/thrift-config.h>
 
-//// boost
-//#include <boost/noncopyable.hpp>
-//#include <boost/scoped_ptr.hpp>
+// boost
+#include <boost/noncopyable.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #if USE_BOOST_THREAD
 #include <boost/thread/once.hpp>
@@ -48,12 +48,12 @@ namespace apache { namespace thrift { namespace transport {
  * Winsock2 must be intialised once only in order to create sockets. This class
  * performs a one time initialisation when create is called.
  */
-class TWinsockSingleton 
+class TWinsockSingleton : private boost::noncopyable
 {
 
 public:
 
-    typedef std::shared_ptr<TWinsockSingleton> instance_ptr;
+    typedef boost::scoped_ptr<TWinsockSingleton> instance_ptr;
 
 private:
 

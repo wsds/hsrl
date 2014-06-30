@@ -23,8 +23,8 @@
 #include <thrift/transport/TTransport.h>
 #include <thrift/protocol/TProtocolException.h>
 
-#include <memory> 
-//#include <boost/static_assert.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/static_assert.hpp>
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
@@ -44,7 +44,7 @@
 // understanding_strict_aliasing.html
 template <typename To, typename From>
 static inline To bitwise_cast(From from) {
-  //BOOST_STATIC_ASSERT(sizeof(From) == sizeof(To));
+  BOOST_STATIC_ASSERT(sizeof(From) == sizeof(To));
 
   // BAD!!!  These are all broken with -O2.
   //return *reinterpret_cast<To*>(&from);  // BAD!!!
@@ -89,8 +89,8 @@ using apache::thrift::transport::TTransport;
 #  define __THRIFT_LITTLE_ENDIAN LITTLE_ENDIAN
 #  define __THRIFT_BIG_ENDIAN BIG_ENDIAN
 # else
-//#  include <boost/config.hpp>
-//#  include <boost/detail/endian.hpp>
+#  include <boost/config.hpp>
+#  include <boost/detail/endian.hpp>
 #  define __THRIFT_BYTE_ORDER BOOST_BYTE_ORDER
 #  ifdef BOOST_LITTLE_ENDIAN
 #   define __THRIFT_LITTLE_ENDIAN __THRIFT_BYTE_ORDER
@@ -647,25 +647,25 @@ class TProtocol {
     return ::apache::thrift::protocol::skip(*this, type);
   }
 
-  inline std::shared_ptr<TTransport> getTransport() {
+  inline boost::shared_ptr<TTransport> getTransport() {
     return ptrans_;
   }
 
   // TODO: remove these two calls, they are for backwards
   // compatibility
-  inline std::shared_ptr<TTransport> getInputTransport() {
+  inline boost::shared_ptr<TTransport> getInputTransport() {
     return ptrans_;
   }
-  inline std::shared_ptr<TTransport> getOutputTransport() {
+  inline boost::shared_ptr<TTransport> getOutputTransport() {
     return ptrans_;
   }
 
  protected:
-  TProtocol(std::shared_ptr<TTransport> ptrans):
+  TProtocol(boost::shared_ptr<TTransport> ptrans):
     ptrans_(ptrans) {
   }
 
-  std::shared_ptr<TTransport> ptrans_;
+  boost::shared_ptr<TTransport> ptrans_;
 
  private:
   TProtocol() {}
@@ -680,7 +680,7 @@ class TProtocolFactory {
 
   virtual ~TProtocolFactory() {}
 
-  virtual std::shared_ptr<TProtocol> getProtocol(std::shared_ptr<TTransport> trans) = 0;
+  virtual boost::shared_ptr<TProtocol> getProtocol(boost::shared_ptr<TTransport> trans) = 0;
 };
 
 /**

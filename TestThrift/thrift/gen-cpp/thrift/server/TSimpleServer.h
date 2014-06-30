@@ -36,10 +36,10 @@ class TSimpleServer : public TServer {
  public:
   template<typename ProcessorFactory>
   TSimpleServer(
-      const std::shared_ptr<ProcessorFactory>& processorFactory,
-      const std::shared_ptr<TServerTransport>& serverTransport,
-      const std::shared_ptr<TTransportFactory>& transportFactory,
-      const std::shared_ptr<TProtocolFactory>& protocolFactory,
+      const boost::shared_ptr<ProcessorFactory>& processorFactory,
+      const boost::shared_ptr<TServerTransport>& serverTransport,
+      const boost::shared_ptr<TTransportFactory>& transportFactory,
+      const boost::shared_ptr<TProtocolFactory>& protocolFactory,
       THRIFT_OVERLOAD_IF(ProcessorFactory, TProcessorFactory)) :
     TServer(processorFactory, serverTransport, transportFactory,
             protocolFactory),
@@ -47,22 +47,22 @@ class TSimpleServer : public TServer {
 
   template<typename Processor>
   TSimpleServer(
-      const std::shared_ptr<Processor>& processor,
-      const std::shared_ptr<TServerTransport>& serverTransport,
-      const std::shared_ptr<TTransportFactory>& transportFactory,
-      const std::shared_ptr<TProtocolFactory>& protocolFactory,
+      const boost::shared_ptr<Processor>& processor,
+      const boost::shared_ptr<TServerTransport>& serverTransport,
+      const boost::shared_ptr<TTransportFactory>& transportFactory,
+      const boost::shared_ptr<TProtocolFactory>& protocolFactory,
       THRIFT_OVERLOAD_IF(Processor, TProcessor)) :
     TServer(processor, serverTransport, transportFactory, protocolFactory),
     stop_(false) {}
 
   template<typename ProcessorFactory>
   TSimpleServer(
-      const std::shared_ptr<ProcessorFactory>& processorFactory,
-      const std::shared_ptr<TServerTransport>& serverTransport,
-      const std::shared_ptr<TTransportFactory>& inputTransportFactory,
-      const std::shared_ptr<TTransportFactory>& outputTransportFactory,
-      const std::shared_ptr<TProtocolFactory>& inputProtocolFactory,
-      const std::shared_ptr<TProtocolFactory>& outputProtocolFactory,
+      const boost::shared_ptr<ProcessorFactory>& processorFactory,
+      const boost::shared_ptr<TServerTransport>& serverTransport,
+      const boost::shared_ptr<TTransportFactory>& inputTransportFactory,
+      const boost::shared_ptr<TTransportFactory>& outputTransportFactory,
+      const boost::shared_ptr<TProtocolFactory>& inputProtocolFactory,
+      const boost::shared_ptr<TProtocolFactory>& outputProtocolFactory,
       THRIFT_OVERLOAD_IF(ProcessorFactory, TProcessorFactory)) :
     TServer(processorFactory, serverTransport,
             inputTransportFactory, outputTransportFactory,
@@ -71,12 +71,12 @@ class TSimpleServer : public TServer {
 
   template<typename Processor>
   TSimpleServer(
-      const std::shared_ptr<Processor>& processor,
-      const std::shared_ptr<TServerTransport>& serverTransport,
-      const std::shared_ptr<TTransportFactory>& inputTransportFactory,
-      const std::shared_ptr<TTransportFactory>& outputTransportFactory,
-      const std::shared_ptr<TProtocolFactory>& inputProtocolFactory,
-      const std::shared_ptr<TProtocolFactory>& outputProtocolFactory,
+      const boost::shared_ptr<Processor>& processor,
+      const boost::shared_ptr<TServerTransport>& serverTransport,
+      const boost::shared_ptr<TTransportFactory>& inputTransportFactory,
+      const boost::shared_ptr<TTransportFactory>& outputTransportFactory,
+      const boost::shared_ptr<TProtocolFactory>& inputProtocolFactory,
+      const boost::shared_ptr<TProtocolFactory>& outputProtocolFactory,
       THRIFT_OVERLOAD_IF(Processor, TProcessor)) :
     TServer(processor, serverTransport,
             inputTransportFactory, outputTransportFactory,

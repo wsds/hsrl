@@ -310,7 +310,7 @@ class TProtocolDefaults : public TProtocol {
   }
 
  protected:
-  TProtocolDefaults(std::shared_ptr<TTransport> ptrans)
+  TProtocolDefaults(boost::shared_ptr<TTransport> ptrans)
     : TProtocol(ptrans)
   {}
 };
@@ -554,7 +554,7 @@ class TVirtualProtocol : public Super_ {
   using Super_::readBool; // so we don't hide readBool(bool&)
 
  protected:
-  TVirtualProtocol(std::shared_ptr<TTransport> ptrans)
+  TVirtualProtocol(boost::shared_ptr<TTransport> ptrans)
     : Super_(ptrans)
   {}
 };

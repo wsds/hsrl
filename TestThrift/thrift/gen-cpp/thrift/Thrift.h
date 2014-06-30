@@ -20,22 +20,11 @@
 #ifndef _THRIFT_THRIFT_H_
 #define _THRIFT_THRIFT_H_ 1
 
-
-#ifndef HAVE_STDINT_H
-#define HAVE_STDINT_H
-#endif
-#ifndef _WIN32
-#define _WIN32
-#endif
-
 #include <thrift/transport/PlatformSocket.h>
 
 #include <thrift/thrift-config.h>
 
 #include <stdio.h>
-
-#include <memory> 
-
 #include <assert.h>
 
 #include <sys/types.h>
@@ -53,21 +42,8 @@
 #include <exception>
 #include <typeinfo>
 
-//#include <boost/utility/enable_if.hpp>
-namespace open_boost
-{
-	template <bool B, class T = void>
-	struct enable_if_c {
-		typedef T type;
-	};
-
-	template <class T>
-	struct enable_if_c<false, T> {};
-
-	template <class Cond, class T = void>
-	struct enable_if : public enable_if_c<Cond::value, T> {};
-}
-//#include <boost/type_traits/is_convertible.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 #include <thrift/TLogging.h>
 
@@ -87,144 +63,140 @@ namespace open_boost
  * defined separately from where it is declared.
  */
 #define THRIFT_OVERLOAD_IF_DEFN(T, Y) \
-	typename ::open_boost::enable_if<typename ::std::is_convertible<T*, Y*>::type, void*>::type
+  typename ::boost::enable_if<typename ::boost::is_convertible<T*, Y*>::type, \
+                              void*>::type
 
 #define THRIFT_OVERLOAD_IF(T, Y) \
-	THRIFT_OVERLOAD_IF_DEFN(T, Y) = NULL
+  THRIFT_OVERLOAD_IF_DEFN(T, Y) = NULL
 
 #define THRIFT_UNUSED_VARIABLE(x) ((x)=(x))
 
-namespace apache {
-	namespace thrift {
+namespace apache { namespace thrift {
 
-		class TEnumIterator : public std::iterator<std::forward_iterator_tag, std::pair<int, const char*> > {
-		public:
-			TEnumIterator(int n,
-				int* enums,
-				const char** names) :
-				ii_(0), n_(n), enums_(enums), names_(names) {
-			}
+class TEnumIterator : public std::iterator<std::forward_iterator_tag, std::pair<int, const char*> > {
+ public:
+  TEnumIterator(int n,
+                int* enums,
+                const char** names) :
+      ii_(0), n_(n), enums_(enums), names_(names) {
+  }
 
-			int operator ++() {
-				return ++ii_;
-			}
+  int operator ++() {
+    return ++ii_;
+  }
 
-			bool operator !=(const TEnumIterator& end) {
-				assert(end.n_ == -1);
-				return (ii_ != n_);
-			}
+  bool operator !=(const TEnumIterator& end) {
+    assert(end.n_ == -1);
+    return (ii_ != n_);
+  }
 
-			std::pair<int, const char*> operator*() const {
-				return std::make_pair(enums_[ii_], names_[ii_]);
-			}
+  std::pair<int, const char*> operator*() const {
+    return std::make_pair(enums_[ii_], names_[ii_]);
+  }
 
-		private:
-			int ii_;
-			const int n_;
-			int* enums_;
-			const char** names_;
-		};
+ private:
+  int ii_;
+  const int n_;
+  int* enums_;
+  const char** names_;
+};
 
-		class TOutput {
-		public:
-			TOutput() : f_(&errorTimeWrapper) {}
+class TOutput {
+ public:
+  TOutput() : f_(&errorTimeWrapper) {}
 
-			inline void setOutputFunction(void(*function)(const char *)){
-				f_ = function;
-			}
+  inline void setOutputFunction(void (*function)(const char *)){
+    f_ = function;
+  }
 
-			inline void operator()(const char *message){
-				f_(message);
-			}
+  inline void operator()(const char *message){
+    f_(message);
+  }
 
-			// It is important to have a const char* overload here instead of
-			// just the string version, otherwise errno could be corrupted
-			// if there is some problem allocating memory when constructing
-			// the string.
-			void perror(const char *message, int errno_copy);
-			inline void perror(const std::string &message, int errno_copy) {
-				perror(message.c_str(), errno_copy);
-			}
+  // It is important to have a const char* overload here instead of
+  // just the string version, otherwise errno could be corrupted
+  // if there is some problem allocating memory when constructing
+  // the string.
+  void perror(const char *message, int errno_copy);
+  inline void perror(const std::string &message, int errno_copy) {
+    perror(message.c_str(), errno_copy);
+  }
 
-			void printf(const char *message, ...);
+  void printf(const char *message, ...);
 
-			static void errorTimeWrapper(const char* msg);
+  static void errorTimeWrapper(const char* msg);
 
-			/** Just like strerror_r but returns a C++ string object. */
-			static std::string strerror_s(int errno_copy);
+  /** Just like strerror_r but returns a C++ string object. */
+  static std::string strerror_s(int errno_copy);
 
-		private:
-			void(*f_)(const char *);
-		};
+ private:
+  void (*f_)(const char *);
+};
 
-		extern TOutput GlobalOutput;
+extern TOutput GlobalOutput;
 
-		class TException : public std::exception {
-		public:
-			TException() :
-				message_() {}
+class TException : public std::exception {
+ public:
+  TException():
+    message_() {}
 
-			TException(const std::string& message) :
-				message_(message) {}
+  TException(const std::string& message) :
+    message_(message) {}
 
-			virtual ~TException() throw() {}
+  virtual ~TException() throw() {}
 
-			virtual const char* what() const throw() {
-				if (message_.empty()) {
-					return "Default TException.";
-				}
-				else {
-					return message_.c_str();
-				}
-			}
+  virtual const char* what() const throw() {
+    if (message_.empty()) {
+      return "Default TException.";
+    } else {
+      return message_.c_str();
+    }
+  }
 
-		protected:
-			std::string message_;
+ protected:
+  std::string message_;
 
-		};
+};
 
 
-		// Forward declare this structure used by TDenseProtocol
-		namespace reflection {
-			namespace local {
-				struct TypeSpec;
-			}
-		}
+// Forward declare this structure used by TDenseProtocol
+namespace reflection { namespace local {
+struct TypeSpec;
+}}
 
-		class TDelayedException {
-		public:
-			template <class E> static TDelayedException* delayException(const E& e);
-			virtual void throw_it() = 0;
-			virtual ~TDelayedException() {};
-		};
+class TDelayedException {
+ public:
+  template <class E> static TDelayedException* delayException(const E& e);
+  virtual void throw_it() = 0;
+  virtual ~TDelayedException() {};
+};
 
-		template <class E> class TExceptionWrapper : public TDelayedException {
-		public:
-			TExceptionWrapper(const E& e) : e_(e) {}
-			virtual void throw_it() {
-				E temp(e_);
-				delete this;
-				throw temp;
-			}
-		private:
-			E e_;
-		};
+template <class E> class TExceptionWrapper : public TDelayedException {
+ public:
+  TExceptionWrapper(const E& e) : e_(e) {}
+  virtual void throw_it() {
+    E temp(e_);
+    delete this;
+    throw temp;
+  }
+ private:
+  E e_;
+};
 
-		template <class E>
-		TDelayedException* TDelayedException::delayException(const E& e) {
-			return new TExceptionWrapper<E>(e);
-		}
+template <class E>
+TDelayedException* TDelayedException::delayException(const E& e) {
+  return new TExceptionWrapper<E>(e);
+}
 
 #if T_GLOBAL_DEBUG_VIRTUAL > 1
-		void profile_virtual_call(const std::type_info& info);
-		void profile_generic_protocol(const std::type_info& template_type,
-			const std::type_info& prot_type);
-		void profile_print_info(FILE *f);
-		void profile_print_info();
-		void profile_write_pprof(FILE* gen_calls_f, FILE* virtual_calls_f);
+void profile_virtual_call(const std::type_info& info);
+void profile_generic_protocol(const std::type_info& template_type,
+                              const std::type_info& prot_type);
+void profile_print_info(FILE *f);
+void profile_print_info();
+void profile_write_pprof(FILE* gen_calls_f, FILE* virtual_calls_f);
 #endif
 
-	}
-} // apache::thrift
+}} // apache::thrift
 
 #endif // #ifndef _THRIFT_THRIFT_H_

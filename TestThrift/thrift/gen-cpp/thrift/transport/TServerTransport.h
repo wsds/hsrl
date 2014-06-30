@@ -22,8 +22,7 @@
 
 #include <thrift/transport/TTransport.h>
 #include <thrift/transport/TTransportException.h>
-
-#include <memory> 
+#include <boost/shared_ptr.hpp>
 
 namespace apache { namespace thrift { namespace transport {
 
@@ -54,8 +53,8 @@ class TServerTransport {
    * @return A new TTransport object
    * @throws TTransportException if there is an error
    */
-  std::shared_ptr<TTransport> accept() {
-    std::shared_ptr<TTransport> result = acceptImpl();
+  boost::shared_ptr<TTransport> accept() {
+    boost::shared_ptr<TTransport> result = acceptImpl();
     if (!result) {
       throw TTransportException("accept() may not return NULL");
     }
@@ -84,7 +83,7 @@ class TServerTransport {
    * @return A newly allocated TTransport object
    * @throw TTransportException If an error occurs
    */
-  virtual std::shared_ptr<TTransport> acceptImpl() = 0;
+  virtual boost::shared_ptr<TTransport> acceptImpl() = 0;
 
 };
 

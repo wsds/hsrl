@@ -21,7 +21,7 @@
 #define _THRIFT_TRANSPORT_TTRANSPORT_H_ 1
 
 #include <thrift/Thrift.h>
-#include <memory> 
+#include <boost/shared_ptr.hpp>
 #include <thrift/transport/TTransportException.h>
 #include <string>
 
@@ -259,7 +259,7 @@ class TTransportFactory {
   /**
    * Default implementation does nothing, just returns the transport given.
    */
-  virtual std::shared_ptr<TTransport> getTransport(std::shared_ptr<TTransport> trans) {
+  virtual boost::shared_ptr<TTransport> getTransport(boost::shared_ptr<TTransport> trans) {
     return trans;
   }
 
