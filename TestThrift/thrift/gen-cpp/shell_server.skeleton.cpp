@@ -2,20 +2,22 @@
 // You should copy it to another filename to avoid overwriting it.
 
 #include "shell.h"
-#include <thrift/protocol/TBinaryProtocol.h>
+#include <thrift/protocol/TJSONProtocol.h>
 #include <thrift/server/TSimpleServer.h>
-#include <thrift/transport/TServerSocket.h>
-#include <thrift/transport/TBufferTransports.h>
-#include <thrift/TDispatchProcessor.h>
+#include <thrift/transport/TSocket.h>
 
-#include "shell_server.skeleton.h"
+#include <thrift/transport/TServerSocket.h>
+#include <thrift/transport/THttpServer.h>
+#include <thrift/transport/THttpTransport.h>
+#include <thrift/transport/TBufferTransports.h>
 
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
-using std::shared_ptr;
+using boost::shared_ptr;
+#include <string>
 
 using namespace  ::open;
 
@@ -38,10 +40,29 @@ int server_main(int argc, char **argv) {
   shared_ptr<TProcessor> processor(new shellProcessor(handler));
   shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
   shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-  shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+  shared_ptr<TProtocolFactory> protocolFactory(new TJSONProtocolFactory());
+
+
+  TWinsockSingleton *tWinsockSingleton = new TWinsockSingleton();
 
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
   server.serve();
   return 0;
 }
 
+//int server_main(int argc, char **argv) {
+//	int port = 9090;
+//	shared_ptr<shellHandler> handler(new shellHandler());
+//	shared_ptr<TProcessor> processor(new shellProcessor(handler));
+//	std::string string = "localhost";
+//	shared_ptr<TSocket> tTransport(new TSocket(string, 9090));
+//	shared_ptr<THttpServer> httpServer(new THttpServer(tTransport));
+//	shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+//	shared_ptr<TProtocolFactory> protocolFactory(new TJSONProtocolFactory());
+//
+//	TWinsockSingleton *tWinsockSingleton = new TWinsockSingleton();
+//
+//	TSimpleServer server(processor, httpServer, transportFactory, protocolFactory);
+//	server.serve();
+//	return 0;
+//}

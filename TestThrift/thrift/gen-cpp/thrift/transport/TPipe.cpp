@@ -16,7 +16,7 @@
 * specific language governing permissions and limitations
 * under the License.
 */
-
+#undef UNICODE
 #include <thrift/transport/TTransportException.h>
 #include <thrift/transport/TPipe.h>
 

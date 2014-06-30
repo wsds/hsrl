@@ -22,9 +22,9 @@
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
-#ifdef HAVE_SYS_RESOURCE_H
-#include <sys/resource.h>
-#endif
+//#ifdef HAVE_SYS_RESOURCE_H
+//#include <sys/resource.h>
+//#endif
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -33,15 +33,16 @@
 namespace apache { namespace thrift { namespace server {
 
 int increase_max_fds(int max_fds=(1<<24))  {
-  struct rlimit fdmaxrl;
+  //struct rlimit fdmaxrl;
 
-  for(fdmaxrl.rlim_cur = max_fds, fdmaxrl.rlim_max = max_fds;
-      max_fds && (setrlimit(RLIMIT_NOFILE, &fdmaxrl) < 0);
-      fdmaxrl.rlim_cur = max_fds, fdmaxrl.rlim_max = max_fds) {
-    max_fds /= 2;
-  }
+  //for(fdmaxrl.rlim_cur = max_fds, fdmaxrl.rlim_max = max_fds;
+  //    max_fds && (setrlimit(RLIMIT_NOFILE, &fdmaxrl) < 0);
+  //    fdmaxrl.rlim_cur = max_fds, fdmaxrl.rlim_max = max_fds) {
+  //  max_fds /= 2;
+  //}
 
-  return static_cast<int>(fdmaxrl.rlim_cur);
+  //return static_cast<int>(fdmaxrl.rlim_cur);
+	return 0;
 }
 
 }}} // apache::thrift::server

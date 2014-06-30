@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+#define _WIN32 1
 #ifdef _WIN32
 # include <thrift/windows/config.h>
 #else

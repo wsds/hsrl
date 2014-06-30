@@ -46,7 +46,8 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #include <thrift/TLogging.h>
-
+#undef UNICODE
+#define HAVE_PTHREAD_H
 /**
  * Helper macros to allow function overloading even when using
  * boost::shared_ptr.

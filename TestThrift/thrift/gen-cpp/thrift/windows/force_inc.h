@@ -1,0 +1,3 @@
+
+#define BOOST_ALL_NO_LIB 1
+#define BOOST_THREAD_NO_LIB 1

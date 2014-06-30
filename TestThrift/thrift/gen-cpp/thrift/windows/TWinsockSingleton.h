@@ -55,7 +55,7 @@ public:
 
     typedef boost::scoped_ptr<TWinsockSingleton> instance_ptr;
 
-private:
+public:
 
     TWinsockSingleton(void);
 

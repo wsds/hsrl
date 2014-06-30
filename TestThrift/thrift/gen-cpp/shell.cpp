@@ -5,8 +5,6 @@
  *  @generated
  */
 #include "shell.h"
-#include <iostream>
-
 
 namespace open {
 
@@ -266,10 +264,10 @@ void shellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TP
   }
 }
 
-::std::shared_ptr< ::apache::thrift::TProcessor > shellProcessorFactory::getProcessor(const ::apache::thrift::TConnectionInfo& connInfo) {
+::boost::shared_ptr< ::apache::thrift::TProcessor > shellProcessorFactory::getProcessor(const ::apache::thrift::TConnectionInfo& connInfo) {
   ::apache::thrift::ReleaseHandler< shellIfFactory > cleanup(handlerFactory_);
-  ::std::shared_ptr< shellIf > handler(handlerFactory_->getHandler(connInfo), cleanup);
-  ::std::shared_ptr< ::apache::thrift::TProcessor > processor(new shellProcessor(handler));
+  ::boost::shared_ptr< shellIf > handler(handlerFactory_->getHandler(connInfo), cleanup);
+  ::boost::shared_ptr< ::apache::thrift::TProcessor > processor(new shellProcessor(handler));
   return processor;
 }
 } // namespace
