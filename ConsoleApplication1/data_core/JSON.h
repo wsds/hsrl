@@ -16,6 +16,19 @@
 #define NULL 0
 #endif /* NULL */
 
+static char LEFTBRACKET = '[';
+static char RIGHTBRACKET = ']';
+static char SINGLEQUOTE = '\'';
+static char DOUBLEQUOTES = '"';
+static char EQUALITY = '=';
+static char BLANK = ' ';
+
+static char COMMA = ',';
+static char COLON = ':';
+
+static char NUMBERCHARSTART = '0';
+static char NUMBERCHAREND = '9';
+
 
 class JSONIndicator
 {

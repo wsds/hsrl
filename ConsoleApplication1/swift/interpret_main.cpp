@@ -1,7 +1,7 @@
 #include "interpret_main.h"
 #include "interface/log.h"
 
-#include "../data_core/data_core.h"
+
 
 void interpret_test_Simple_Value(){
 
@@ -49,5 +49,176 @@ void interpret_main(){
 
 
 
+
+}
+
+HashTable * keyWordMap;
+bool is_initialized = false;
+void initializeKeyWordMap(){
+
+	JSNumber * number1 = new JSNumber();
+	JSObject* number = (JSObject*)number1;
+	number->number = 888006;
+
+
+	keyWordMap = new HashTable();
+	keyWordMap->initialize();
+
+
+	keyWordMap->set("var", number);
+
+	keyWordMap->set("if", number);
+	keyWordMap->set("else", number);
+
+	keyWordMap->set("for", number);
+	keyWordMap->set("in", number);
+
+	keyWordMap->set("while", number);
+	keyWordMap->set("do", number);
+
+	keyWordMap->set("func", number);
+	keyWordMap->set("return", number);
+
+	keyWordMap->set("class", number);
+	keyWordMap->set("instance", number);
+	keyWordMap->set("this", number);
+	keyWordMap->set("self", number);
+	is_initialized = true;
+}
+
+bool isKeyWord(char* name){
+	if (!is_initialized){
+		initializeKeyWordMap();
+	}
+	JSObject* number = keyWordMap->get(name);
+	if (number == NULL){
+		return false;
+	}
+	else{
+		return true;
+	}
+}
+int BRACKET_element_counter = 0;
+int SINGLEQUOTE_element_counter = 0;
+int DOUBLEQUOTES_element_counter = 0;
+int resolveElementStatus = 1;//[1:normal,2:json,3:string,1-2,2-1,1-3,3-1]
+
+int resolveElement(char* from, int length, CodeElement** codeElements, int element_index){
+
+	char localChar;
+	int pre_blank = 0;
+
+	for (int i = 0; i < length; i++){
+		localChar = from[i];
+		if (localChar == BLANK){
+			pre_blank++;
+		}
+		else{
+			break;
+		}
+	}
+	for (int i = pre_blank; i < length - pre_blank; i++){
+		if (resolveElementStatus == 1){
+			localChar = from[i];
+			if (localChar == BLANK){
+				//resolve the left code
+				element_index = element_index + resolveElement(from, i, codeElements, element_index);
+
+				//resolve the right code
+				element_index = element_index + resolveElement(from + i, length - i, codeElements, element_index);
+				return element_index;
+			}
+			else if (localChar == SINGLEQUOTE){
+
+
+			}
+			else if (localChar == DOUBLEQUOTES){
+
+			}
+			else if (localChar == LEFTBRACKET){
+			}
+			else if (localChar == RIGHTBRACKET){
+				//report error
+			}
+		}
+		else if (resolveElementStatus==2){
+			if (localChar == RIGHTBRACKET){
+			}
+			else if (localChar == LEFTBRACKET){
+			}
+
+		}
+		else if (resolveElementStatus == 3){
+			if (localChar == SINGLEQUOTE){
+
+
+			}
+			else if (localChar == DOUBLEQUOTES){
+
+			}
+		}
+		
+	}
+
+	char* name = (char*)JSMalloc(length - pre_blank);
+	strcopy(from + pre_blank, name, length - pre_blank);
+	std::cout << "resolve element: ";
+	if (isKeyWord(name)){
+
+		CodeElement * codeElement = new CodeElement();
+		codeElements[element_index] = codeElement;
+		element_index++;
+
+		codeElement->type = KEYWORD;
+		codeElement->keyword = name;
+
+		std::cout << "[key word]: ";
+	}
+	else{
+		CodeElement * codeElement = new CodeElement();
+		codeElements[element_index] = codeElement;
+		element_index++;
+
+		codeElement->type = NAME;
+		codeElement->name = name;
+
+		std::cout << "[name]: ";
+	}
+	std::cout << name << std::endl;
+
+	return 1;
+}
+
+void resolveCodeLine(char* line){
+
+	CodeLine* codeLine = new CodeLine();
+	CodeElement** codeElements = (CodeElement**)JSMalloc(8);
+
+	char localChar;
+	int string_length = strlen(line);
+
+	int element_index = 0;
+
+	for (int i = 0; i < string_length; i++){
+		localChar = line[i];
+		if (localChar == EQUALITY){
+
+			CodeElement * codeElement = new CodeElement();
+			codeElements[element_index] = codeElement;
+			element_index++;
+
+			codeElement->type = CODEOPERATOR;
+			codeElement->code_operator = localChar;
+
+			//resolve the left code
+			element_index = element_index + resolveElement(line, i, codeElements, element_index);
+
+			//resolve the right code
+			element_index = element_index + resolveElement(line + i + 1, string_length - i - 1, codeElements, element_index);
+
+		}
+	}
+
+	std::cout << "element_index: " << element_index;
 
 }

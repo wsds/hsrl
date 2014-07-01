@@ -1,6 +1,8 @@
 #ifndef INTERPRETMAIN_H
 #define INTERPRETMAIN_H
+#include <iostream>
 
+#include "../data_core/data_core.h"
 
 #ifndef NULL
 #define NULL 0
@@ -9,6 +11,31 @@
 void interpret_test();
 void interpret_main();
 
+#define KEYWORD 0
+#define NAME 1
+#define CODEOPERATOR  2
+#define NUMBER 3
+
+class CodeElement{
+public:
+	int type;
+	char *keyword;
+	char *name;
+	char code_operator;
+	int number;
+
+	int index;
+};
+
+
+class CodeLine{
+
+	CodeElement** codeElements;
+
+
+
+};
+void resolveCodeLine(char* line);
 
 #endif /* INTERPRETMAIN_H */
 

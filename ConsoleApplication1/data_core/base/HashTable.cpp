@@ -106,7 +106,7 @@ bool HashTable::resize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	//this->elements = (HashEntry**)JSMalloc(mem_size);
+	this->elements = (HashEntry**)JSMalloc(mem_size);
 
 	for (old_index = 0; old_index < old_max_size; old_index++)
 	{
@@ -151,10 +151,10 @@ bool HashTable::initialize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	//this->elements = (HashEntry**)JSMalloc(mem_size);
-	for (int i = 0; i < 50; i++){
-		this->elements[i] = NULL;
-	}
+	this->elements = (HashEntry**)JSMalloc(mem_size);
+	//for (int i = 0; i < 50; i++){
+	//	this->elements[i] = NULL;
+	//}
 
 	this->is_initialized = true;
 
@@ -246,4 +246,42 @@ int strlen(char *str)
 	while (*eos++);
 
 	return(eos - str - 1);
+}
+
+int strcopy(char *source, char *target)
+{
+	char *eos = source;
+
+	while (*eos){
+		*target = *eos;
+		eos++;
+		target++;
+	}
+
+	*target = '\0';
+
+	return(eos - source - 1);
+}
+
+int strcopy(char *source, char *target, int length)
+{
+	*(target + length) = '\0';
+
+	while (length >= 0){
+		length--;
+		*(target + length) = *(source + length);
+	}
+
+	return length;
+}
+int strappend(char *target, char *source){
+
+	int offset = strlen(target);
+	target = target + offset;
+	return strcopy(source, target);
+}
+
+void strclear(char *str)
+{
+	*str = '\0';
 }

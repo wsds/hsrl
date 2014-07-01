@@ -143,16 +143,7 @@ JSObject* JSON::del(char* key)
 }
 
 
-char LEFTBRACKET = '[';
-char RIGHTBRACKET = ']';
-char SINGLEQUOTE = '\'';
-char DOUBLEQUOTES = '"';
 
-char COMMA = ',';
-char COLON = ':';
-
-char NUMBERCHARSTART = '0';
-char NUMBERCHAREND = '9';
 
 
 int stringifyJSObject(JSObject* object, char* string, int index);
@@ -402,11 +393,7 @@ JSON* parseJSON(char* string){
 						}
 					}
 
-
-
 					json_indicator = json->json_indicator;
-
-
 
 					last_COMMA_index++;
 				}
