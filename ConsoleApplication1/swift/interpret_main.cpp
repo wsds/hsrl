@@ -101,12 +101,18 @@ bool isKeyWord(char* name){
 int BRACKET_element_counter = 0;
 int SINGLEQUOTE_element_counter = 0;
 int DOUBLEQUOTES_element_counter = 0;
-int resolveElementStatus = 1;//[1:normal,2:json,3:string,1-2,2-1,1-3,3-1]
+int resolveElementStatus = 1;//[1:normal,2:json,[321,323,311,313]:string,1-2,2-1,1-3,3-1]
 
 int resolveElement(char* from, int length, CodeElement** codeElements, int element_index){
 
 	char localChar;
+
+	BRACKET_element_counter = 0;
+
 	int pre_blank = 0;
+	if (resolveElementStatus != 1){
+		localChar = 10;
+	}
 
 	for (int i = 0; i < length; i++){
 		localChar = from[i];
@@ -118,8 +124,8 @@ int resolveElement(char* from, int length, CodeElement** codeElements, int eleme
 		}
 	}
 	for (int i = pre_blank; i < length - pre_blank; i++){
+		localChar = from[i];
 		if (resolveElementStatus == 1){
-			localChar = from[i];
 			if (localChar == BLANK){
 				//resolve the left code
 				element_index = element_index + resolveElement(from, i, codeElements, element_index);
@@ -129,35 +135,45 @@ int resolveElement(char* from, int length, CodeElement** codeElements, int eleme
 				return element_index;
 			}
 			else if (localChar == SINGLEQUOTE){
-
-
+				resolveElementStatus = 311;
 			}
 			else if (localChar == DOUBLEQUOTES){
-
+				resolveElementStatus = 321;
 			}
 			else if (localChar == LEFTBRACKET){
+				BRACKET_element_counter++;
+				resolveElementStatus = 2;
 			}
 			else if (localChar == RIGHTBRACKET){
 				//report error
 			}
 		}
-		else if (resolveElementStatus==2){
+		else if (resolveElementStatus == 2){
 			if (localChar == RIGHTBRACKET){
+				BRACKET_element_counter--;
+				if (BRACKET_element_counter == 0){
+					resolveElementStatus = 1;
+				}
 			}
 			else if (localChar == LEFTBRACKET){
+				BRACKET_element_counter++;
 			}
 
 		}
-		else if (resolveElementStatus == 3){
-			if (localChar == SINGLEQUOTE){
-
-
+		else if (int(resolveElementStatus / 100) == 3){
+			if (resolveElementStatus == 311){
+				if (localChar == SINGLEQUOTE){
+					resolveElementStatus = 1;
+				}
 			}
-			else if (localChar == DOUBLEQUOTES){
 
+			else if (resolveElementStatus == 321){
+				if (localChar == DOUBLEQUOTES){
+					resolveElementStatus = 1;
+				}
 			}
 		}
-		
+
 	}
 
 	char* name = (char*)JSMalloc(length - pre_blank);
@@ -214,7 +230,7 @@ void resolveCodeLine(char* line){
 			element_index = element_index + resolveElement(line, i, codeElements, element_index);
 
 			//resolve the right code
-			element_index = element_index + resolveElement(line + i + 1, string_length - i - 1, codeElements, element_index);
+			element_index = element_index + resolveElement(line + i + 1, string_length - i, codeElements, element_index);
 
 		}
 	}

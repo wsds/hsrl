@@ -1,6 +1,6 @@
 
-var myVariable = 42
+var label = "The width is"
 
-func simpleDescription() {
-	return "A @name@ shape with @numberOfSides@ sides."
-}
+var label2 = 'The height is'
+
+var shoppingList = ["catfihh  sh", "water", "tulips", "blue paint"]

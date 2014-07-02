@@ -166,12 +166,12 @@ void test3(){
 
 		}
 	}
-	HashEntry* e[113];
+	//HashEntry* e[113];
 
 
-	for (int i = 0; i < 113; i++){
-		//e[i] = hashTable->elements[i];
-	}
+	//for (int i = 0; i < 113; i++){
+	//	//e[i] = hashTable->elements[i];
+	//}
 
 	std::cout << "test3 end" << std::endl;
 }
