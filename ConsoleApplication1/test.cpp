@@ -271,6 +271,7 @@ char* getLine(){
 
 int test_file()
 {
+	interpret_main();
 	while (int key = _getch())
 	{
 		std::cout << "***************************************************************: " << key << std::endl;

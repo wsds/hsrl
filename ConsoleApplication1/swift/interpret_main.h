@@ -21,10 +21,13 @@ void interpret_main();
 class CodeElement{
 public:
 	int type;
-	char *keyword;
-	char *name;
+	char * keyword;
+	char * variable_name;
 	char code_operator;
+
 	int number;
+	char * char_string;
+	char * jsonstr;
 
 	int index;
 };
@@ -40,11 +43,13 @@ public:
 class Assignment{
 public:
 	bool isNew;
-	CodeElement* name;
+	CodeElement* left;
 	CodeElement* codeOperator;
-	CodeElement* value;
+	CodeElement* right;
 };
+void interpret_main();
 void resolveCodeLine(char* line);
+void excute(Assignment * assignment);
 
 #endif /* INTERPRETMAIN_H */
 
