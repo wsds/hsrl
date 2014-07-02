@@ -14,7 +14,9 @@ void interpret_main();
 #define KEYWORD 0
 #define NAME 1
 #define CODEOPERATOR  2
-#define NUMBER 3
+#define CODE_NUMBER 3
+#define CODE_STRING 4
+#define CODE_JSON 5
 
 class CodeElement{
 public:
@@ -29,11 +31,18 @@ public:
 
 
 class CodeLine{
+public:
+	//CodeElement** codeElements;
+	CodeElement* codeElements[10];
+	int element_index;
+};
 
-	CodeElement** codeElements;
-
-
-
+class Assignment{
+public:
+	bool isNew;
+	CodeElement* name;
+	CodeElement* codeOperator;
+	CodeElement* value;
 };
 void resolveCodeLine(char* line);
 

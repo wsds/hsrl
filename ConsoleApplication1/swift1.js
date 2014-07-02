@@ -10,6 +10,7 @@ shoppingList[1] = "bottle of water"
 var occupations = [
     "Malcolm": "Captain",
     "Kaylee": "Mechanic",
+	shoppingList:["catfish", "water", "tulips", "blue paint"],
 ]
 occupations["Jayne"] = "Public Relations"
 

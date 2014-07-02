@@ -10,11 +10,7 @@
 #define NULL 0
 #endif /* NULL */
 
-class Assignment{
-	CodeElement* name;
-	CodeElement* codeOperator;
-	CodeElement* value;
-};
+
 
 class Assign
 {

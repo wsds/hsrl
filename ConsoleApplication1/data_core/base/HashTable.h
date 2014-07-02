@@ -65,5 +65,13 @@ int strcopy(char *source, char *target, int length);
 int strappend(char *target, char *source);
 void strclear(char *str);
 
+
+static char NUMBERCHARSTART = '0';
+static char NUMBERCHAREND = '9';
+
+bool isNumber(char *string);
+int parseStringToNubmer(char* string, int length);
+int parseNubmerToString(int number, char * target);
+
 #endif /* HASHTABLE_H */
 

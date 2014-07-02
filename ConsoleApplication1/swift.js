@@ -1,6 +1,10 @@
 
+var n=12241
+
 var label = "The width is"
 
-var label2 = 'The height is'
-
-var shoppingList = ["catfihh  sh", "water", "tulips", "blue paint"]
+var occupations = [
+    "Malcolm": "Captain",
+    "Kaylee": "Mechanic",
+	shoppingList:["catfish", "water", "tulips", "blue paint"],
+]

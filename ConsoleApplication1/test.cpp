@@ -195,11 +195,15 @@ int DOUBLEQUOTES_Counter = 0;
 //}
 
 
+int lineNumberRead = 0;
+char line[128] = { 0 };
 
 void interpret_line(char* line){
 
-	std::cout << "resolving: " << line << std::endl;
+	//std::cout << "resolving: " << line << std::endl;
 	resolveCodeLine(line);
+	std::cout << "-------------------------------line:" << lineNumberRead + 2 << std::endl;
+
 }
 
 
@@ -242,8 +246,6 @@ void resolveLine(char* line){
 
 
 
-int lineNumberRead = 0;
-char line[128] = { 0 };
 
 char* getLine(){
 
@@ -271,7 +273,7 @@ int test_file()
 {
 	while (int key = _getch())
 	{
-		std::cout << "***************************************: " << key << std::endl;
+		std::cout << "***************************************************************: " << key << std::endl;
 		if (key == 103){
 			getLine();
 		}

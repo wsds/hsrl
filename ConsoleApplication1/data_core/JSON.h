@@ -26,8 +26,6 @@ static char BLANK = ' ';
 static char COMMA = ',';
 static char COLON = ':';
 
-static char NUMBERCHARSTART = '0';
-static char NUMBERCHAREND = '9';
 
 
 class JSONIndicator
@@ -76,9 +74,6 @@ public:
 	char* stringify();
 	bool parse(char* string);
 };
-
-int parseStringToNubmer(char* string, int length);
-int parseNubmerToString(int number, char * target);
 
 void testJSONParse();
 JSON* parseJSON(char* string);

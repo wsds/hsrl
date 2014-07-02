@@ -103,9 +103,10 @@ int SINGLEQUOTE_element_counter = 0;
 int DOUBLEQUOTES_element_counter = 0;
 int resolveElementStatus = 1;//[1:normal,2:json,[321,323,311,313]:string,1-2,2-1,1-3,3-1]
 
-int resolveElement(char* from, int length, CodeElement** codeElements, int element_index){
+int resolveElement(char* from, int length, CodeLine* codeLine){
 
 	char localChar;
+	int codeElementType = CODE_NUMBER;
 
 	BRACKET_element_counter = 0;
 
@@ -128,11 +129,13 @@ int resolveElement(char* from, int length, CodeElement** codeElements, int eleme
 		if (resolveElementStatus == 1){
 			if (localChar == BLANK){
 				//resolve the left code
-				element_index = element_index + resolveElement(from, i, codeElements, element_index);
+				resolveElement(from, i, codeLine);
 
 				//resolve the right code
-				element_index = element_index + resolveElement(from + i, length - i, codeElements, element_index);
-				return element_index;
+				resolveElement(from + i, length - i, codeLine);
+
+				return 1;
+
 			}
 			else if (localChar == SINGLEQUOTE){
 				resolveElementStatus = 311;
@@ -153,6 +156,7 @@ int resolveElement(char* from, int length, CodeElement** codeElements, int eleme
 				BRACKET_element_counter--;
 				if (BRACKET_element_counter == 0){
 					resolveElementStatus = 1;
+					codeElementType = CODE_JSON;
 				}
 			}
 			else if (localChar == LEFTBRACKET){
@@ -164,43 +168,70 @@ int resolveElement(char* from, int length, CodeElement** codeElements, int eleme
 			if (resolveElementStatus == 311){
 				if (localChar == SINGLEQUOTE){
 					resolveElementStatus = 1;
+					codeElementType = CODE_STRING;
 				}
 			}
 
 			else if (resolveElementStatus == 321){
 				if (localChar == DOUBLEQUOTES){
 					resolveElementStatus = 1;
+					codeElementType = CODE_STRING;
 				}
 			}
 		}
 
 	}
 
-	char* name = (char*)JSMalloc(length - pre_blank);
-	strcopy(from + pre_blank, name, length - pre_blank);
-	std::cout << "resolve element: ";
-	if (isKeyWord(name)){
+	if (codeElementType == CODE_STRING){
+		char* string = (char*)JSMalloc(length - pre_blank - 2);
+		strcopy(from + pre_blank + 1, string, length - pre_blank - 3);
 
-		CodeElement * codeElement = new CodeElement();
-		codeElements[element_index] = codeElement;
-		element_index++;
 
-		codeElement->type = KEYWORD;
-		codeElement->keyword = name;
-
-		std::cout << "[key word]: ";
+		std::cout << "[string]: ";
+		std::cout << string << std::endl;
 	}
-	else{
-		CodeElement * codeElement = new CodeElement();
-		codeElements[element_index] = codeElement;
-		element_index++;
+	else {
+		char* name = (char*)JSMalloc(length - pre_blank);
+		strcopy(from + pre_blank, name, length - pre_blank);
+		if (codeElementType == CODE_JSON){
 
-		codeElement->type = NAME;
-		codeElement->name = name;
 
-		std::cout << "[name]: ";
+
+			std::cout << "[json]: ";
+			std::cout << name << std::endl;
+		}
+		else if (isNumber(name)){
+
+
+
+			std::cout << "[number]: ";
+			std::cout << name << std::endl;
+		}
+
+		else if (isKeyWord(name)){
+
+			CodeElement * keyWord = new CodeElement();
+			codeLine->codeElements[codeLine->element_index] = keyWord;
+			codeLine->element_index++;
+
+			keyWord->type = KEYWORD;
+			keyWord->keyword = name;
+
+			std::cout << "[key word]: ";
+			std::cout << name << std::endl;
+		}
+		else{
+			CodeElement * string = new CodeElement();
+			codeLine->codeElements[codeLine->element_index] = string;
+			codeLine->element_index++;
+
+			string->type = NAME;
+			string->name = name;
+
+			std::cout << "[name]: ";
+			std::cout << name << std::endl;
+		}
 	}
-	std::cout << name << std::endl;
 
 	return 1;
 }
@@ -208,33 +239,37 @@ int resolveElement(char* from, int length, CodeElement** codeElements, int eleme
 void resolveCodeLine(char* line){
 
 	CodeLine* codeLine = new CodeLine();
-	CodeElement** codeElements = (CodeElement**)JSMalloc(8);
+	//CodeElement** codeElements = (CodeElement**)JSMalloc(8);
 
 	char localChar;
 	int string_length = strlen(line);
 
-	int element_index = 0;
 
 	for (int i = 0; i < string_length; i++){
 		localChar = line[i];
 		if (localChar == EQUALITY){
+			Assignment * assignment = new Assignment();
 
-			CodeElement * codeElement = new CodeElement();
-			codeElements[element_index] = codeElement;
-			element_index++;
 
-			codeElement->type = CODEOPERATOR;
-			codeElement->code_operator = localChar;
+			//"="
+			CodeElement * equality = new CodeElement();
+			codeLine->codeElements[codeLine->element_index] = equality;
+			codeLine->element_index++;
+
+			equality->type = CODEOPERATOR;
+			equality->code_operator = localChar;
+
+			assignment->codeOperator = equality;
 
 			//resolve the left code
-			element_index = element_index + resolveElement(line, i, codeElements, element_index);
+			resolveElement(line, i, codeLine);
 
 			//resolve the right code
-			element_index = element_index + resolveElement(line + i + 1, string_length - i, codeElements, element_index);
+			resolveElement(line + i + 1, string_length - i, codeLine);
 
 		}
 	}
 
-	std::cout << "element_index: " << element_index;
+	std::cout << "element_index: " << codeLine->element_index << std::endl;;
 
 }

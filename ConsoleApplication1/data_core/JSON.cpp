@@ -617,33 +617,7 @@ JSON* parseJSON(char* string){
 	return NULL;
 
 }
-int parseNubmerToString(int number, char * target){
-	char buf[15] = "";//need memory optimize
-	int len = 0;
-	while (number != 0){
-		buf[len++] = number % 10 + NUMBERCHARSTART;
-		number /= 10;
-	}
-	for (int j = len - 1; j >= 0; j--){
-		target[len - j - 1] = buf[j];
-	}
-	return len;
-}
 
-int parseStringToNubmer(char* string, int length){
-	char number_char;
-	int result = 0;
-	for (int i = 0; i < length; i++){
-		number_char = string[i];
-		if (number_char >= NUMBERCHARSTART&&number_char <= NUMBERCHAREND){
-			result = number_char - NUMBERCHARSTART + result * 10;
-		}
-		else{
-			//parse error
-		}
-	}
-	return result;
-}
 
 JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue){
 	JSObject* object;
