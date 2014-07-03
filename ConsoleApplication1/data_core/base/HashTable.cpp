@@ -106,7 +106,7 @@ bool HashTable::resize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	//this->elements = (HashEntry**)JSMalloc(mem_size);
+	this->elements = (HashEntry**)JSMalloc(mem_size);
 
 	for (old_index = 0; old_index < old_max_size; old_index++)
 	{
@@ -151,10 +151,10 @@ bool HashTable::initialize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	//this->elements = (HashEntry**)JSMalloc(mem_size);
-	for (int i = 0; i < 50; i++){
-		this->elements[i] = NULL;
-	}
+	this->elements = (HashEntry**)JSMalloc(mem_size);
+	//for (int i = 0; i < 50; i++){
+	//	this->elements[i] = NULL;
+	//}
 
 	this->is_initialized = true;
 
@@ -246,4 +246,86 @@ int strlen(char *str)
 	while (*eos++);
 
 	return(eos - str - 1);
+}
+
+int strcopy(char *source, char *target)
+{
+	char *eos = source;
+
+	while (*eos){
+		*target = *eos;
+		eos++;
+		target++;
+	}
+
+	*target = '\0';
+
+	return(eos - source - 1);
+}
+
+int strcopy(char *source, char *target, int length)
+{
+	*(target + length) = '\0';
+
+	while (length >= 0){
+		length--;
+		*(target + length) = *(source + length);
+	}
+
+	return length;
+}
+int strappend(char *target, char *source){
+
+	int offset = strlen(target);
+	target = target + offset;
+	return strcopy(source, target);
+}
+
+void strclear(char *str)
+{
+	*str = '\0';
+}
+
+int parseNubmerToString(int number, char * target){
+	char buf[15] = "";//need memory optimize
+	int len = 0;
+	while (number != 0){
+		buf[len++] = number % 10 + NUMBERCHARSTART;
+		number /= 10;
+	}
+	for (int j = len - 1; j >= 0; j--){
+		target[len - j - 1] = buf[j];
+	}
+	return len;
+}
+
+int parseStringToNubmer(char* string, int length){
+	char number_char;
+	int result = 0;
+	for (int i = 0; i < length; i++){
+		number_char = string[i];
+		if (number_char >= NUMBERCHARSTART&&number_char <= NUMBERCHAREND){
+			result = number_char - NUMBERCHARSTART + result * 10;
+		}
+		else{
+			//parse error
+		}
+	}
+	return result;
+}
+
+bool isNumber(char *string)
+{
+	char *eos = string;
+
+	while (*eos){
+		if (*eos >= NUMBERCHARSTART&&NUMBERCHAREND >= *eos){
+		}
+		else{
+			return false;
+		}
+		eos++;
+	}
+
+	return true;
 }

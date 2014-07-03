@@ -5,7 +5,7 @@ void* JSMalloc(size_t size)
 {
 	void *pointer = malloc(size);
 
-	for (int i = 0; i < size; i++){
+	for (unsigned int i = 0; i < size; i++){
 		*((char*)pointer + i) = 0;
 	}
 	return pointer;

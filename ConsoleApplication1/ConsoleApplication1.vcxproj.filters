@@ -43,6 +43,12 @@
     <Filter Include="源文件\swift\interface">
       <UniqueIdentifier>{97df4e38-61ba-4fd5-87d4-5d47a0763091}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\swift\SimpleValues">
+      <UniqueIdentifier>{839d27ae-eb16-45e5-a38d-33e7805b4198}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\swift\SimpleValues">
+      <UniqueIdentifier>{3f6ab3b8-7db4-4fe9-9331-bf0fd20bf707}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -96,6 +102,9 @@
     <ClInclude Include="data_core\data_core.h">
       <Filter>头文件\data_core</Filter>
     </ClInclude>
+    <ClInclude Include="swift\SimpleValues\Assign.h">
+      <Filter>头文件\swift\SimpleValues</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -142,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="swift\interface\log.cpp">
       <Filter>源文件\swift\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\SimpleValues\Assign.cpp">
+      <Filter>源文件\swift\SimpleValues</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

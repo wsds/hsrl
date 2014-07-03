@@ -1,4 +1,11 @@
 #include <iostream>
+
+#include <sstream>
+#include <fstream>
+
+#include <string>
+#include<conio.h>
+
 #include "test.h"
 #include "data_core/base/List.h"
 #include "data_core/base/HashTable.h"
@@ -38,7 +45,7 @@ void showList(LIST *list)
 
 void showJSObject(JSObject *object, int indent)
 {
-	char *indentation = (char*)JSMalloc(indent*2+1);
+	char *indentation = (char*)JSMalloc(indent * 2 + 1);
 
 	for (int i = 0; i < indent * 2 + 1; i++){
 		*((char*)indentation + i) = 32;
@@ -159,25 +166,124 @@ void test3(){
 
 		}
 	}
-	HashEntry* e[113];
+	//HashEntry* e[113];
 
 
-	for (int i = 0; i < 113; i++){
-		e[i] = hashTable->elements[i];
-	}
+	//for (int i = 0; i < 113; i++){
+	//	//e[i] = hashTable->elements[i];
+	//}
 
 	std::cout << "test3 end" << std::endl;
+}
+
+//char LEFTBRACKET = '[';
+//char RIGHTBRACKET = ']';
+//char SINGLEQUOTE = '\'';
+//char DOUBLEQUOTES = '"';
+
+int BRACKET_Counter = 0;
+int SINGLEQUOTE_Counter = 0;
+int DOUBLEQUOTES_Counter = 0;
+
+//int strlen(char *str)
+//{
+//	char *eos = str;
+//
+//	while (*eos++);
+//
+//	return(eos - str - 1);
+//}
+
+
+int lineNumberRead = 0;
+char line[128] = { 0 };
+
+void interpret_line(char* line){
+
+	//std::cout << "resolving: " << line << std::endl;
+	resolveCodeLine(line);
+	std::cout << "-------------------------------line:" << lineNumberRead + 2 << std::endl;
+
+}
+
+
+char resolvedLine[256] = { 0 };
+
+
+void resolveLine(char* line){
+
+	char localChar;
+	int string_length = strlen(line);
+
+	for (int i = 0; i < string_length; i++){
+		localChar = line[i];
+		if (localChar == SINGLEQUOTE){
+			SINGLEQUOTE_Counter = (SINGLEQUOTE_Counter + 1) % 2;
+		}
+		else if (localChar == DOUBLEQUOTES){
+			DOUBLEQUOTES_Counter = (DOUBLEQUOTES_Counter + 1) % 2;
+		}
+		else if (localChar == LEFTBRACKET){
+			BRACKET_Counter++;
+		}
+		else if (localChar == RIGHTBRACKET){
+			BRACKET_Counter--;
+		}
+	}
+	strappend(resolvedLine, line);
+	if (SINGLEQUOTE_Counter == 0 && DOUBLEQUOTES_Counter == 0 && BRACKET_Counter == 0){
+
+		interpret_line(resolvedLine);
+
+		strclear(resolvedLine);
+	}
+	else{
+		strappend(resolvedLine, "\r\n");
+	}
+
+
 }
 
 
 
 
+char* getLine(){
+
+	std::ifstream fin("swift.js", std::ios::in);
+
+	int lineNumber = 0;
+	while (fin.getline(line, sizeof(line)))
+	{
+		if (lineNumber > lineNumberRead){
+			//std::cout << line << std::endl;
+			resolveLine(line);
+			lineNumberRead++;
+		}
+		lineNumber++;
+	}
+
+	fin.clear();
+	fin.close();
+	return line;
+
+}
 
 
-
-
-
-
+int test_file()
+{
+	interpret_main();
+	while (int key = _getch())
+	{
+		std::cout << "***************************************************************: " << key << std::endl;
+		if (key == 103){
+			getLine();
+		}
+		else if (key == 114){
+			lineNumberRead = 0;
+		}
+	}
+	return 0;
+}
 
 
 
@@ -195,6 +301,6 @@ void testEntry()
 	//std::cout << "test entry." << std::endl;
 	//test4();
 	//std::cout << "test end." << std::endl;
-
-	interpret_test();
+	test_file();
+	//interpret_test();
 }

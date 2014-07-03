@@ -47,7 +47,7 @@ occupations["Jayne"] = "Public Relations"
 //-------------------------------------
 
 char* shoppingListStr = "[\"catfish\",\"water\",\"tulips\",\"blue paint\"]";
-JSON* shoppingList = shoppingList = parseJSON(shoppingListStr);
+JSON* shoppingList = parseJSON(shoppingListStr);
 
 JSString* valueStr1001 = new JSString("bottle of water");
 shoppingList->replace((JSObject*)valueStr1001, 1);

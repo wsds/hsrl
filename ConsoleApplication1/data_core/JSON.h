@@ -16,6 +16,17 @@
 #define NULL 0
 #endif /* NULL */
 
+static char LEFTBRACKET = '[';
+static char RIGHTBRACKET = ']';
+static char SINGLEQUOTE = '\'';
+static char DOUBLEQUOTES = '"';
+static char EQUALITY = '=';
+static char BLANK = ' ';
+
+static char COMMA = ',';
+static char COLON = ':';
+
+
 
 class JSONIndicator
 {
@@ -63,9 +74,6 @@ public:
 	char* stringify();
 	bool parse(char* string);
 };
-
-int parseStringToNubmer(char* string, int length);
-int parseNubmerToString(int number, char * target);
 
 void testJSONParse();
 JSON* parseJSON(char* string);

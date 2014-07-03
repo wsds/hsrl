@@ -93,6 +93,7 @@
     <ClInclude Include="swift\FunctionsClosures\Closure.h" />
     <ClInclude Include="swift\interface\log.h" />
     <ClInclude Include="swift\interpret_main.h" />
+    <ClInclude Include="swift\SimpleValues\Assign.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="test.h" />
   </ItemGroup>
@@ -111,6 +112,7 @@
     <ClCompile Include="swift\FunctionsClosures\Closure.cpp" />
     <ClCompile Include="swift\interface\log.cpp" />
     <ClCompile Include="swift\interpret_main.cpp" />
+    <ClCompile Include="swift\SimpleValues\Assign.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

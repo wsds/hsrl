@@ -81,3 +81,37 @@ void add(JSObject* closure){
 	jsNumberHelper->add(y, 5, y);
 }
 
+/***************************************
+*func
+*callback function
+***************************************/
+func returnFifteen() {
+    var y = 10
+
+    getInput()@Input@
+		var z = Input + y
+	@@
+    return z
+}
+
+func getInput()@Input@{
+	sleep(1000);
+	Input=3600
+}
+
+//-------------------------------------
+func returnFifteen() {
+    var y = 10
+	var z
+
+    getInput(function(Input){
+		z=Input+y;
+	})
+}
+
+func getInput(callback){
+	sleep(1000);
+	var Input=3600
+	callback(Input)
+}
+//-------------------------------------
