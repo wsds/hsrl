@@ -1,6 +1,6 @@
 #include <iostream>
 #include "test.h"
-#include "thrift\gen-cpp\shell_server.skeleton.h"
+#include "thrift\gen-cpp\Shell_OPEN_Server_server.skeleton.h"
 
 
 //Entry

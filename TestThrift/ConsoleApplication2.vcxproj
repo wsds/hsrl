@@ -85,8 +85,8 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="thrift\gen-cpp\open_boost\scoped_array.hpp" />
-    <ClInclude Include="thrift\gen-cpp\shell.h" />
-    <ClInclude Include="thrift\gen-cpp\shell_server.skeleton.h" />
+    <ClInclude Include="thrift\gen-cpp\Shell_OPEN_Server.h" />
+    <ClInclude Include="thrift\gen-cpp\Shell_OPEN_Server_server.skeleton.h" />
     <ClInclude Include="thrift\gen-cpp\test_constants.h" />
     <ClInclude Include="thrift\gen-cpp\test_types.h" />
     <ClInclude Include="thrift\gen-cpp\thrift\cxxfunctional.h" />
@@ -120,8 +120,8 @@
     <ClCompile Include="ConsoleApplication2.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="test.cpp" />
-    <ClCompile Include="thrift\gen-cpp\shell.cpp" />
-    <ClCompile Include="thrift\gen-cpp\shell_server.skeleton.cpp" />
+    <ClCompile Include="thrift\gen-cpp\Shell_OPEN_Server.cpp" />
+    <ClCompile Include="thrift\gen-cpp\Shell_OPEN_Server_server.skeleton.cpp" />
     <ClCompile Include="thrift\gen-cpp\test_constants.cpp" />
     <ClCompile Include="thrift\gen-cpp\test_types.cpp" />
     <ClCompile Include="thrift\gen-cpp\thrift\protocol\TBase64Utils.cpp" />

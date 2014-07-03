@@ -75,18 +75,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="thrift\gen-cpp\test_types.h">
-      <Filter>头文件\thrift\gen-cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="thrift\gen-cpp\test_constants.h">
-      <Filter>头文件\thrift\gen-cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="thrift\gen-cpp\shell.h">
-      <Filter>头文件\thrift\gen-cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="thrift\gen-cpp\shell_server.skeleton.h">
-      <Filter>头文件\thrift\gen-cpp</Filter>
-    </ClInclude>
     <ClInclude Include="thrift\gen-cpp\open_boost\scoped_array.hpp">
       <Filter>头文件\thrift\gen-cpp\open_boost</Filter>
     </ClInclude>
@@ -177,20 +165,20 @@
     <ClInclude Include="thrift\gen-cpp\thrift\protocol\TBase64Utils.h">
       <Filter>头文件\thrift\gen-cpp\thrift\protocol</Filter>
     </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\Shell_OPEN_Server.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\test_constants.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\test_types.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="thrift\gen-cpp\Shell_OPEN_Server_server.skeleton.h">
+      <Filter>头文件\thrift\gen-cpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="thrift\gen-cpp\shell_server.skeleton.cpp">
-      <Filter>源文件\thrift\gen-cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="thrift\gen-cpp\shell.cpp">
-      <Filter>源文件\thrift\gen-cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="thrift\gen-cpp\test_constants.cpp">
-      <Filter>源文件\thrift\gen-cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="thrift\gen-cpp\test_types.cpp">
-      <Filter>源文件\thrift\gen-cpp</Filter>
-    </ClCompile>
     <ClCompile Include="thrift\gen-cpp\thrift\TApplicationException.cpp">
       <Filter>源文件\thrift\gen-cpp\thrift</Filter>
     </ClCompile>
@@ -247,6 +235,18 @@
     </ClCompile>
     <ClCompile Include="thrift\gen-cpp\thrift\protocol\TBase64Utils.cpp">
       <Filter>源文件\thrift\gen-cpp\thrift\protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\Shell_OPEN_Server.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\test_constants.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\test_types.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="thrift\gen-cpp\Shell_OPEN_Server_server.skeleton.cpp">
+      <Filter>源文件\thrift\gen-cpp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

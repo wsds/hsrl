@@ -4,11 +4,11 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-#include "shell.h"
+#include "Shell_OPEN_Server.h"
 
 namespace open {
 
-uint32_t shell_shell_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t Shell_OPEN_Server_shell_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -48,9 +48,9 @@ uint32_t shell_shell_args::read(::apache::thrift::protocol::TProtocol* iprot) {
   return xfer;
 }
 
-uint32_t shell_shell_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t Shell_OPEN_Server_shell_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("shell_shell_args");
+  xfer += oprot->writeStructBegin("Shell_OPEN_Server_shell_args");
 
   xfer += oprot->writeFieldBegin("query", ::apache::thrift::protocol::T_STRING, 1);
   xfer += oprot->writeString(this->query);
@@ -61,9 +61,9 @@ uint32_t shell_shell_args::write(::apache::thrift::protocol::TProtocol* oprot) c
   return xfer;
 }
 
-uint32_t shell_shell_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t Shell_OPEN_Server_shell_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("shell_shell_pargs");
+  xfer += oprot->writeStructBegin("Shell_OPEN_Server_shell_pargs");
 
   xfer += oprot->writeFieldBegin("query", ::apache::thrift::protocol::T_STRING, 1);
   xfer += oprot->writeString((*(this->query)));
@@ -74,7 +74,7 @@ uint32_t shell_shell_pargs::write(::apache::thrift::protocol::TProtocol* oprot) 
   return xfer;
 }
 
-uint32_t shell_shell_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t Shell_OPEN_Server_shell_result::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -101,18 +101,18 @@ uint32_t shell_shell_result::read(::apache::thrift::protocol::TProtocol* iprot) 
   return xfer;
 }
 
-uint32_t shell_shell_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t Shell_OPEN_Server_shell_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
 
   uint32_t xfer = 0;
 
-  xfer += oprot->writeStructBegin("shell_shell_result");
+  xfer += oprot->writeStructBegin("Shell_OPEN_Server_shell_result");
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
 }
 
-uint32_t shell_shell_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t Shell_OPEN_Server_shell_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -139,18 +139,18 @@ uint32_t shell_shell_presult::read(::apache::thrift::protocol::TProtocol* iprot)
   return xfer;
 }
 
-void shellClient::shell(const std::string& query)
+void Shell_OPEN_ServerClient::shell(const std::string& query)
 {
   send_shell(query);
   recv_shell();
 }
 
-void shellClient::send_shell(const std::string& query)
+void Shell_OPEN_ServerClient::send_shell(const std::string& query)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("shell", ::apache::thrift::protocol::T_CALL, cseqid);
 
-  shell_shell_pargs args;
+  Shell_OPEN_Server_shell_pargs args;
   args.query = &query;
   args.write(oprot_);
 
@@ -159,7 +159,7 @@ void shellClient::send_shell(const std::string& query)
   oprot_->getTransport()->flush();
 }
 
-void shellClient::recv_shell()
+void Shell_OPEN_ServerClient::recv_shell()
 {
 
   int32_t rseqid = 0;
@@ -184,7 +184,7 @@ void shellClient::recv_shell()
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  shell_shell_presult result;
+  Shell_OPEN_Server_shell_presult result;
   result.read(iprot_);
   iprot_->readMessageEnd();
   iprot_->getTransport()->readEnd();
@@ -192,7 +192,7 @@ void shellClient::recv_shell()
   return;
 }
 
-bool shellProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, const std::string& fname, int32_t seqid, void* callContext) {
+bool Shell_OPEN_ServerProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, const std::string& fname, int32_t seqid, void* callContext) {
   ProcessMap::iterator pfn;
   pfn = processMap_.find(fname);
   if (pfn == processMap_.end()) {
@@ -211,33 +211,33 @@ bool shellProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* iprot, 
   return true;
 }
 
-void shellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+void Shell_OPEN_ServerProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
 {
   void* ctx = NULL;
   if (this->eventHandler_.get() != NULL) {
-    ctx = this->eventHandler_->getContext("shell.shell", callContext);
+    ctx = this->eventHandler_->getContext("Shell_OPEN_Server.shell", callContext);
   }
-  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "shell.shell");
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "Shell_OPEN_Server.shell");
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preRead(ctx, "shell.shell");
+    this->eventHandler_->preRead(ctx, "Shell_OPEN_Server.shell");
   }
 
-  shell_shell_args args;
+  Shell_OPEN_Server_shell_args args;
   args.read(iprot);
   iprot->readMessageEnd();
   uint32_t bytes = iprot->getTransport()->readEnd();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postRead(ctx, "shell.shell", bytes);
+    this->eventHandler_->postRead(ctx, "Shell_OPEN_Server.shell", bytes);
   }
 
-  shell_shell_result result;
+  Shell_OPEN_Server_shell_result result;
   try {
     iface_->shell(args.query);
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
-      this->eventHandler_->handlerError(ctx, "shell.shell");
+      this->eventHandler_->handlerError(ctx, "Shell_OPEN_Server.shell");
     }
 
     ::apache::thrift::TApplicationException x(e.what());
@@ -250,7 +250,7 @@ void shellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TP
   }
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preWrite(ctx, "shell.shell");
+    this->eventHandler_->preWrite(ctx, "Shell_OPEN_Server.shell");
   }
 
   oprot->writeMessageBegin("shell", ::apache::thrift::protocol::T_REPLY, seqid);
@@ -260,14 +260,14 @@ void shellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TP
   oprot->getTransport()->flush();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postWrite(ctx, "shell.shell", bytes);
+    this->eventHandler_->postWrite(ctx, "Shell_OPEN_Server.shell", bytes);
   }
 }
 
-::boost::shared_ptr< ::apache::thrift::TProcessor > shellProcessorFactory::getProcessor(const ::apache::thrift::TConnectionInfo& connInfo) {
-  ::apache::thrift::ReleaseHandler< shellIfFactory > cleanup(handlerFactory_);
-  ::boost::shared_ptr< shellIf > handler(handlerFactory_->getHandler(connInfo), cleanup);
-  ::boost::shared_ptr< ::apache::thrift::TProcessor > processor(new shellProcessor(handler));
+::boost::shared_ptr< ::apache::thrift::TProcessor > Shell_OPEN_ServerProcessorFactory::getProcessor(const ::apache::thrift::TConnectionInfo& connInfo) {
+  ::apache::thrift::ReleaseHandler< Shell_OPEN_ServerIfFactory > cleanup(handlerFactory_);
+  ::boost::shared_ptr< Shell_OPEN_ServerIf > handler(handlerFactory_->getHandler(connInfo), cleanup);
+  ::boost::shared_ptr< ::apache::thrift::TProcessor > processor(new Shell_OPEN_ServerProcessor(handler));
   return processor;
 }
 } // namespace
