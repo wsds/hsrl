@@ -10,3 +10,7 @@ var occupations = [
     "Kaylee": "Mechanic",
 	shoppingList:["catfish", "water", "tulips", "blue paint"]
 ]
+
+log("hello swift!")
+
+log(occupations)
