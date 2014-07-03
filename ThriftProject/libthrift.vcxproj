@@ -80,6 +80,12 @@
     </ClCompile>
     <ClCompile Include="src\thrift\transport\TTransportException.cpp" />
     <ClCompile Include="src\thrift\transport\TTransportUtils.cpp" />
+    <ClCompile Include="src\thrift\transport\TWebSocketTransport.cpp" />
+    <ClCompile Include="src\thrift\transport\Websocket\base64\base64.cpp" />
+    <ClCompile Include="src\thrift\transport\Websocket\md5\md5.cpp" />
+    <ClCompile Include="src\thrift\transport\Websocket\sha1\sha1.cpp" />
+    <ClCompile Include="src\thrift\transport\Websocket\WebsocketHandshakeMessage.cpp" />
+    <ClCompile Include="src\thrift\transport\Websocket\WebsocketProtocol.cpp" />
     <ClCompile Include="src\thrift\windows\GetTimeOfDay.cpp" />
     <ClCompile Include="src\thrift\windows\OverlappedSubmissionThread.cpp" />
     <ClCompile Include="src\thrift\windows\SocketPair.cpp" />
@@ -100,6 +106,7 @@
     <ClInclude Include="src\thrift\protocol\TProtocol.h" />
     <ClInclude Include="src\thrift\protocol\TVirtualProtocol.h" />
     <ClInclude Include="src\thrift\server\TServer.h" />
+    <ClInclude Include="src\thrift\server\TServerEventHandlerImpl.h" />
     <ClInclude Include="src\thrift\server\TSimpleServer.h" />
     <ClInclude Include="src\thrift\server\TThreadPoolServer.h" />
     <ClInclude Include="src\thrift\TApplicationException.h" />
@@ -121,6 +128,11 @@
     <ClInclude Include="src\thrift\transport\TTransportException.h" />
     <ClInclude Include="src\thrift\transport\TTransportUtils.h" />
     <ClInclude Include="src\thrift\transport\TVirtualTransport.h" />
+    <ClInclude Include="src\thrift\transport\TWebSocketTransport.h" />
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketDataMessage.h" />
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketHandshakeMessage.h" />
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketMessage.h" />
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketProtocol.h" />
     <ClInclude Include="src\thrift\windows\config.h" />
     <ClInclude Include="src\thrift\windows\GetTimeOfDay.h" />
     <ClInclude Include="src\thrift\windows\Operators.h" />
@@ -228,8 +240,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Tool\boost_1_55_0;$(ProjectDir)\src\;$(ProjectDir)\src\thrift\windows\;$(BOOST_ROOT)\include;$(BOOST_ROOT)\;$(OPENSSL_ROOT_DIR)\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Tool\boost_1_55_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(BOOST_HOME);$(ProjectDir)\src\;$(ProjectDir)\src\thrift\windows\;$(BOOST_ROOT)\include;$(BOOST_ROOT)\;$(OPENSSL_ROOT_DIR)\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_HOME)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-mt|Win32'">
     <IncludePath>$(ProjectDir)\src\;$(ProjectDir)\src\thrift\windows\;$(BOOST_ROOT)\include;$(BOOST_ROOT)\;$(OPENSSL_ROOT_DIR)\include\;$(IncludePath)</IncludePath>

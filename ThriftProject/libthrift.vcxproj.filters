@@ -103,6 +103,24 @@
       <Filter>transport</Filter>
     </ClCompile>
     <ClCompile Include="src\thrift\windows\OverlappedSubmissionThread.cpp" />
+    <ClCompile Include="src\thrift\transport\Websocket\base64\base64.cpp">
+      <Filter>transport\websocket\sha</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thrift\transport\Websocket\md5\md5.cpp">
+      <Filter>transport\websocket\sha</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thrift\transport\Websocket\sha1\sha1.cpp">
+      <Filter>transport\websocket\sha</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thrift\transport\Websocket\WebsocketHandshakeMessage.cpp">
+      <Filter>transport\websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thrift\transport\Websocket\WebsocketProtocol.cpp">
+      <Filter>transport\websocket</Filter>
+    </ClCompile>
+    <ClCompile Include="src\thrift\transport\TWebSocketTransport.cpp">
+      <Filter>transport</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\thrift\transport\TBufferTransports.h">
@@ -220,6 +238,24 @@
       <Filter>transport</Filter>
     </ClInclude>
     <ClInclude Include="src\thrift\windows\OverlappedSubmissionThread.h" />
+    <ClInclude Include="src\thrift\server\TServerEventHandlerImpl.h">
+      <Filter>server</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketDataMessage.h">
+      <Filter>transport\websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketHandshakeMessage.h">
+      <Filter>transport\websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketMessage.h">
+      <Filter>transport\websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thrift\transport\Websocket\WebsocketProtocol.h">
+      <Filter>transport\websocket</Filter>
+    </ClInclude>
+    <ClInclude Include="src\thrift\transport\TWebSocketTransport.h">
+      <Filter>transport</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="protocal">
@@ -245,6 +281,12 @@
     </Filter>
     <Filter Include="windows\tr1">
       <UniqueIdentifier>{eea10406-3380-4f2d-9365-c26fa2875dae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="transport\websocket">
+      <UniqueIdentifier>{ba79a0b3-0371-4628-ab59-600cb399f18a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="transport\websocket\sha">
+      <UniqueIdentifier>{4eba22f9-7bc2-4b2d-83d7-0fd95a138e07}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

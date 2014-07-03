@@ -61,6 +61,11 @@ class TTransport {
   virtual ~TTransport() {}
 
   /**
+  * is there only handshake message.
+  */
+  virtual bool handshake() { return false; }
+
+  /**
    * Whether this transport is open.
    */
   virtual bool isOpen() {

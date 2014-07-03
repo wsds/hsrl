@@ -56,3 +56,4 @@ VisualGDBCache
 *.user
 *.log
 Debug
+/ThriftProject/*.sdf
