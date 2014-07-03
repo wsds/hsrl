@@ -39,7 +39,7 @@ int server_main(int argc, char **argv) {
   shared_ptr<shellHandler> handler(new shellHandler());
   shared_ptr<TProcessor> processor(new shellProcessor(handler));
   shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-  shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  shared_ptr<TTransportFactory> transportFactory(new THttpServerTransportFactory());
   shared_ptr<TProtocolFactory> protocolFactory(new TJSONProtocolFactory());
 
 
