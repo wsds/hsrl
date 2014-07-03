@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B849C14-D346-4B1F-9345-956F23E70540}</ProjectGuid>
     <RootNamespace>server</RootNamespace>
+    <ProjectName>server</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -75,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gen-cpp\Shell.h" />
+    <ClInclude Include="gen-cpp\ShellIface.h" />
     <ClInclude Include="gen-cpp\Shell_constants.h" />
     <ClInclude Include="gen-cpp\Shell_types.h" />
   </ItemGroup>

@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Thrift Javascript Bindings - Tutorial Example</title>
+  <title>Thrift Javascript</title>
 
   <script src="static/js/thrift.js" type="text/javascript"></script>
   <script src="static/js/websocketTransport.js" type="text/javascript"></script>
@@ -11,26 +11,39 @@
   <script src="static/js/Shell.js" type="text/javascript"></script>
 
   <script type="text/javascript" src="static/js/jquery.min.js"></script>
+  
+<script type="text/javascript" src="static/js/main.js"></script>
+	
 
-
-  <script type="text/javascript" charset="utf-8">
-  //<![CDATA[
-  var client;
-  $(document).ready(function(){
-	var transport = new Thrift.WebsocketTransport("ws://localhost:9090/");	
-    var protocol  = new Thrift.Protocol(transport);
-    client = new ShellClient(protocol);
-	transport.setClient(client);
-  });
-
-  function test(){
-	client.shell("123");
-  }
-
-  </script>
-
+<style type="text/css">
+.div1{
+	width:220px;
+	float:left;
+}
+.div2{
+	background-color:#CCC;
+	width:500px;
+	height:500px;
+	float:left;
+}
+.shell_text {
+	height: 200px;
+	width: 200px;
+	overflow:hidden;
+	resize:none;
+}
+.shell_button {
+	width: 200px;
+}
+</style>
 </head>
 <body>
-  <h2>test websocket</h2>
+  <h2>web shell</h2>
+  <div class="div1">
+  <textarea id="shell_text" class="shell_text"></textarea><br />
+  <input type="button" value="shell" class="shell_button" onclick="shell()"/>
+  </div>
+  <div class="div2">
+  </div>
 </body>
 </html>
