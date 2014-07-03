@@ -28,7 +28,7 @@ public:
 
 	void shell(const std::string& query) {
 		// Your implementation goes here
-		printf("shell\n");
+		printf("shell %s\n", query.c_str());
 	}
 
 };

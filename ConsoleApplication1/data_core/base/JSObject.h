@@ -13,6 +13,8 @@
 #define JSSTRING 4
 
 #define JSINSTANCE 5
+#define JSCLASS 6
+#define JSFUNCTION 7
 
 class JSObject
 {

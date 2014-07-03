@@ -47,9 +47,18 @@ public:
 	CodeElement* codeOperator;
 	CodeElement* right;
 };
+
+
+class FunctionCall{
+public:
+	CodeElement* functionName;
+	CodeElement* variables;
+};
+
 void interpret_main();
 void resolveCodeLine(char* line);
 void excute(Assignment * assignment);
+void excute(FunctionCall * functionCall);
 
 #endif /* INTERPRETMAIN_H */
 

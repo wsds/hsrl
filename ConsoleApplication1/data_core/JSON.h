@@ -26,7 +26,8 @@ static char BLANK = ' ';
 static char COMMA = ',';
 static char COLON = ':';
 
-
+static char LEFTSMALLBRACKET = '(';
+static char RIGHTSMALLBRACKET = ')';
 
 class JSONIndicator
 {

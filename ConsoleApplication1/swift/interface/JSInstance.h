@@ -2,8 +2,7 @@
 #define JSINSTANCE_H
 
 
-#include "base/JSObject.h"
-#include "JSON.h"
+#include "../../data_core/data_core.h"
 
 #ifndef NULL
 #define NULL 0
@@ -15,7 +14,7 @@ public:
 	JSInstance();
 	char* name;
 	JSON* children;
-
+	void test();
 	void(*function)(JSObject* parameter, JSObject* result);
 };
 

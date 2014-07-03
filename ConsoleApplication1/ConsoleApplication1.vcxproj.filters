@@ -90,9 +90,6 @@
     <ClInclude Include="swift\FunctionsClosures\Closure.h">
       <Filter>头文件\swift\FunctionsClosures</Filter>
     </ClInclude>
-    <ClInclude Include="data_core\JSInstance.h">
-      <Filter>头文件\data_core</Filter>
-    </ClInclude>
     <ClInclude Include="swift\interpret_main.h">
       <Filter>头文件\swift</Filter>
     </ClInclude>
@@ -104,6 +101,18 @@
     </ClInclude>
     <ClInclude Include="swift\SimpleValues\Assign.h">
       <Filter>头文件\swift\SimpleValues</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\interface\JSFunction.h">
+      <Filter>头文件\swift\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\interface\Import.h">
+      <Filter>头文件\swift\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\interface\JSClass.h">
+      <Filter>头文件\swift\interface</Filter>
+    </ClInclude>
+    <ClInclude Include="swift\interface\JSInstance.h">
+      <Filter>头文件\swift\interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,9 +152,6 @@
     <ClCompile Include="swift\FunctionsClosures\Closure.cpp">
       <Filter>源文件\swift\FunctionsClosures</Filter>
     </ClCompile>
-    <ClCompile Include="data_core\JSInstance.cpp">
-      <Filter>源文件\data_core</Filter>
-    </ClCompile>
     <ClCompile Include="swift\interpret_main.cpp">
       <Filter>源文件\swift</Filter>
     </ClCompile>
@@ -154,6 +160,18 @@
     </ClCompile>
     <ClCompile Include="swift\SimpleValues\Assign.cpp">
       <Filter>源文件\swift\SimpleValues</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interface\Import.cpp">
+      <Filter>源文件\swift\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interface\JSClass.cpp">
+      <Filter>源文件\swift\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interface\JSFunction.cpp">
+      <Filter>源文件\swift\interface</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interface\JSInstance.cpp">
+      <Filter>源文件\swift\interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

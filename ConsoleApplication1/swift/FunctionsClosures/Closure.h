@@ -21,6 +21,11 @@ public:
 
 	Closure* forward();
 	Closure* backward();
+
+	JSObject* get(char* key);
+	bool set(char* key, JSObject* jsObject);
+
+	JSObject* lookup(char* key);
 };
 
 

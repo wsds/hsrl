@@ -38,11 +38,12 @@ func getGasPrices(){
     return (3.59, 3.69, 3.79)
 }
 //-------------------------------------
-JSON* result=new JSON();
-void getGasPrices(JSObject* result){
-	((JSON*)result)->push(3.59);
-	((JSON*)result)->push(3.69);
-	((JSON*)result)->push(3.79);
+
+JSON* getGasPrices(){
+	JSON* result=new JSON();
+	result->push(3.59);
+	result->push(3.69);
+	result->push(3.79);
 }
 
 

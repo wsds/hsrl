@@ -47,8 +47,9 @@ void interpret_test(){
 Closure * rootClosure;
 
 void interpret_main(){
-	rootClosure = new Closure();
-	rootClosure->initialize();
+	Import* import = Import::getInstance();
+	import->regiditFunctions();
+	rootClosure = import->rootClosure;
 }
 
 HashTable * keyWordMap;
@@ -123,7 +124,21 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			break;
 		}
 	}
-	for (int i = pre_blank; i < length - pre_blank; i++){
+
+	int tail_blank = 0;
+
+	for (int i = length - 1; i > 0; i--){
+		localChar = from[i];
+		if (localChar == BLANK){
+			tail_blank++;
+		}
+		else{
+			break;
+		}
+	}
+
+
+	for (int i = pre_blank; i < length - tail_blank; i++){
 		localChar = from[i];
 		if (resolveElementStatus == 1){
 			if (localChar == BLANK){
@@ -195,8 +210,8 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 		std::cout << string << std::endl;
 	}
 	else {
-		char* name = (char*)JSMalloc(length - pre_blank);
-		strcopy(from + pre_blank, name, length - pre_blank);
+		char* name = (char*)JSMalloc(length - pre_blank - tail_blank);
+		strcopy(from + pre_blank, name, length - pre_blank - tail_blank);
 		if (codeElementType == CODE_JSON){
 
 			element->type = CODE_JSON;
@@ -237,12 +252,10 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 }
 
 char* string_var = "var";
-
-void resolveCodeLine(char* line){
+void resolveAssignment(char* line){
 
 	CodeLine* codeLine = new CodeLine();
 	Assignment * assignment = NULL;
-	//CodeElement** codeElements = (CodeElement**)JSMalloc(8);
 
 	char localChar;
 	int string_length = strlen(line);
@@ -273,7 +286,7 @@ void resolveCodeLine(char* line){
 			}
 
 			//resolve the right code
-			elementCount = resolveElement(line + ii + 1, string_length - ii, codeLine);
+			elementCount = resolveElement(line + ii + 1, string_length - ii - 1, codeLine);
 			for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
 				if (codeLine->codeElements[i]->type == NAME){
 					assignment->right = codeLine->codeElements[i];
@@ -292,23 +305,152 @@ void resolveCodeLine(char* line){
 		}
 	}
 
-	std::cout << "element_index: " << codeLine->element_index << std::endl;
+	//std::cout << "element_index: " << codeLine->element_index << std::endl;
 	if (assignment != NULL){
 		excute(assignment);
 	}
+
+}
+
+void resolveFunctionCall(char* line){
+	CodeLine* codeLine = new CodeLine();
+	FunctionCall * functionCall = NULL;
+
+	char localChar;
+	int string_length = strlen(line);
+
+	int index_LEFTSMALLBRACKET = 0;
+	int index_RIGHTSMALLBRACKET = 0;
+
+	for (int ii = 0; ii < string_length; ii++){
+		localChar = line[ii];
+		if (localChar == LEFTSMALLBRACKET){
+			index_LEFTSMALLBRACKET = ii;
+		}
+		else if (localChar == RIGHTSMALLBRACKET){
+			index_RIGHTSMALLBRACKET = ii;
+		}
+	}
+
+	if (index_RIGHTSMALLBRACKET > index_LEFTSMALLBRACKET && index_LEFTSMALLBRACKET != 0){
+		functionCall = new FunctionCall();
+		//resolve the small brackt outer code
+		int elementCount = resolveElement(line, index_LEFTSMALLBRACKET, codeLine);
+		for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
+			if (codeLine->codeElements[i]->type == NAME){
+				functionCall->functionName = codeLine->codeElements[i];
+			}
+		}
+
+		//resolve the small brackt inner code
+		elementCount = resolveElement(line + index_LEFTSMALLBRACKET + 1, index_RIGHTSMALLBRACKET - index_LEFTSMALLBRACKET - 1, codeLine);
+		for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
+			if (codeLine->codeElements[i]->type == NAME){
+				functionCall->variables = codeLine->codeElements[i];
+			}
+			else if (codeLine->codeElements[i]->type == CODE_NUMBER){
+				functionCall->variables = codeLine->codeElements[i];
+			}
+			else if (codeLine->codeElements[i]->type == CODE_STRING){
+				functionCall->variables = codeLine->codeElements[i];
+			}
+			else if (codeLine->codeElements[i]->type == CODE_JSON){
+				functionCall->variables = codeLine->codeElements[i];
+			}
+		}
+	}
+
+
+	//std::cout << "element_index: " << codeLine->element_index << std::endl;
+	if (functionCall != NULL){
+		std::cout << "excute functionCall: " << functionCall->functionName->variable_name << std::endl;
+		excute(functionCall);
+	}
+}
+void resolveCodeLine(char* line){
+
+	resolveAssignment(line);
+	resolveFunctionCall(line);
+}
+void excute(FunctionCall * functionCall){
+
+	if (functionCall->functionName->type != NAME){
+		//report error
+		return;
+	}
+	JSObject * jsVariables;
+	if (functionCall->variables->type == CODE_NUMBER){
+		jsVariables = (JSObject *)(new JSNumber(functionCall->variables->number));
+	}
+	else if (functionCall->variables->type == CODE_STRING){
+		jsVariables = (JSObject *)(new JSString(functionCall->variables->char_string));
+	}
+	else if (functionCall->variables->type == CODE_JSON){
+		JSON* json = parseJSON(functionCall->variables->jsonstr);
+		jsVariables = (JSObject *)json;
+		//log((JSObject*)json);
+	}
+	else if (functionCall->variables->type == NAME){
+		unsigned int hash = dictGenHashFunction(functionCall->variables->variable_name, strlen(functionCall->variables->variable_name));
+		//std::cout << "key:[" << functionCall->variables->variable_name << "]hash:" << hash << std::endl;
+		JSKeyValue *jsKeyValue = (JSKeyValue *)rootClosure->variables->get(functionCall->variables->variable_name);
+		if (jsKeyValue == NULL){
+			//report error
+			//return;
+		}
+		else{
+			jsVariables = jsKeyValue->value;
+		}
+
+
+		//JSKeyValue * keyvalues[10];
+		//for (int i = 0; i < 10; i++){
+		//	keyvalues[i] = (JSKeyValue *)rootClosure->variables->list->elements[i];
+		//}
+
+		//HashEntry* hashEntrys[8];
+		//for (int i = 0; i < 10; i++){
+		//	hashEntrys[i] = rootClosure->variables->hashTable->elements[i];
+		//}
+		//int i = 1;
+		//i++;
+
+	}
+
+
+
+	JSKeyValue * jsFunctionKeyValue;
+	jsFunctionKeyValue = (JSKeyValue *)rootClosure->get(functionCall->functionName->variable_name);
+	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
+		//report error
+		return;
+	}
+	JSFunction * jsFunction = (JSFunction *)jsFunctionKeyValue->value;
+	if (jsFunction == NULL || ((JSObject*)jsFunction)->type != JSFUNCTION){
+		//report error
+		return;
+	}
+	else{
+		JSON* parameter = new JSON();
+		parameter->initialize();
+		parameter->push(jsVariables);
+		JSON* result = jsFunction->function(parameter);
+	}
+
 }
 
 void excute(Assignment * assignment){
-	JSObject * jsObject;
+	JSObject * rightValue;
 	if (assignment->right->type == CODE_NUMBER){
-		jsObject = (JSObject *)(new JSNumber(assignment->right->number));
+		rightValue = (JSObject *)(new JSNumber(assignment->right->number));
 	}
 	else if (assignment->right->type == CODE_STRING){
-		jsObject = (JSObject *)(new JSString(assignment->right->char_string));
+		rightValue = (JSObject *)(new JSString(assignment->right->char_string));
 	}
 	else if (assignment->right->type == CODE_JSON){
 		JSON* json = parseJSON(assignment->right->jsonstr);
-		jsObject = (JSObject *)json;
+		rightValue = (JSObject *)json;
+		//log((JSObject*)json);
 	}
 	else if (assignment->right->type == NAME){
 		JSKeyValue *jsKeyValue = (JSKeyValue *)rootClosure->variables->get(assignment->right->variable_name);
@@ -316,20 +458,26 @@ void excute(Assignment * assignment){
 			//report error
 		}
 		else{
-			jsObject = jsKeyValue->value;
+			rightValue = jsKeyValue->value;
 		}
 	}
+	JSObject * leftVariable;
 	if (assignment->isNew){
-		rootClosure->variables->set(assignment->left->variable_name, jsObject);
+		unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
+		//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
+
+		rootClosure->variables->set(assignment->left->variable_name, rightValue);
 	}
 	else{
-		jsObject = rootClosure->variables->get(assignment->right->variable_name);
-		if (jsObject == NULL){
+		leftVariable = rootClosure->get(assignment->right->variable_name);
+		if (leftVariable == NULL){
 			//report error
 		}
 		else{
 			//replace or modify???
-			rootClosure->variables->set(assignment->left->variable_name, jsObject);
+			unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
+			//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
+			rootClosure->set(assignment->left->variable_name, rightValue);
 		}
 	}
 }

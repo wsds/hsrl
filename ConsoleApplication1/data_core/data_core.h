@@ -8,7 +8,6 @@
 #include "JSString.h"
 #include "JSNumber.h"
 #include "JSON.h"
-#include "JSInstance.h"
 
 
 #ifndef NULL
