@@ -14,6 +14,7 @@
 #include "data_core/JSON.h"
 
 #include "swift\interpret_main.h"
+#include "thrift_server\Thrift_server.h"
 
 //test base list
 void testMM(){
@@ -293,6 +294,50 @@ void test4(){
 	testJSONParse();
 }
 
+//test shell
+void testShell(){
+	interpret_main();
+	int port = 9090;
+
+	open::startWebsocketServer(port);
+}
+
+void open::ShellHandler::shell(const std::string& query){
+
+	int from = 0;
+	char ENTER = '\r';
+	char BR = '\n';
+	line[0] = '\0';
+
+	const char* query_c = query.c_str();
+
+	for (int i = 0;i>=0; i++){
+		if (i >= from && query_c[i] == ENTER && query_c[i + 1] == BR){
+			line[i - from] = '\0';
+			resolveLine(line);
+			lineNumberRead++;
+			from = i + 2;
+			continue;
+		}
+		else if (i >= from && query_c[i] == BR){
+			line[i - from] = '\0';
+			resolveLine(line);
+			lineNumberRead++;
+			from = i + 1;
+			continue;
+		}
+
+		if (!query_c[i]){
+			line[i - from] = '\0';
+			resolveLine(line);
+			lineNumberRead++;
+			from = i + 1;
+			break;
+		}
+
+		line[i - from] = query_c[i];
+	}
+}
 
 //Entry
 void testEntry()
@@ -301,6 +346,10 @@ void testEntry()
 	//std::cout << "test entry." << std::endl;
 	//test4();
 	//std::cout << "test end." << std::endl;
-	test_file();
+
+	//test_file();
+
 	//interpret_test();
+
+	testShell();
 }
