@@ -8,6 +8,8 @@
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/transport/THttpServer.h>
+#include <thrift/transport/TWebsocketTransport.h>
+#include <thrift/server/TServerEventHandlerImpl.h>
 
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
@@ -31,9 +33,23 @@ public:
 
 };
 
+typedef TServerEventHandlerImpl<ShellClient> ShellClientHandler;
+typedef TProcessorEventHandlerImpl<ShellClient> ShellProcessorHandler;
+
+void startHttpServer(int port);
+void startWebsocketServer(int port);
+
 int main(int argc, char **argv) {
 	TWinsockSingleton::create();
+	
 	int port = 9090;
+
+	startWebsocketServer(port);
+	
+	return 0;
+}
+
+void startHttpServer(int port){
 	shared_ptr<ShellHandler> handler(new ShellHandler());
 	shared_ptr<TProcessor> processor(new ShellProcessor(handler));
 	shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
@@ -42,6 +58,19 @@ int main(int argc, char **argv) {
 
 	TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
 	server.serve();
-	return 0;
+}
+
+void startWebsocketServer(int port){
+	shared_ptr<ShellHandler> handler(new ShellHandler());
+	shared_ptr<TProcessor> processor(new ShellProcessor(handler));
+	shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+	shared_ptr<TTransportFactory> transportFactory(new TWebsocketTransportFactory());
+	shared_ptr<TProtocolFactory> protocolFactory(new TJSONProtocolFactory());
+
+	TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
+	server.setServerEventHandler(boost::shared_ptr<TServerEventHandler>(new ShellClientHandler()));
+	processor->setEventHandler(boost::shared_ptr<TProcessorEventHandler>(new ShellProcessorHandler(server.getEventHandler())));
+
+	server.serve();
 }
 

@@ -13,6 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4B849C14-D346-4B1F-9345-956F23E70540}</ProjectGuid>
     <RootNamespace>server</RootNamespace>
+    <ProjectName>server</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -39,8 +40,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Tool\boost_1_55_0;$(SolutionDir)/src;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Tool\boost_1_55_0\stage\lib;$(SolutionDir)/Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(BOOST_HOME);$(SolutionDir)/src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(BOOST_HOME)\stage\lib;$(SolutionDir)/Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -75,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gen-cpp\Shell.h" />
+    <ClInclude Include="gen-cpp\ShellIface.h" />
     <ClInclude Include="gen-cpp\Shell_constants.h" />
     <ClInclude Include="gen-cpp\Shell_types.h" />
   </ItemGroup>
