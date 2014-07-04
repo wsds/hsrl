@@ -45,8 +45,13 @@ void interpret_test(){
 
 }
 Closure * rootClosure;
+int funtionLevel;
+FunctionDefinition * currentFunctionDefinition;
 
 void interpret_main(){
+	funtionLevel = 0;
+	currentFunctionDefinition = NULL;
+
 	Import* import = Import::getInstance();
 	import->regiditFunctions();
 	rootClosure = import->rootClosure;
@@ -200,8 +205,8 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 	codeLine->element_index++;
 
 	if (codeElementType == CODE_STRING){
-		char* string = (char*)JSMalloc(length - pre_blank - 1);
-		strcopy(from + pre_blank + 1, string, length - pre_blank - 2);
+		char* string = (char*)JSMalloc(length - pre_blank - tail_blank - 1);
+		strcopy(from + pre_blank + 1, string, length - pre_blank - tail_blank - 2);
 
 		element->type = CODE_STRING;
 		element->char_string = string;
@@ -252,6 +257,7 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 }
 
 char* string_var = "var";
+char* string_func = "func";
 void resolveAssignment(char* line){
 
 	CodeLine* codeLine = new CodeLine();
@@ -307,7 +313,16 @@ void resolveAssignment(char* line){
 
 	//std::cout << "element_index: " << codeLine->element_index << std::endl;
 	if (assignment != NULL){
-		excute(assignment);
+		if (funtionLevel == 0){
+			excute(assignment);
+		}
+		else if (currentFunctionDefinition != NULL){
+			currentFunctionDefinition->executables[currentFunctionDefinition->executable_index] = assignment;
+			currentFunctionDefinition->executable_index++;
+		}
+		else{
+			//report error
+		}
 	}
 
 }
@@ -315,6 +330,7 @@ void resolveAssignment(char* line){
 void resolveFunctionCall(char* line){
 	CodeLine* codeLine = new CodeLine();
 	FunctionCall * functionCall = NULL;
+	FunctionDefinition * functionDefinition = NULL;
 
 	char localChar;
 	int string_length = strlen(line);
@@ -330,15 +346,33 @@ void resolveFunctionCall(char* line){
 		else if (localChar == RIGHTSMALLBRACKET){
 			index_RIGHTSMALLBRACKET = ii;
 		}
+		else if (localChar == LEFTBIGBRACKET){
+			funtionLevel++;
+			functionDefinition = new FunctionDefinition();
+			currentFunctionDefinition = functionDefinition;
+		}
+		else if (localChar == RIGHTBIGBRACKET){
+			funtionLevel--;
+			if (funtionLevel == 0){
+				currentFunctionDefinition = NULL;
+			}
+			else if (funtionLevel < 0){
+				//report error
+			}
+		}
 	}
 
 	if (index_RIGHTSMALLBRACKET > index_LEFTSMALLBRACKET && index_LEFTSMALLBRACKET != 0){
+
 		functionCall = new FunctionCall();
+
 		//resolve the small brackt outer code
 		int elementCount = resolveElement(line, index_LEFTSMALLBRACKET, codeLine);
 		for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
 			if (codeLine->codeElements[i]->type == NAME){
 				functionCall->functionName = codeLine->codeElements[i];
+			}
+			else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(string_func, codeLine->codeElements[i]->keyword)){
 			}
 		}
 
@@ -360,18 +394,47 @@ void resolveFunctionCall(char* line){
 		}
 	}
 
-
 	//std::cout << "element_index: " << codeLine->element_index << std::endl;
-	if (functionCall != NULL){
-		std::cout << "excute functionCall: " << functionCall->functionName->variable_name << std::endl;
-		excute(functionCall);
+	if (functionDefinition != NULL){
+		functionDefinition->functionName = functionCall->functionName;
+		functionDefinition->variables = functionCall->variables;
+		std::cout << "excute functionDefinition: " << functionDefinition->functionName->variable_name << std::endl;
 	}
+	else if (functionCall != NULL){
+
+		if (funtionLevel == 0){
+			std::cout << "excute functionCall: " << functionCall->functionName->variable_name << std::endl;
+			excute(functionCall);
+		}
+		else if (currentFunctionDefinition != NULL){
+			currentFunctionDefinition->executables[currentFunctionDefinition->executable_index] = functionCall;
+			currentFunctionDefinition->executable_index++;
+		}
+		else{
+			//report error
+		}
+
+	}
+
 }
 void resolveCodeLine(char* line){
 
 	resolveAssignment(line);
 	resolveFunctionCall(line);
 }
+
+
+void excute(FunctionDefinition * functionDefinition){
+	JSFunction * jsFunction = new JSFunction();
+	jsFunction->function_name = functionDefinition->functionName->variable_name;
+	jsFunction->functionDefinition = functionDefinition;
+
+
+	rootClosure->variables->set(functionDefinition->functionName->variable_name, jsFunction);
+
+}
+
+
 void excute(FunctionCall * functionCall){
 
 	if (functionCall->functionName->type != NAME){
@@ -391,7 +454,7 @@ void excute(FunctionCall * functionCall){
 		//log((JSObject*)json);
 	}
 	else if (functionCall->variables->type == NAME){
-		unsigned int hash = dictGenHashFunction(functionCall->variables->variable_name, strlen(functionCall->variables->variable_name));
+		//unsigned int hash = dictGenHashFunction(functionCall->variables->variable_name, strlen(functionCall->variables->variable_name));
 		//std::cout << "key:[" << functionCall->variables->variable_name << "]hash:" << hash << std::endl;
 		JSKeyValue *jsKeyValue = (JSKeyValue *)rootClosure->variables->get(functionCall->variables->variable_name);
 		if (jsKeyValue == NULL){
@@ -463,7 +526,7 @@ void excute(Assignment * assignment){
 	}
 	JSObject * leftVariable;
 	if (assignment->isNew){
-		unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
+		//unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
 		//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
 
 		rootClosure->variables->set(assignment->left->variable_name, rightValue);
@@ -475,7 +538,7 @@ void excute(Assignment * assignment){
 		}
 		else{
 			//replace or modify???
-			unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
+			//unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
 			//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
 			rootClosure->set(assignment->left->variable_name, rightValue);
 		}

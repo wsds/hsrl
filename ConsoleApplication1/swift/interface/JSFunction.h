@@ -3,12 +3,12 @@
 
 
 #include "../../data_core/data_core.h"
-
+#include "../interpret_main.h"
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
 
-class JSFunction : JSObject
+class JSFunction : public JSObject
 {
 public:
 	JSFunction();
@@ -18,6 +18,8 @@ public:
 	char* function_name;
 
 	JSON* (*function)(JSON* parameter);
+
+	FunctionDefinition * functionDefinition;
 };
 
 

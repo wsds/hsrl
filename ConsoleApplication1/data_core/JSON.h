@@ -32,6 +32,9 @@ static char COLON = ':';
 static char LEFTSMALLBRACKET = '(';
 static char RIGHTSMALLBRACKET = ')';
 
+static char LEFTBIGBRACKET = '{';
+static char RIGHTBIGBRACKET = '}';
+
 class JSONIndicator
 {
 public:

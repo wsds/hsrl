@@ -202,7 +202,7 @@ void interpret_line(char* line){
 
 	//std::cout << "resolving: " << line << std::endl;
 	resolveCodeLine(line);
-	std::cout << "-------------------------------line:" << lineNumberRead + 2 << std::endl;
+	std::cout << "-------------------------------line:" << lineNumberRead + 1 << std::endl;
 
 }
 
@@ -230,7 +230,7 @@ void resolveLine(char* line){
 			return;
 		}
 	}
-	else{
+	else if (string_length - pre_blank == 0){
 		//std::cout << "empty line:" << lineNumberRead + 2 << std::endl;
 		return;
 	}
@@ -274,7 +274,7 @@ char* getLine(){
 	int lineNumber = 0;
 	while (fin.getline(line, sizeof(line)))
 	{
-		if (lineNumber > lineNumberRead){
+		if (lineNumber >= lineNumberRead){
 			//std::cout << line << std::endl;
 			resolveLine(line);
 			lineNumberRead++;

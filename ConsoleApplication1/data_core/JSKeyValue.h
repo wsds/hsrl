@@ -8,7 +8,7 @@
 #define NULL 0
 #endif /* NULL */
 
-class JSKeyValue : JSObject
+class JSKeyValue : public JSObject
 {
 public:
 	JSKeyValue();

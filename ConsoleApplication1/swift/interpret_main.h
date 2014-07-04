@@ -40,7 +40,11 @@ public:
 	int element_index;
 };
 
-class Assignment{
+class Executable{
+
+};
+
+class Assignment : public Executable{
 public:
 	bool isNew;
 	CodeElement* left;
@@ -49,10 +53,19 @@ public:
 };
 
 
-class FunctionCall{
+class FunctionCall : public Executable{
 public:
 	CodeElement* functionName;
 	CodeElement* variables;
+};
+
+class FunctionDefinition : public Executable{
+public:
+	CodeElement* functionName;
+	CodeElement* variables;
+
+	Executable* executables[10];
+	int executable_index;
 };
 
 void interpret_main();
