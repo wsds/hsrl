@@ -471,11 +471,8 @@ void excute(FunctionCall * functionCall){
 	else if (functionCall->variables->type == CODE_JSON){
 		JSON* json = parseJSON(functionCall->variables->jsonstr);
 		jsVariables = (JSObject *)json;
-		//log((JSObject*)json);
 	}
 	else if (functionCall->variables->type == NAME){
-		//unsigned int hash = dictGenHashFunction(functionCall->variables->variable_name, strlen(functionCall->variables->variable_name));
-		//std::cout << "key:[" << functionCall->variables->variable_name << "]hash:" << hash << std::endl;
 		JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->variables->variable_name);
 		if (jsKeyValue == NULL){
 			//report error
@@ -484,20 +481,6 @@ void excute(FunctionCall * functionCall){
 		else{
 			jsVariables = jsKeyValue->value;
 		}
-
-
-		//JSKeyValue * keyvalues[10];
-		//for (int i = 0; i < 10; i++){
-		//	keyvalues[i] = (JSKeyValue *)rootClosure->variables->list->elements[i];
-		//}
-
-		//HashEntry* hashEntrys[8];
-		//for (int i = 0; i < 10; i++){
-		//	hashEntrys[i] = rootClosure->variables->hashTable->elements[i];
-		//}
-		//int i = 1;
-		//i++;
-
 	}
 
 
@@ -581,8 +564,6 @@ void excute(Assignment * assignment){
 	}
 	JSObject * leftVariable;
 	if (assignment->isNew){
-		//unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
-		//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
 
 		currentClosure->set(assignment->left->variable_name, rightValue);
 	}
@@ -593,8 +574,6 @@ void excute(Assignment * assignment){
 		}
 		else{
 			//replace or modify???
-			//unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
-			//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
 			currentClosure->set(assignment->left->variable_name, rightValue);
 		}
 	}
