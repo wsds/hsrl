@@ -2,6 +2,7 @@
 // You should copy it to another filename to avoid overwriting it.
 
 #include "Shell.h"
+#include "Thrift_server.h"
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/protocol/TJSONProtocol.h>
 #include <thrift/server/TSimpleServer.h>
@@ -20,24 +21,21 @@ using boost::shared_ptr;
 
 using namespace  ::open;
 
-class ShellHandler : virtual public ShellIf {
-public:
-	ShellHandler() {
-		// Your initialization goes here
-	}
-
-	void shell(const std::string& query) {
-		// Your implementation goes here
-		printf("shell: %s\n", query.c_str());
-	}
-
-};
+//class ShellHandler : virtual public ShellIf {
+//public:
+//	ShellHandler() {
+//		// Your initialization goes here
+//	}
+//
+//	void shell(const std::string& query) {
+//		// Your implementation goes here
+//		printf("shell: %s\n", query.c_str());
+//	}
+//
+//};
 
 typedef TServerEventHandlerImpl<ShellClient> ShellClientHandler;
 typedef TProcessorEventHandlerImpl<ShellClient> ShellProcessorHandler;
-
-void startHttpServer(int port);
-void startWebsocketServer(int port);
 
 //int main(int argc, char **argv) {
 //	TWinsockSingleton::create();
@@ -49,7 +47,9 @@ void startWebsocketServer(int port);
 //	return 0;
 //}
 
-void startHttpServer(int port){
+void open::startHttpServer(int port){
+	TWinsockSingleton::create();
+
 	shared_ptr<ShellHandler> handler(new ShellHandler());
 	shared_ptr<TProcessor> processor(new ShellProcessor(handler));
 	shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
@@ -60,7 +60,9 @@ void startHttpServer(int port){
 	server.serve();
 }
 
-void startWebsocketServer(int port){
+void open::startWebsocketServer(int port){
+	TWinsockSingleton::create();
+
 	shared_ptr<ShellHandler> handler(new ShellHandler());
 	shared_ptr<TProcessor> processor(new ShellProcessor(handler));
 	shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
@@ -72,5 +74,9 @@ void startWebsocketServer(int port){
 	processor->setEventHandler(boost::shared_ptr<TProcessorEventHandler>(new ShellProcessorHandler(server.getEventHandler())));
 
 	server.serve();
+}
+
+void open::log(char* log){
+
 }
 

@@ -126,7 +126,7 @@ bool LIST::resize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	//this->elements = (JSObject**)JSMalloc(mem_size);
+	this->elements = (JSObject**)JSMalloc(mem_size);
 
 	int i = 0;//~~~~~~~~~~~~~~~Need Memory Management~~~~~~~~~~~~~~~~~
 	for (i = 0; i <= this->length; i++)
@@ -146,7 +146,7 @@ bool LIST::initialize()
 
 	int mem_size = this->max_size*sizeof(void*);
 
-	//this->elements = (JSObject**)JSMalloc(mem_size);
+	this->elements = (JSObject**)JSMalloc(mem_size);
 
 	this->is_initialized = true;
 

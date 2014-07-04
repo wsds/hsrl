@@ -13,8 +13,8 @@ class LIST
 {
 public:
 	//store the orginal type of data directly should be supported. or supported by another class. 
-    //JSObject** elements;//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~
-	JSObject* elements[50];//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~//for debug
+    JSObject** elements;//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~
+	//JSObject* elements[50];//~~~~~~~~~~~~~~~Memory Management~~~~~~~~~~~~~~~~~//for debug
 
     int length;
 
