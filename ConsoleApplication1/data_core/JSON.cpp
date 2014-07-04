@@ -250,7 +250,7 @@ char* stringifyJSON(JSON* json){
 	char* string = new char[100];
 	int index = 0;
 	int offset = stringifyJSObject((JSObject*)json, string, index);
-	string[offset] = '\0';
+	string[offset] = STREND;
 	return string;
 }
 
@@ -260,7 +260,7 @@ char* JSON::stringify()
 	((JSObject*)js_string)->char_string = new char[100];
 	js_string->length = 0;
 	//stringifyJSON(this, js_string);
-	((JSObject*)js_string)->char_string[js_string->length] = '\0';
+	((JSObject*)js_string)->char_string[js_string->length] = STREND;
 	return ((JSObject*)js_string)->char_string;
 }
 
@@ -324,11 +324,18 @@ JSON* parseJSON(char* string){
 
 					JSObject* object = parseObject(string, object_indicator, false);
 					if (key_value_stack_top > 0 && key_value_indicators[key_value_stack_top - 1]->key_value->value == NULL){
-						key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
-						key_value_stack_top--;
+						if (object != NULL){
+							key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
+							key_value_stack_top--;
+						}
+						else{
+							//report error,value cannot be NULL
+						}
 					}
 					else{
-						((JSON*)(json_indicator->json))->push(object);
+						if (object != NULL){
+							((JSON*)(json_indicator->json))->push(object);
+						}
 					}
 
 				}
@@ -345,12 +352,17 @@ JSON* parseJSON(char* string){
 
 					JSObject* object = parseObject(string, object_indicator, true);
 					if (key_value_stack_top < key_value_stack_size){
-						key_value_indicators[key_value_stack_top] = new KeyValueIndicator();
-						key_value_indicators[key_value_stack_top]->key_value = (JSKeyValue *)object;
-						key_value_indicators[key_value_stack_top]->json_indicators_stack_top = json_indicators_stack_top;
-						key_value_indicators[key_value_stack_top]->key_value->value = NULL;
-						((JSON*)(json_indicator->json))->push(object);
-						key_value_stack_top++;
+						if (object != NULL){
+							key_value_indicators[key_value_stack_top] = new KeyValueIndicator();
+							key_value_indicators[key_value_stack_top]->key_value = (JSKeyValue *)object;
+							key_value_indicators[key_value_stack_top]->json_indicators_stack_top = json_indicators_stack_top;
+							key_value_indicators[key_value_stack_top]->key_value->value = NULL;
+							((JSON*)(json_indicator->json))->push(object);
+							key_value_stack_top++;
+						}
+						else{
+							//report error,key cannot be NULL
+						}
 					}
 					else{
 						//report error;
@@ -413,20 +425,28 @@ JSON* parseJSON(char* string){
 				JSObject* object = parseObject(string, object_indicator, false);
 				if (key_value_stack_top > 0 && key_value_indicators[key_value_stack_top - 1]->json_indicators_stack_top == json_indicators_stack_top){
 					if (key_value_indicators[key_value_stack_top - 1]->key_value->value == NULL){
-						key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
+						if (object != NULL){
+							key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
+						}
+						else{
+							//report error,value cannot be NULL
+						}
 					}
 					else if (key_value_stack_top > 0){
-						((JSON*)(json_indicator->json))->push(object);
+						if (object != NULL){
+							((JSON*)(json_indicator->json))->push(object);
+						}
 					}
 					key_value_stack_top--;
 				}
 				else{
-					((JSON*)(json_indicator->json))->push(object);
+					if (object != NULL){
+						((JSON*)(json_indicator->json))->push(object);
+					}
 				}
 
-				if (i + 1 == string_length || string[i + 1] == COMMA){
-					last_COMMA_index = i + 2;
-				}
+				last_COMMA_index = i + 1;
+				
 
 				if (json_indicators_stack_top > 1){
 					//resolve the last element spited by COMMA
@@ -488,7 +508,7 @@ JSON* parseJSON(char* string){
 				json_indicator->quotes_count = 1;
 				parsingStatus = 1;
 				if (localChar == COMMA){
-					if (i > last_COMMA_index){
+					if (i>last_COMMA_index){
 						object_indicator = new JSONIndicator();//get from pool//to do
 						object_indicator->head = last_COMMA_index;
 						object_indicator->tail = i;
@@ -499,16 +519,53 @@ JSON* parseJSON(char* string){
 
 						JSObject* object = parseObject(string, object_indicator, false);
 						if (key_value_stack_top > 0 && key_value_indicators[key_value_stack_top - 1]->key_value->value == NULL){
-							key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
-							key_value_stack_top--;
+							if (object != NULL){
+								key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
+								key_value_stack_top--;
+							}
+							else{
+								//report error,value cannot be NULL
+							}
 						}
 						else{
-							((JSON*)(json_indicator->json))->push(object);
+							if (object != NULL){
+								((JSON*)(json_indicator->json))->push(object);
+							}
 						}
 
 					}
 				}
+				else if (localChar == COLON){
+					if (i > last_COMMA_index){
+						object_indicator = new JSONIndicator();//get from pool//to do
+						object_indicator->head = last_COMMA_index;
+						object_indicator->tail = i;
+						object_indicator->quotes_count = json_indicator->quotes_count;
+						json_indicator->quotes_count = 0;
+
+						last_COMMA_index = i + 1;
+
+						JSObject* object = parseObject(string, object_indicator, true);
+						if (key_value_stack_top < key_value_stack_size){
+							if (object != NULL){
+								key_value_indicators[key_value_stack_top] = new KeyValueIndicator();
+								key_value_indicators[key_value_stack_top]->key_value = (JSKeyValue *)object;
+								key_value_indicators[key_value_stack_top]->json_indicators_stack_top = json_indicators_stack_top;
+								key_value_indicators[key_value_stack_top]->key_value->value = NULL;
+								((JSON*)(json_indicator->json))->push(object);
+								key_value_stack_top++;
+							}
+							else{
+								//report error,key cannot be NULL
+							}
+						}
+						else{
+							//report error;
+						}
+					}
+				}
 				else if (localChar == RIGHTBRACKET){
+
 					object_indicator = new JSONIndicator();//get from pool//to do
 					object_indicator->head = last_COMMA_index;
 					object_indicator->tail = i;
@@ -519,20 +576,27 @@ JSON* parseJSON(char* string){
 					JSObject* object = parseObject(string, object_indicator, false);
 					if (key_value_stack_top > 0 && key_value_indicators[key_value_stack_top - 1]->json_indicators_stack_top == json_indicators_stack_top){
 						if (key_value_indicators[key_value_stack_top - 1]->key_value->value == NULL){
-							key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
+							if (object != NULL){
+								key_value_indicators[key_value_stack_top - 1]->key_value->value = object;
+							}
+							else{
+								//report error,value cannot be NULL
+							}
 						}
-						else if (key_value_stack_top - 1 > 0){
-							((JSON*)(json_indicator->json))->push(object);
+						else if (key_value_stack_top > 0){
+							if (object != NULL){
+								((JSON*)(json_indicator->json))->push(object);
+							}
 						}
 						key_value_stack_top--;
 					}
 					else{
-						((JSON*)(json_indicator->json))->push(object);
+						if (object != NULL){
+							((JSON*)(json_indicator->json))->push(object);
+						}
 					}
 
-					if (i + 1 == string_length || string[i + 1] == COMMA || string[i + 1] != RIGHTBRACKET){
-						last_COMMA_index = i + 2;
-					}
+					last_COMMA_index = i + 1;
 
 					if (json_indicators_stack_top > 1){
 						//resolve the last element spited by COMMA
@@ -558,30 +622,6 @@ JSON* parseJSON(char* string){
 					}
 					else{
 						//report error
-					}
-				}
-				else if (localChar == COLON){
-					if (i > last_COMMA_index){
-						object_indicator = new JSONIndicator();//get from pool//to do
-						object_indicator->head = last_COMMA_index;
-						object_indicator->tail = i;
-						object_indicator->quotes_count = json_indicator->quotes_count;
-						json_indicator->quotes_count = 0;
-
-						last_COMMA_index = i + 1;
-
-						JSObject* object = parseObject(string, object_indicator, true);
-						if (key_value_stack_top < key_value_stack_size){
-							key_value_indicators[key_value_stack_top] = new KeyValueIndicator();
-							key_value_indicators[key_value_stack_top]->key_value = (JSKeyValue *)object;
-							key_value_indicators[key_value_stack_top]->json_indicators_stack_top = json_indicators_stack_top;
-							key_value_indicators[key_value_stack_top]->key_value->value = NULL;
-							((JSON*)(json_indicator->json))->push(object);
-							key_value_stack_top++;
-						}
-						else{
-							//report error;
-						}
 					}
 				}
 			}
@@ -618,16 +658,41 @@ JSON* parseJSON(char* string){
 
 }
 
-
 JSObject* parseObject(char* string, JSONIndicator* object_indicator, bool isJSKeyValue){
 	JSObject* object;
-	int length = object_indicator->tail - object_indicator->head - object_indicator->quotes_count * 2;
+	int start = object_indicator->head;
+	int end = object_indicator->tail;
+	char localChar;
+	while (true){
+		localChar = string[start];
+		if (localChar == TAB || localChar == COMMA || localChar == ENTER || localChar == BR || localChar == BLANK){
+			start++;
+		}
+		else{
+			break;
+		}
+	}
+
+	while (true){
+		localChar = string[end - 1];
+		if (localChar == TAB || localChar == COMMA || localChar == ENTER || localChar == BR || localChar == BLANK){
+			end--;
+		}
+		else{
+			break;
+		}
+	}
+	if (start >= end){
+		return NULL;
+	}
+
+	int length = end - start - object_indicator->quotes_count * 2;
 	//std::cout << length << std::endl;
 	char *tartget_string = (char*)JSMalloc(length + 1);
-	for (int i = object_indicator->head + object_indicator->quotes_count; i < object_indicator->tail - object_indicator->quotes_count; i++){
-		tartget_string[i - (object_indicator->head + object_indicator->quotes_count)] = string[i];
+	for (int i = start + object_indicator->quotes_count; i < end - object_indicator->quotes_count; i++){
+		tartget_string[i - (start + object_indicator->quotes_count)] = string[i];
 	}
-	tartget_string[length] = '\0';
+	tartget_string[length] = STREND;
 
 	if (isJSKeyValue == false){
 
