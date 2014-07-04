@@ -22,7 +22,6 @@ static char SINGLEQUOTE = '\'';
 static char DOUBLEQUOTES = '"';
 static char EQUALITY = '=';
 static char BLANK = ' ';
-static char TAB = '\t';
 
 static char SLASH = '/';
 
