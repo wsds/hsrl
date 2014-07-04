@@ -3,11 +3,8 @@
 
  var shoppingList =    ["catfish","water","tulips","blue paint",efg:[1,12],abc:123]    
 
-                      log(   "hello swift!")  
-
 log(   "hello swift!"   )  
-var myVariable=123 j   
-
+var myVariable=123 
 	  
 
 func greet(i_shoppingList) {
@@ -17,6 +14,4 @@ func greet(i_shoppingList) {
 	log(i_shoppingList)
 }
 
-log(myVariable)		
-
-// greet(shoppingList, 123)
+greet(shoppingList)

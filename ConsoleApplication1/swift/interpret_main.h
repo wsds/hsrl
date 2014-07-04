@@ -40,12 +40,18 @@ public:
 	int element_index;
 };
 
-class Executable{
+#define ASSIGNMENT 1
+#define FUNCTIONCALL 2
+#define FUNCTIONDEFINITION 3
 
+class Executable{
+public:
+	int type;
 };
 
 class Assignment : public Executable{
 public:
+	Assignment();
 	bool isNew;
 	CodeElement* left;
 	CodeElement* codeOperator;
@@ -55,12 +61,14 @@ public:
 
 class FunctionCall : public Executable{
 public:
+	FunctionCall();
 	CodeElement* functionName;
 	CodeElement* variables;
 };
 
 class FunctionDefinition : public Executable{
 public:
+	FunctionDefinition();
 	CodeElement* functionName;
 	CodeElement* variables;
 
@@ -72,6 +80,9 @@ void interpret_main();
 void resolveCodeLine(char* line);
 void excute(Assignment * assignment);
 void excute(FunctionCall * functionCall);
+void excute(FunctionDefinition * functionDefinition);
+
+void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
 #endif /* INTERPRETMAIN_H */
 

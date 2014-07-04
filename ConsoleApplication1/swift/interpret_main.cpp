@@ -3,6 +3,19 @@
 #include "FunctionsClosures\Closure.h"
 
 
+Assignment::Assignment(){
+	this->type = ASSIGNMENT;
+}
+
+FunctionCall::FunctionCall(){
+	this->type = FUNCTIONCALL;
+}
+
+FunctionDefinition::FunctionDefinition(){
+	this->executable_index = 0;
+	this->type = FUNCTIONDEFINITION;
+}
+
 void interpret_test_Simple_Value(){
 
 	char * json_str5 = "[123,567:[012,[\"hello\"],456,'''''',swift_main:[123,'123123'],123],567,,,,]";
@@ -45,6 +58,7 @@ void interpret_test(){
 
 }
 Closure * rootClosure;
+Closure * currentClosure;
 int funtionLevel;
 FunctionDefinition * currentFunctionDefinition;
 
@@ -55,6 +69,7 @@ void interpret_main(){
 	Import* import = Import::getInstance();
 	import->regiditFunctions();
 	rootClosure = import->rootClosure;
+	currentClosure = rootClosure;
 }
 
 HashTable * keyWordMap;
@@ -399,6 +414,7 @@ void resolveFunctionCall(char* line){
 		functionDefinition->functionName = functionCall->functionName;
 		functionDefinition->variables = functionCall->variables;
 		std::cout << "excute functionDefinition: " << functionDefinition->functionName->variable_name << std::endl;
+		excute(functionDefinition);
 	}
 	else if (functionCall != NULL){
 
@@ -430,8 +446,12 @@ void excute(FunctionDefinition * functionDefinition){
 	jsFunction->functionDefinition = functionDefinition;
 
 
-	rootClosure->variables->set(functionDefinition->functionName->variable_name, jsFunction);
-
+	currentClosure->set(functionDefinition->functionName->variable_name, jsFunction);
+	JSKeyValue * jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionDefinition->functionName->variable_name);
+	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
+		//report error
+		return;
+	}
 }
 
 
@@ -456,7 +476,7 @@ void excute(FunctionCall * functionCall){
 	else if (functionCall->variables->type == NAME){
 		//unsigned int hash = dictGenHashFunction(functionCall->variables->variable_name, strlen(functionCall->variables->variable_name));
 		//std::cout << "key:[" << functionCall->variables->variable_name << "]hash:" << hash << std::endl;
-		JSKeyValue *jsKeyValue = (JSKeyValue *)rootClosure->variables->get(functionCall->variables->variable_name);
+		JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->variables->variable_name);
 		if (jsKeyValue == NULL){
 			//report error
 			//return;
@@ -483,7 +503,7 @@ void excute(FunctionCall * functionCall){
 
 
 	JSKeyValue * jsFunctionKeyValue;
-	jsFunctionKeyValue = (JSKeyValue *)rootClosure->get(functionCall->functionName->variable_name);
+	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName->variable_name);
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
 		return;
@@ -497,9 +517,44 @@ void excute(FunctionCall * functionCall){
 		JSON* parameter = new JSON();
 		parameter->initialize();
 		parameter->push(jsVariables);
-		JSON* result = jsFunction->function(parameter);
+		if (jsFunction->function != NULL){
+			JSON* result = jsFunction->function(parameter);
+		}
+		else if (jsFunction->functionDefinition != NULL){
+			excuteFunction(jsFunction->functionDefinition, parameter);
+		}
+
 	}
 
+}
+
+void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter){
+
+	Closure * closure = new Closure();
+	closure->initialize();
+	currentClosure->next = closure;
+	closure->previous = currentClosure;
+
+	closure->set(functionDefinition->variables->variable_name, parameter->pop());
+
+
+	currentClosure = currentClosure->next;
+
+	Executable * executable;
+	for (int i = 0; i < functionDefinition->executable_index; i++){
+		executable = functionDefinition->executables[i];
+		if (executable->type == ASSIGNMENT){
+			excute((Assignment*)executable);
+		}
+		else if (executable->type == FUNCTIONCALL){
+			excute((FunctionCall*)executable);
+		}
+		else if (executable->type == FUNCTIONDEFINITION){
+			excute((FunctionDefinition*)executable);
+		}
+	}
+
+	currentClosure = currentClosure->previous;
 }
 
 void excute(Assignment * assignment){
@@ -516,7 +571,7 @@ void excute(Assignment * assignment){
 		//log((JSObject*)json);
 	}
 	else if (assignment->right->type == NAME){
-		JSKeyValue *jsKeyValue = (JSKeyValue *)rootClosure->variables->get(assignment->right->variable_name);
+		JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(assignment->right->variable_name);
 		if (jsKeyValue == NULL){
 			//report error
 		}
@@ -529,10 +584,10 @@ void excute(Assignment * assignment){
 		//unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
 		//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
 
-		rootClosure->variables->set(assignment->left->variable_name, rightValue);
+		currentClosure->set(assignment->left->variable_name, rightValue);
 	}
 	else{
-		leftVariable = rootClosure->get(assignment->right->variable_name);
+		leftVariable = currentClosure->lookup(assignment->right->variable_name);
 		if (leftVariable == NULL){
 			//report error
 		}
@@ -540,7 +595,7 @@ void excute(Assignment * assignment){
 			//replace or modify???
 			//unsigned int hash = dictGenHashFunction(assignment->left->variable_name, strlen(assignment->left->variable_name));
 			//std::cout << "key:[" << assignment->left->variable_name << "]hash:" << hash << std::endl;
-			rootClosure->set(assignment->left->variable_name, rightValue);
+			currentClosure->set(assignment->left->variable_name, rightValue);
 		}
 	}
 }
