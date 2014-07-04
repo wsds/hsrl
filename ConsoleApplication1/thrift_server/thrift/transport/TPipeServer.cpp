@@ -357,7 +357,7 @@ bool TNamedPipeServer::createNamedPipe() {
 
   // Create an instance of the named pipe
   TAutoHandle hPipe(CreateNamedPipe(
-        (LPCWSTR)pipename_.c_str(),        // pipe name
+        pipename_.c_str(),        // pipe name
         PIPE_ACCESS_DUPLEX |      // read/write access
         FILE_FLAG_OVERLAPPED,     // async mode
         PIPE_TYPE_BYTE |          // byte type pipe

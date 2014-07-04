@@ -214,6 +214,26 @@ void resolveLine(char* line){
 
 	char localChar;
 	int string_length = strlen(line);
+	int pre_blank = 0;
+	for (int i = 0; i < string_length; i++){
+		localChar = line[i];
+		if (localChar == BLANK || localChar == TAB){
+			pre_blank++;
+		}
+		else{
+			break;
+		}
+	}
+	if (string_length - pre_blank > 2){
+		if (line[pre_blank + 0] == SLASH&&line[pre_blank + 1] == SLASH){
+			//std::cout << "comment line:" << lineNumberRead + 2 << std::endl;
+			return;
+		}
+	}
+	else{
+		//std::cout << "empty line:" << lineNumberRead + 2 << std::endl;
+		return;
+	}
 
 	for (int i = 0; i < string_length; i++){
 		localChar = line[i];
@@ -230,7 +250,7 @@ void resolveLine(char* line){
 			BRACKET_Counter--;
 		}
 	}
-	strappend(resolvedLine, line);
+	strappend(resolvedLine, line + pre_blank);
 	if (SINGLEQUOTE_Counter == 0 && DOUBLEQUOTES_Counter == 0 && BRACKET_Counter == 0){
 
 		interpret_line(resolvedLine);

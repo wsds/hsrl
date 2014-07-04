@@ -200,14 +200,14 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 	codeLine->element_index++;
 
 	if (codeElementType == CODE_STRING){
-		char* string = (char*)JSMalloc(length - pre_blank - 2);
-		strcopy(from + pre_blank + 1, string, length - pre_blank - 3);
+		char* string = (char*)JSMalloc(length - pre_blank - 1);
+		strcopy(from + pre_blank + 1, string, length - pre_blank - 2);
 
 		element->type = CODE_STRING;
 		element->char_string = string;
 
-		std::cout << "[string]: ";
-		std::cout << string << std::endl;
+		//std::cout << "[string]: ";
+		//std::cout << string << std::endl;
 	}
 	else {
 		char* name = (char*)JSMalloc(length - pre_blank - tail_blank);
@@ -217,16 +217,16 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			element->type = CODE_JSON;
 			element->jsonstr = name;
 
-			std::cout << "[json]: ";
-			std::cout << name << std::endl;
+			//std::cout << "[json]: ";
+			//std::cout << name << std::endl;
 		}
 		else if (isNumber(name)){
 
 			element->type = CODE_NUMBER;
 			element->number = parseStringToNubmer(name, strlen(name));
 
-			std::cout << "[number]: ";
-			std::cout << name << std::endl;
+			//std::cout << "[number]: ";
+			//std::cout << name << std::endl;
 		}
 
 		else if (isKeyWord(name)){
@@ -234,8 +234,8 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			element->type = KEYWORD;
 			element->keyword = name;
 
-			std::cout << "[key word]: ";
-			std::cout << name << std::endl;
+			//std::cout << "[key word]: ";
+			//std::cout << name << std::endl;
 		}
 		else{
 			CodeElement * string = new CodeElement();
@@ -243,8 +243,8 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			element->type = NAME;
 			element->variable_name = name;
 
-			std::cout << "[variable name]: ";
-			std::cout << name << std::endl;
+			//std::cout << "[variable name]: ";
+			//std::cout << name << std::endl;
 		}
 	}
 
