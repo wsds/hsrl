@@ -5,6 +5,7 @@
  *  @generated
  */
 #include "Shell.h"
+#include "Thrift_server.h"
 
 namespace open {
 
@@ -232,7 +233,7 @@ void ShellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TP
     this->eventHandler_->postRead(ctx, "Shell.shell", bytes);
   }
 
-  Shell_shell_result result;
+  //Shell_shell_result result;
   try {
     iface_->shell(args.query);
   } catch (const std::exception& e) {
@@ -249,7 +250,9 @@ void ShellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TP
     return;
   }
 
-  if (this->eventHandler_.get() != NULL) {
+  //Don't automatically return information
+
+  /*if (this->eventHandler_.get() != NULL) {
     this->eventHandler_->preWrite(ctx, "Shell.shell");
   }
 
@@ -261,7 +264,7 @@ void ShellProcessor::process_shell(int32_t seqid, ::apache::thrift::protocol::TP
 
   if (this->eventHandler_.get() != NULL) {
     this->eventHandler_->postWrite(ctx, "Shell.shell", bytes);
-  }
+  }*/
 }
 
 ::boost::shared_ptr< ::apache::thrift::TProcessor > ShellProcessorFactory::getProcessor(const ::apache::thrift::TConnectionInfo& connInfo) {

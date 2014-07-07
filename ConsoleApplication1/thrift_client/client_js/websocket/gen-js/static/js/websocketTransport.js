@@ -27,19 +27,35 @@ Thrift.WebsocketTransport.prototype.connect = function(){
 		this.websocket.onmessage = function(msg){
 			console.log('received message: '+msg.data);
 			This.setRecvBuffer(msg.data);
-	
-			var ret = This.client.input.readMessageBegin();
-			var fname = ret.fname;
-			var mtype = ret.mtype;
-			var rseqid = ret.rseqid;
-			This.client.input.readMessageEnd();
 			
-			/// 如果请求的响应也使用回调方式； 不过，现在请求会使用ajax的方式同步进行
-			var method = (mtype == Thrift.MessageType.CALL) ? "notice_":"recv_";
-			method += fname;
-			console.log('mothod: '+method);
+			var msgobj;
+			if (typeof JSON !== 'undefined' && typeof JSON.parse === 'function') {
+				msgobj = JSON.parse(msg.data);
+			} else if (typeof jQuery !== 'undefined') {
+				msgobj = jQuery.parseJSON(msg.data);
+			} else {
+				msgobj = eval(msg.data);
+			}
 
-			This.client[method]();			
+			if(msgobj==null||msgobj==undefined){
+				return;
+			}
+			if(msgobj[0] = 2){
+				processLog(msgobj[1]);
+			}else if(msgobj[0] = 1){
+				var ret = This.client.input.readMessageBegin();
+				var fname = ret.fname;
+				var mtype = ret.mtype;
+				var rseqid = ret.rseqid;
+				This.client.input.readMessageEnd();
+				
+				/// 如果请求的响应也使用回调方式； 不过，现在请求会使用ajax的方式同步进行
+				var method = (mtype == Thrift.MessageType.CALL) ? "notice_":"recv_";
+				method += fname;
+				console.log('mothod: '+method);
+
+				This.client[method]();	
+			}	
 		};		
 		
 		this.websocket.onclose = function(){

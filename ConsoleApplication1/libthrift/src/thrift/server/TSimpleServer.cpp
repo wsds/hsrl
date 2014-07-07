@@ -150,4 +150,129 @@ namespace apache { namespace thrift { namespace server {
 		}
 	}
 
+	void TSimpleServer::websocketServer(boost::shared_ptr<TTransport>& outTransport){
+		shared_ptr<TTransport> client;
+		shared_ptr<TTransport> inputTransport;
+		shared_ptr<TTransport> outputTransport;
+		shared_ptr<TProtocol> inputProtocol;
+		shared_ptr<TProtocol> outputProtocol;
+
+		// Start the server listening
+		serverTransport_->listen();
+
+		// Run the preServe event
+		if (eventHandler_ != NULL) {
+			eventHandler_->preServe();
+		}
+
+		// Fetch client from server
+		while (!stop_) {
+			try {
+				client = serverTransport_->accept();
+				inputTransport = inputTransportFactory_->getTransport(client);
+				outTransport = outputTransport = outputTransportFactory_->getTransport(client);
+				inputProtocol = inputProtocolFactory_->getProtocol(inputTransport);
+				outputProtocol = outputProtocolFactory_->getProtocol(outputTransport);
+			}
+			catch (TTransportException& ttx) {
+				if (inputTransport != NULL) { inputTransport->close(); }
+				if (outputTransport != NULL) { outputTransport->close(); }
+				if (client != NULL) { client->close(); }
+				if (!stop_ || ttx.getType() != TTransportException::INTERRUPTED) {
+					string errStr = string("TServerTransport died on accept: ") + ttx.what();
+					GlobalOutput(errStr.c_str());
+				}
+				continue;
+			}
+			catch (TException& tx) {
+				if (inputTransport != NULL) { inputTransport->close(); }
+				if (outputTransport != NULL) { outputTransport->close(); }
+				if (client != NULL) { client->close(); }
+				string errStr = string("Some kind of accept exception: ") + tx.what();
+				GlobalOutput(errStr.c_str());
+				continue;
+			}
+			catch (string s) {
+				if (inputTransport != NULL) { inputTransport->close(); }
+				if (outputTransport != NULL) { outputTransport->close(); }
+				if (client != NULL) { client->close(); }
+				string errStr = string("Some kind of accept exception: ") + s;
+				GlobalOutput(errStr.c_str());
+				break;
+			}
+
+			// Get the processor
+			shared_ptr<TProcessor> processor = getProcessor(inputProtocol,
+				outputProtocol, client);
+
+			void* connectionContext = NULL;
+			if (eventHandler_ != NULL) {
+				connectionContext = eventHandler_->createContext(inputProtocol, outputProtocol);
+			}
+			try {
+				for (;;) {
+					if (eventHandler_ != NULL) {
+						eventHandler_->processContext(connectionContext, client);
+					}
+					if (!processor->process(inputProtocol, outputProtocol,
+						connectionContext) ||
+						// Peek ahead, is the remote side closed?
+						!inputProtocol->getTransport()->peek()) {
+						break;
+					}
+				}
+			}
+			catch (const TTransportException& ttx) {
+				string errStr = string("TSimpleServer client died: ") + ttx.what();
+				GlobalOutput(errStr.c_str());
+			}
+			catch (const std::exception& x) {
+				GlobalOutput.printf("TSimpleServer exception: %s: %s",
+					typeid(x).name(), x.what());
+			}
+			catch (...) {
+				GlobalOutput("TSimpleServer uncaught exception.");
+			}
+			if (eventHandler_ != NULL) {
+				eventHandler_->deleteContext(connectionContext, inputProtocol, outputProtocol);
+			}
+
+			try {
+				inputTransport->close();
+			}
+			catch (const TTransportException& ttx) {
+				string errStr = string("TSimpleServer input close failed: ")
+					+ ttx.what();
+				GlobalOutput(errStr.c_str());
+			}
+			try {
+				outputTransport->close();
+			}
+			catch (const TTransportException& ttx) {
+				string errStr = string("TSimpleServer output close failed: ")
+					+ ttx.what();
+				GlobalOutput(errStr.c_str());
+			}
+			try {
+				client->close();
+			}
+			catch (const TTransportException& ttx) {
+				string errStr = string("TSimpleServer client close failed: ")
+					+ ttx.what();
+				GlobalOutput(errStr.c_str());
+			}
+		}
+
+		if (stop_) {
+			try {
+				serverTransport_->close();
+			}
+			catch (TTransportException &ttx) {
+				string errStr = string("TServerTransport failed on close: ") + ttx.what();
+				GlobalOutput(errStr.c_str());
+			}
+			stop_ = false;
+		}
+	}
+
 }}} // apache::thrift::server

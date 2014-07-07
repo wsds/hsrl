@@ -60,6 +60,8 @@ void open::startHttpServer(int port){
 	server.serve();
 }
 
+shared_ptr<TTransport> outputTransport;
+
 void open::startWebsocketServer(int port){
 	TWinsockSingleton::create();
 
@@ -73,10 +75,13 @@ void open::startWebsocketServer(int port){
 	server.setServerEventHandler(boost::shared_ptr<TServerEventHandler>(new ShellClientHandler()));
 	processor->setEventHandler(boost::shared_ptr<TProcessorEventHandler>(new ShellProcessorHandler(server.getEventHandler())));
 
-	server.serve();
+	server.websocketServer(outputTransport);
 }
 
 void open::log(char* log){
-
+	outputTransport->write((uint8_t*)"[2,\"", 4);
+	outputTransport->write((uint8_t*)log, strlen(log));
+	outputTransport->write((uint8_t*)"\"]", 2);
+	outputTransport->flush();
 }
 

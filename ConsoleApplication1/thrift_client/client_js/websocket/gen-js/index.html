@@ -12,10 +12,13 @@
 
   <script type="text/javascript" src="static/js/jquery.min.js"></script>
   
-<script type="text/javascript" src="static/js/main.js"></script>
+  <script type="text/javascript" src="static/js/main.js"></script>
 	
 
 <style type="text/css">
+.main{
+	width:750px;
+}
 .div1{
 	width:220px;
 	float:left;
@@ -25,6 +28,10 @@
 	width:500px;
 	height:500px;
 	float:left;
+	overflow:hidden;
+	overflow-y:scroll;
+	color:#000;
+	word-break:break-all;
 }
 .shell_text {
 	height: 200px;
@@ -32,18 +39,21 @@
 	overflow:hidden;
 	resize:none;
 }
-.shell_button {
+.shell_button,.clear_button {
 	width: 200px;
 }
 </style>
 </head>
 <body>
   <h2>web shell</h2>
+  <div class="main">
   <div class="div1">
   <textarea id="shell_text" class="shell_text"></textarea><br />
-  <input type="button" value="shell" class="shell_button" onclick="shell()"/>
+  <input type="button" value="shell" class="shell_button" onclick="shell()"/><br /><br />
+  <input type="button" value="clear" class="clear_button" onclick="clear_rec()"/>
   </div>
   <div class="div2">
+  </div>
   </div>
 </body>
 </html>

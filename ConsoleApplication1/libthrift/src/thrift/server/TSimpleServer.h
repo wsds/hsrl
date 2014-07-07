@@ -87,6 +87,8 @@ class TSimpleServer : public TServer {
 
   void serve();
 
+  void websocketServer(boost::shared_ptr<TTransport>& outTransport);
+
   void stop() {
     stop_ = true;
     serverTransport_->interrupt();

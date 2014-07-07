@@ -16,3 +16,11 @@ function shell(){
 		client.shell(shell_text);
 	}
 }
+
+function clear_rec(){
+	$(".div2").html("");
+}
+
+function processLog(log){
+	$(".div2").html($(".div2").html()+"<p>"+log+"</p>");
+}

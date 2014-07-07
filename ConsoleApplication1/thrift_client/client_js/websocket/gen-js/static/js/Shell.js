@@ -96,7 +96,8 @@ ShellClient = function(input, output) {
 ShellClient.prototype = {};
 ShellClient.prototype.shell = function(query) {
   this.send_shell(query);
-  this.recv_shell();
+  //It is wrong to call it
+  //this.recv_shell();
 };
 
 ShellClient.prototype.send_shell = function(query) {
