@@ -7,11 +7,12 @@ log(   "hello swift!"   )
 var myVariable=123 
 	  
 
-func greet(i_shoppingList) {
+func greet1(i_shoppingList) {
 	var a=1
 	var b=2
 	log(a)
 	log(i_shoppingList)
+	log(myVariable)
 }
 
 greet(shoppingList)

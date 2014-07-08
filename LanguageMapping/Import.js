@@ -4,8 +4,7 @@
 /***************************************
 *Import
 ***************************************/
-import=
-[
+import=[
 	"log":function,
 	"http":instance,
 
@@ -16,7 +15,6 @@ import=
 		"add":function,
 		"sin":function
 	]
-
 ]
 
 
