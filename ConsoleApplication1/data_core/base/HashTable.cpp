@@ -296,6 +296,7 @@ int parseNubmerToString(int number, char * target){
 	for (int j = len - 1; j >= 0; j--){
 		target[len - j - 1] = buf[j];
 	}
+	target[len] = '\0';
 	return len;
 }
 

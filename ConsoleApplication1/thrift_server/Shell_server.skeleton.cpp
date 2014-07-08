@@ -79,9 +79,7 @@ void open::startWebsocketServer(int port){
 }
 
 void open::log(char* log){
-	outputTransport->write((uint8_t*)"[2,\"", 4);
 	outputTransport->write((uint8_t*)log, strlen(log));
-	outputTransport->write((uint8_t*)"\"]", 2);
 	outputTransport->flush();
 }
 

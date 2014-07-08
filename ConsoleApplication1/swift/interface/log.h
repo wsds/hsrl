@@ -4,6 +4,7 @@
 
 
 #include "../../data_core/data_core.h"
+#include "../../thrift_server/Thrift_server.h"
 
 #ifndef NULL
 #define NULL 0
