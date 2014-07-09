@@ -26,6 +26,7 @@ static char BLANK = ' ';
 static char SLASH = '/';
 
 static char COMMA = ',';
+static char SEMICOLON = ';';
 static char COLON = ':';
 
 static char LEFTSMALLBRACKET = '(';

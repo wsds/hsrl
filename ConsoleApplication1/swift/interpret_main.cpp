@@ -16,47 +16,19 @@ FunctionDefinition::FunctionDefinition(){
 	this->type = FUNCTIONDEFINITION;
 }
 
-void interpret_test_Simple_Value(){
-
-	char * json_str5 = "[123,567:[012,[\"hello\"],456,'''''',swift_main:[123,'123123'],123],567,,,,]";
-
-	JSON* json = parseJSON(json_str5);
-
-	log((JSObject*)json);
-
-	JSNumber * number = new JSNumber(888006);
-	log((JSObject*)number);
-
-	JSString * string = new JSString("hello swift");
-	log((JSObject*)string);
-
-
-	char* shoppingListStr = "[\"catfish\",\"water\",\"tulips\",\"blue paint\"]";
-	JSON* shoppingList = shoppingList = parseJSON(shoppingListStr);
-
-	JSString* valueStr1001 = new JSString("bottle of water");
-	shoppingList->replace((JSObject*)valueStr1001, 1);
-	log((JSObject*)shoppingList);
-
-	char* occupationsStr = "[123,\"Malcolm\":\"Captain\",\"Kaylee\":\"Mechanic\",456]";
-	JSON* occupations = parseJSON(occupationsStr);
-
-	JSString* valueStr1002 = new JSString("Public Relations");
-
-	char* keyStr = "Jayne";
-	occupations->set(keyStr, (JSObject*)valueStr1002);
-
-	JSString* valueStr1003 = new JSString("private Relations");
-	occupations->set(keyStr, (JSObject*)valueStr1003);
-
-	log((JSObject*)occupations);
-
+Condition::Condition(){
+	this->type = CONDITION;
 }
 
-void interpret_test(){
-	interpret_test_Simple_Value();
+IfBlock::IfBlock(){
+	this->type = IFBLOCK;
+	this->conditions_index = 0;
+	this->executable_index = 0;
+	this->else_executable_index = 0;
 
+	this->next = NULL;
 }
+
 Closure * rootClosure;
 Closure * currentClosure;
 int funtionLevel;
@@ -72,6 +44,12 @@ void interpret_main(){
 	currentClosure = rootClosure;
 }
 
+KeyWords::KeyWords(){
+	string_func = "func";
+
+
+
+}
 HashTable * keyWordMap;
 bool is_initialized = false;
 void initializeKeyWordMap(){
@@ -156,7 +134,9 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			break;
 		}
 	}
-
+	if (pre_blank + tail_blank == length){
+		return 0;
+	}
 
 	for (int i = pre_blank; i < length - tail_blank; i++){
 		localChar = from[i];
@@ -171,6 +151,20 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 				return elementCount;
 
 			}
+			else if (localChar == COMMA || localChar == SEMICOLON){
+
+				//resolve the left code
+				int elementCount = resolveElement(from, i, codeLine);
+
+				CodeElement * delimiter = new CodeElement();
+				codeLine->codeElements[codeLine->element_index] = delimiter;
+				codeLine->element_index++;
+				delimiter->type = DELIMITER;
+				//resolve the right code
+				elementCount = elementCount + 1 + resolveElement(from + i + 1, length - i - 1, codeLine);
+
+				return elementCount;
+			}
 			else if (localChar == SINGLEQUOTE){
 				resolveElementStatus = 311;
 			}
@@ -183,6 +177,37 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			}
 			else if (localChar == RIGHTBRACKET){
 				//report error
+			}
+			else if (localChar == LEFTSMALLBRACKET || localChar == RIGHTSMALLBRACKET || localChar == LEFTBIGBRACKET || localChar == RIGHTBIGBRACKET){
+				//resolve the left code
+				int elementCount = resolveElement(from, i, codeLine);
+
+				CodeElement * bracket = new CodeElement();
+				codeLine->codeElements[codeLine->element_index] = bracket;
+				bracket->code_operator = localChar;
+				codeLine->element_index++;
+				bracket->type = BRACKET;
+
+				//resolve the right code
+				elementCount = elementCount + 1 + resolveElement(from + i + 1, length - i - 1, codeLine);
+
+				return elementCount;
+
+			}
+			else if ((64 >= localChar && localChar >= 58) || (47 >= localChar && localChar >= 32) || localChar == 94 || localChar == 124){
+				//resolve the left code
+				int elementCount = resolveElement(from, i, codeLine);
+
+				CodeElement * code_operator = new CodeElement();
+				codeLine->codeElements[codeLine->element_index] = code_operator;
+				code_operator->code_operator = localChar;
+				codeLine->element_index++;
+				code_operator->type = CODEOPERATOR;
+
+				//resolve the right code
+				elementCount = elementCount + 1 + resolveElement(from + i + 1, length - i - 1, codeLine);
+
+				return elementCount;
 			}
 		}
 		else if (resolveElementStatus == 2){
@@ -433,8 +458,26 @@ void resolveFunctionCall(char* line){
 	}
 
 }
-void resolveCodeLine(char* line){
 
+void resolveOperators(CodeLine* codeLine){
+
+	for (int i = 0; i < codeLine->element_index - 1; i++){
+		if (codeLine->codeElements[i]->type == CODEOPERATOR&&codeLine->codeElements[i + 1]->type == CODEOPERATOR){
+			codeLine->codeElements[i]->code_operator2 = codeLine->codeElements[i + 1]->code_operator;
+			codeLine->codeElements[i + 1]->type = SKIP;
+		}
+	}
+
+}
+
+void resolveCodeLine(char* line){
+	//CodeLine* codeLine = new CodeLine();
+	//codeLine->element_index = 0;
+	//int string_length = strlen(line);
+
+	//int result = resolveElement(line, string_length, codeLine);
+
+	//resolveOperators(codeLine);
 	resolveAssignment(line);
 	resolveFunctionCall(line);
 }
@@ -482,8 +525,6 @@ void excute(FunctionCall * functionCall){
 			jsVariables = jsKeyValue->value;
 		}
 	}
-
-
 
 	JSKeyValue * jsFunctionKeyValue;
 	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName->variable_name);
