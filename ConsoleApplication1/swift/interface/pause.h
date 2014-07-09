@@ -4,6 +4,7 @@
 #include <thread>
 #include <condition_variable>
 #include "../../data_core/JSON.h"
+#include <iostream>
 
 void pause();
 void continueRun();

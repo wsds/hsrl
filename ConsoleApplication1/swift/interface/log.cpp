@@ -5,17 +5,24 @@ void log(JSObject* object){
 
 	if (object->type == JSSTRING){
 		std::cout << ((JSObject*)object)->char_string;
-		open::log(((JSObject*)object)->char_string);
+		open::logBuf("1.");
+		open::logBuf(((JSObject*)object)->char_string);
+		open::logBufFlush();
 	}
 	else if (object->type == JSNUMBER){
 		std::cout << ((JSObject*)object)->number;
 		char num[12];
 		parseNubmerToString(((JSObject*)object)->number,num);
-		open::log(num);
+		open::logBuf("1.");
+		open::logBuf(num);
+		open::logBufFlush();
 	}
 	else if (object->type == JSJSON){
-		std::cout << stringifyJSON((JSON*)object);
-		open::log(stringifyJSON((JSON*)object));
+		char* json_str = stringifyJSON((JSON*)object);
+		std::cout << json_str;
+		open::logBuf("1.");
+		open::logBuf(json_str);
+		open::logBufFlush();
 	}
 
 	std::cout << std::endl;

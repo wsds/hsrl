@@ -21,8 +21,19 @@ function clear_rec(){
 	$(".div2").html("");
 }
 
+function clear_variables(){
+	$(".div3").html("");
+}
+
+
 function processLog(log){
-	$(".div2").html($(".div2").html()+"<p>"+log+"</p>");
+	var type = log.substring(0,2);
+	var content = log.substring(2);
+	if(type=="1."){
+		$(".div2").html($(".div2").html()+"<p>"+content+"</p>");
+	}else if(type=="2."){
+		$(".div3").html($(".div3").html()+"<p>"+content+"</p>");
+	}
 }
 
 function continue_run(){

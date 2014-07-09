@@ -17,13 +17,23 @@
 
 <style type="text/css">
 .main{
-	width:750px;
+	width:1250px;
 }
 .div1{
 	width:220px;
 	float:left;
 }
 .div2{
+	background-color:#CCC;
+	width:500px;
+	height:500px;
+	float:left;
+	overflow:hidden;
+	overflow-y:scroll;
+	color:#000;
+	word-break:break-all;
+}
+.div3{
 	background-color:#CCC;
 	width:500px;
 	height:500px;
@@ -50,11 +60,14 @@
   <div class="div1">
   <textarea id="shell_text" class="shell_text"></textarea><br />
   <input type="button" value="shell" class="shell_button" onclick="shell()"/><br /><br />
-  <input type="button" value="show variables" class="clear_button" onclick="show_variables()"/><br /><br />
-  <input type="button" value="continue" class="clear_button" onclick="continue_run()"/><br /><br />
-  <input type="button" value="clear" class="clear_button" onclick="clear_rec()"/><br /><br />
+  <input type="button" value="clear" class="shell_button" onclick="clear_rec()"/><br /><br />
+  <input type="button" value="show variables" class="shell_button" onclick="show_variables()"/><br /><br />
+  <input type="button" value="clear variables" class="shell_button" onclick="clear_variables()"/><br /><br />
+  <input type="button" value="continue" class="shell_button" onclick="continue_run()"/><br /><br />
   </div>
   <div class="div2">
+  </div>
+  <div class="div3">
   </div>
   </div>
 </body>

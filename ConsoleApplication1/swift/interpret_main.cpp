@@ -623,13 +623,26 @@ void excute(Assignment * assignment){
 void getAllVariablesToString(){
 	Closure * current = currentClosure;
 	int currentLen = 0;
+	int i = 0;
 	while (current){
-		currentLen = currentClosure->variables->list->length;
+		currentLen = current->variables->list->length;
 		JSObject* object;
+		if (i == 0){
+			open::logBuf("2.");
+			open::logBuf("current closure->");
+			open::logBufFlush();
+		}
+		else{
+			open::logBuf("2.");
+			open::logBuf("parent->");
+			open::logBufFlush();
+		}
+		i++;
 		for (int i = 0; i < currentLen; i++){
-			object = currentClosure->variables->find(i);
+			object = current->variables->find(i);
 			JSObject* value = ((JSKeyValue*)object)->value;
 			if (value->type == JSSTRING){
+				open::logBuf("2.");
 				open::logBuf(((JSKeyValue*)object)->key);
 				open::logBuf("=");
 				open::logBuf(((JSObject*)value)->char_string);
@@ -638,6 +651,7 @@ void getAllVariablesToString(){
 			else if (value->type == JSNUMBER){
 				char num[12];
 				parseNubmerToString(((JSObject*)value)->number, num);
+				open::logBuf("2.");
 				open::logBuf(((JSKeyValue*)object)->key);
 				open::logBuf("=");
 				open::logBuf(num);
@@ -645,6 +659,7 @@ void getAllVariablesToString(){
 			}
 			else if (value->type == JSJSON){
 				char* jsonStr = stringifyJSON((JSON*)value);
+				open::logBuf("2.");
 				open::logBuf(((JSKeyValue*)object)->key);
 				open::logBuf("=");
 				open::logBuf(jsonStr);
