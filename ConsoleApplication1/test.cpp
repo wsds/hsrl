@@ -16,6 +16,9 @@
 #include "swift\interpret_main.h"
 #include "thrift_server\Thrift_server.h"
 
+#include "swift\interface\pause.h"
+#include <queue>
+
 //test base list
 void testMM(){
 	int size = 10;
@@ -322,25 +325,54 @@ void testShell(){
 	open::startWebsocketServer(port);
 }
 
+std::queue<char*> shells;
+std::mutex mutex;
+std::condition_variable condition_variable;
+
+const char* GETAllVARABLES = "GETALLVARABLES";
+const char* CONTINUERUN = "CONTINUERUN";
+
 void open::ShellHandler::shell(const std::string& query){
+	if (!strcmp(GETAllVARABLES, query.c_str())){
+		getAllVariablesToString();
+	}
+	else if (!strcmp(CONTINUERUN, query.c_str())){
+		continueRun();
+	}
+	else{
+		int len = query.length();
+		char* shell = new char[len + 1];
+		for (int i = 0; i < len; i++){
+			shell[i] = query[i];
+		}
+		shell[len] = STREND;
+		shells.push(shell);
 
+		condition_variable.notify_one();
+	}
+}
+
+void executeShell(){
+	std::unique_lock<std::mutex> ul(mutex);
+	while (shells.empty()){
+		condition_variable.wait(ul);
+	}
 	int from = 0;
-	char ENTER = '\r';
-	char BR = '\n';
-	line[0] = '\0';
+	line[0] = STREND;
 
-	const char* query_c = query.c_str();
+	char* query_c = shells.front();
+	shells.pop();
 
-	for (int i = 0;i>=0; i++){
+	for (int i = 0; i >= 0; i++){
 		if (i >= from && query_c[i] == ENTER && query_c[i + 1] == BR){
-			line[i - from] = '\0';
+			line[i - from] = STREND;
 			resolveLine(line);
 			lineNumberRead++;
 			from = i + 2;
 			continue;
 		}
 		else if (i >= from && query_c[i] == BR){
-			line[i - from] = '\0';
+			line[i - from] = STREND;
 			resolveLine(line);
 			lineNumberRead++;
 			from = i + 1;
@@ -348,7 +380,7 @@ void open::ShellHandler::shell(const std::string& query){
 		}
 
 		if (!query_c[i]){
-			line[i - from] = '\0';
+			line[i - from] = STREND;
 			resolveLine(line);
 			lineNumberRead++;
 			from = i + 1;
@@ -356,6 +388,15 @@ void open::ShellHandler::shell(const std::string& query){
 		}
 
 		line[i - from] = query_c[i];
+	}
+
+	delete(query_c);
+}
+
+void handleThread(){
+	std::cout << "handle thread is start" << std::endl;
+	while (true){
+		executeShell();
 	}
 }
 
@@ -370,6 +411,7 @@ void testEntry()
 	//test_file();
 
 	//interpret_test();
-
+	std::thread handle(handleThread);
 	testShell();
+	handle.join();
 }

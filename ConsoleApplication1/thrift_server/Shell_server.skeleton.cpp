@@ -78,8 +78,33 @@ void open::startWebsocketServer(int port){
 	server.websocketServer(outputTransport);
 }
 
+
 void open::log(char* log){
-	outputTransport->write((uint8_t*)log, strlen(log));
-	outputTransport->flush();
+	if (log != NULL){
+		outputTransport->write((uint8_t*)log, strlen(log));
+		outputTransport->flush();
+	}
 }
 
+void open::log(char* log, int len){
+	if (log != NULL){
+		outputTransport->write((uint8_t*)log, len);
+		outputTransport->flush();
+	}
+}
+
+void open::logBuf(char* log){
+	if (log != NULL){
+		outputTransport->write((uint8_t*)log, strlen(log));
+	}
+}
+
+void open::logBuf(char* log, int len){
+	if (log != NULL){
+		outputTransport->write((uint8_t*)log, len);
+	}
+}
+
+void open::logBufFlush(){
+	outputTransport->flush();
+}

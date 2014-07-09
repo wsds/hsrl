@@ -578,3 +578,38 @@ void excute(Assignment * assignment){
 		}
 	}
 }
+
+void getAllVariablesToString(){
+	Closure * current = currentClosure;
+	int currentLen = 0;
+	while (current){
+		currentLen = currentClosure->variables->list->length;
+		JSObject* object;
+		for (int i = 0; i < currentLen; i++){
+			object = currentClosure->variables->find(i);
+			JSObject* value = ((JSKeyValue*)object)->value;
+			if (value->type == JSSTRING){
+				open::logBuf(((JSKeyValue*)object)->key);
+				open::logBuf("=");
+				open::logBuf(((JSObject*)value)->char_string);
+				open::logBufFlush();
+			}
+			else if (value->type == JSNUMBER){
+				char num[12];
+				parseNubmerToString(((JSObject*)value)->number, num);
+				open::logBuf(((JSKeyValue*)object)->key);
+				open::logBuf("=");
+				open::logBuf(num);
+				open::logBufFlush();
+			}
+			else if (value->type == JSJSON){
+				char* jsonStr = stringifyJSON((JSON*)value);
+				open::logBuf(((JSKeyValue*)object)->key);
+				open::logBuf("=");
+				open::logBuf(jsonStr);
+				open::logBufFlush();
+			}
+		}
+		current = current->previous;
+	}
+}

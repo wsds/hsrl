@@ -24,3 +24,11 @@ function clear_rec(){
 function processLog(log){
 	$(".div2").html($(".div2").html()+"<p>"+log+"</p>");
 }
+
+function continue_run(){
+	client.shell("CONTINUERUN");
+}
+
+function show_variables(){
+	client.shell("GETALLVARABLES");
+}

@@ -132,6 +132,9 @@
     <ClInclude Include="thrift_server\Thrift_server.h">
       <Filter>头文件\thrift_server</Filter>
     </ClInclude>
+    <ClInclude Include="swift\interface\pause.h">
+      <Filter>头文件\swift\interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -202,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="thrift_server\Shell_server.skeleton.cpp">
       <Filter>源文件\thrift_server</Filter>
+    </ClCompile>
+    <ClCompile Include="swift\interface\pause.cpp">
+      <Filter>源文件\swift\interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

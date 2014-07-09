@@ -84,5 +84,7 @@ void excute(FunctionDefinition * functionDefinition);
 
 void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
+void getAllVariablesToString();
+
 #endif /* INTERPRETMAIN_H */
 

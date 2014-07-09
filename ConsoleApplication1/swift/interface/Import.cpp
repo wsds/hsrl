@@ -24,5 +24,6 @@ void Import::regiditFunctions(){
 
 	import->regedit("log", frame_log);
 	import->regedit("add", frame_add);
+	import->regedit("pause", frame_pause);
 }
 

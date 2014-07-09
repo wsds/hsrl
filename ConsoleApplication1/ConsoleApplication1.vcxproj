@@ -98,6 +98,7 @@
     <ClInclude Include="swift\interface\JSFunction.h" />
     <ClInclude Include="swift\interface\JSInstance.h" />
     <ClInclude Include="swift\interface\log.h" />
+    <ClInclude Include="swift\interface\pause.h" />
     <ClInclude Include="swift\interpret_main.h" />
     <ClInclude Include="swift\SimpleValues\Assign.h" />
     <ClInclude Include="targetver.h" />
@@ -124,6 +125,7 @@
     <ClCompile Include="swift\interface\JSFunction.cpp" />
     <ClCompile Include="swift\interface\JSInstance.cpp" />
     <ClCompile Include="swift\interface\log.cpp" />
+    <ClCompile Include="swift\interface\pause.cpp" />
     <ClCompile Include="swift\interpret_main.cpp" />
     <ClCompile Include="swift\SimpleValues\Assign.cpp" />
     <ClCompile Include="test.cpp" />

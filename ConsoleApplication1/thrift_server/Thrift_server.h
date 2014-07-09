@@ -14,7 +14,11 @@ namespace open{
 
 	void startWebsocketServer(int port);
 
-	void log(char*);
+	void log(char* log);
+	void log(char* log, int len);
+	void logBuf(char* log);
+	void logBuf(char* log, int len);
+	void logBufFlush();
 
 	class ShellHandler : virtual public ShellIf {
 	public:

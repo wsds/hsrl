@@ -5,6 +5,8 @@
 //functions and classes that will be imported to swift context, goes here.
 #include "log.h"
 
+#include "pause.h"
+
 //
 
 #include "../../data_core/data_core.h"
