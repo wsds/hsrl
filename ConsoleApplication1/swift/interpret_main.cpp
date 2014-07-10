@@ -3,6 +3,21 @@
 #include "FunctionsClosures\Closure.h"
 
 
+MetaExecutable::MetaExecutable(){
+	this->type = META;
+}
+
+Expression::Expression(){
+	this->type = EXPRESSION;
+
+	this->executable_index = 0;
+	this->code_operator_index = 0;
+}
+FunctionCall1::FunctionCall1(){
+	this->type = FUNCTIONCALL;
+	this->variable_index = 0;
+}
+
 Assignment::Assignment(){
 	this->type = ASSIGNMENT;
 }
@@ -14,6 +29,12 @@ FunctionCall::FunctionCall(){
 FunctionDefinition::FunctionDefinition(){
 	this->executable_index = 0;
 	this->type = FUNCTIONDEFINITION;
+}
+
+ExecutableBlock::ExecutableBlock(){
+	this->isHolded = false;
+	this->executable_index = 0;
+	this->type = EXCUTEABLEBLOCK;
 }
 
 Condition::Condition(){
@@ -29,66 +50,86 @@ IfBlock::IfBlock(){
 	this->next = NULL;
 }
 
+KeyWords * keyWords;
 Closure * rootClosure;
 Closure * currentClosure;
 int funtionLevel;
 FunctionDefinition * currentFunctionDefinition;
 
+ExecutableBlock * currentExecutableBlock;
+
 void interpret_main(){
 	funtionLevel = 0;
 	currentFunctionDefinition = NULL;
+	keyWords = KeyWords::getInstance();
 
 	Import* import = Import::getInstance();
 	import->regiditFunctions();
 	rootClosure = import->rootClosure;
 	currentClosure = rootClosure;
 }
-
+KeyWords * KeyWords::instance = NULL;
 KeyWords::KeyWords(){
-	string_func = "func";
 
+	this->keyWordMap = new HashTable();
+	this->keyWordMap->initialize();
+
+	this->string_var = "var";
+
+	this->string_if = "if";
+	this->string_else = "else";
+
+	this->string_for = "for";
+	this->string_in = "in";
+	this->string_while = "while";
+	this->string_do = "do";
+
+
+	this->string_func = "func";
+	this->string_return = "return";
+
+	this->string_class = "class";
+	this->string_instance = "instance";
+	this->string_this = "this";
+	this->string_self = "self";
 
 
 }
-HashTable * keyWordMap;
 bool is_initialized = false;
-void initializeKeyWordMap(){
+void initializeKeyWordMap(KeyWords * keyWords){
+
+	HashTable * keyWordMap = keyWords->keyWordMap;
 
 	JSNumber * number1 = new JSNumber();
 	JSObject* number = (JSObject*)number1;
 	number->number = 888006;
 
+	keyWordMap->set(keyWords->string_var, number);
 
-	keyWordMap = new HashTable();
-	keyWordMap->initialize();
+	keyWordMap->set(keyWords->string_if, number);
+	keyWordMap->set(keyWords->string_else, number);
 
+	keyWordMap->set(keyWords->string_for, number);
+	keyWordMap->set(keyWords->string_in, number);
 
-	keyWordMap->set("var", number);
+	keyWordMap->set(keyWords->string_while, number);
+	keyWordMap->set(keyWords->string_do, number);
 
-	keyWordMap->set("if", number);
-	keyWordMap->set("else", number);
+	keyWordMap->set(keyWords->string_func, number);
+	keyWordMap->set(keyWords->string_return, number);
 
-	keyWordMap->set("for", number);
-	keyWordMap->set("in", number);
-
-	keyWordMap->set("while", number);
-	keyWordMap->set("do", number);
-
-	keyWordMap->set("func", number);
-	keyWordMap->set("return", number);
-
-	keyWordMap->set("class", number);
-	keyWordMap->set("instance", number);
-	keyWordMap->set("this", number);
-	keyWordMap->set("self", number);
+	keyWordMap->set(keyWords->string_class, number);
+	keyWordMap->set(keyWords->string_instance, number);
+	keyWordMap->set(keyWords->string_this, number);
+	keyWordMap->set(keyWords->string_self, number);
 	is_initialized = true;
 }
 
 bool isKeyWord(char* name){
 	if (!is_initialized){
-		initializeKeyWordMap();
+		initializeKeyWordMap(keyWords);
 	}
-	JSObject* number = keyWordMap->get(name);
+	JSObject* number = keyWords->keyWordMap->get(name);
 	if (number == NULL){
 		return false;
 	}
@@ -96,6 +137,7 @@ bool isKeyWord(char* name){
 		return true;
 	}
 }
+
 int BRACKET_element_counter = 0;
 int SINGLEQUOTE_element_counter = 0;
 int DOUBLEQUOTES_element_counter = 0;
@@ -157,6 +199,7 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 				int elementCount = resolveElement(from, i, codeLine);
 
 				CodeElement * delimiter = new CodeElement();
+				delimiter->isResolvedDelimiter = false;
 				codeLine->codeElements[codeLine->element_index] = delimiter;
 				codeLine->element_index++;
 				delimiter->type = DELIMITER;
@@ -184,7 +227,7 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 
 				CodeElement * bracket = new CodeElement();
 				codeLine->codeElements[codeLine->element_index] = bracket;
-				bracket->code_operator = localChar;
+				bracket->bracket = localChar;
 				codeLine->element_index++;
 				bracket->type = BRACKET;
 
@@ -296,8 +339,178 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 	return 1;
 }
 
-char* string_var = "var";
-char* string_func = "func";
+Expression*  analyzeExpression(CodeLine * codeLine, int from, int end){
+	Expression * expression;
+
+
+	return NULL;
+
+}
+
+Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
+	Executable* executable = NULL;
+	CodeElement* codeElement = NULL;
+	Expression* expressionDEBUG;
+
+	int skipToIndex = -1;
+	for (int i = from; i < end; i++){
+		if (i < skipToIndex){
+			continue;
+		}
+		codeElement = codeLine->codeElements[i];
+		if (codeElement->type == KEYWORD){
+
+			if (0 == strcmp(keyWords->string_func, codeElement->keyword)){
+
+			}
+			else if (0 == strcmp(keyWords->string_class, codeElement->keyword)){
+
+			}
+			else if (0 == strcmp(keyWords->string_instance, codeElement->keyword)){
+
+			}
+		}
+		else if (codeElement->type == BRACKET){
+
+			if (codeElement->bracket == LEFTSMALLBRACKET){
+				skipToIndex = codeElement->nextBracketIndex;
+			}
+			else if (codeElement->bracket == RIGHTSMALLBRACKET){
+				CodeElement * preBracket = codeLine->codeElements[codeElement->preBracketIndex];
+				if (codeElement->preBracketIndex - 1 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME){
+					FunctionCall1 * functionCall = new FunctionCall1();
+					//executable = functionCall;
+
+					functionCall->functionName = codeLine->codeElements[i - 1];
+					int lastDelimiterindex = preBracket->preBracketIndex + 1;
+					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
+						CodeElement * innerElement = codeLine->codeElements[ii];
+						if (codeElement->type == DELIMITER&&codeElement->isResolvedDelimiter == false){
+
+							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
+							functionCall->variables[functionCall->variable_index] = innerExecutable;
+							functionCall->variable_index++;
+
+							lastDelimiterindex = ii + 1;
+							codeElement->isResolvedDelimiter = true;
+						}
+						else if (ii == preBracket->nextBracketIndex - 1){
+							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii + 1);
+							functionCall->variables[functionCall->variable_index] = innerExecutable;
+							functionCall->variable_index++;
+						}
+					}
+
+					if (executable == NULL){
+						executable = new Expression();
+						expressionDEBUG = (Expression*)executable;
+					}
+					else if (executable->type != EXPRESSION){
+						//report error
+					}
+
+					Expression* expression = (Expression*)executable;
+
+					expression->executable[expression->executable_index] = functionCall;
+					expression->executable_index++;
+
+				}
+				else{
+
+
+					ExecutableBlock * executableBlock = new ExecutableBlock();
+					//executable = executableBlock;
+
+					int lastDelimiterindex = preBracket->preBracketIndex + 1;
+					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
+						CodeElement * innerElement = codeLine->codeElements[ii];
+						if (codeElement->type == DELIMITER&&codeElement->isResolvedDelimiter == false){
+
+							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
+							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
+							executableBlock->executable_index++;
+
+							lastDelimiterindex = ii + 1;
+							codeElement->isResolvedDelimiter = true;
+						}
+						else if (ii == preBracket->nextBracketIndex - 1){
+							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii + 1);
+							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
+							executableBlock->executable_index++;
+						}
+					}
+
+					if (executable == NULL){
+						executable = new Expression();
+						expressionDEBUG = (Expression*)executable;
+					}
+					else if (executable->type != EXPRESSION){
+						//report error
+					}
+
+					Expression* expression = (Expression*)executable;
+
+					expression->executable[expression->executable_index] = executableBlock;
+					expression->executable_index++;
+
+				}
+
+			}
+
+		}
+
+
+		else if (codeElement->type == CODEOPERATOR){
+			if (executable == NULL){
+				executable = new Expression();
+				expressionDEBUG = (Expression*)executable;
+			}
+			else if (executable->type != EXPRESSION){
+				//report error
+			}
+
+			Expression* expression = (Expression*)executable;
+
+			Operator * code_operator = new Operator();
+			code_operator->code_operator = codeElement->code_operator;
+			code_operator->code_operator2 = codeElement->code_operator2;
+
+			expression->code_operator[expression->code_operator_index] = code_operator;
+			expression->code_operator_index++;
+
+
+			//Executable* innerExecutable = analyzeCodeLine(codeLine, i-1, i);
+
+		}
+
+		else if (codeElement->type == NAME || codeElement->type == CODE_NUMBER ||
+			codeElement->type == CODE_STRING || codeElement->type == CODE_JSON){
+			if (i + 1 < end && codeLine->codeElements[i + 1]->type == BRACKET){
+				continue;
+			}
+			if (executable == NULL){
+				executable = new Expression();
+				expressionDEBUG = (Expression*)executable;
+			}
+			else if (executable->type != EXPRESSION){
+				//report error
+			}
+
+			Expression* expression = (Expression*)executable;
+
+			MetaExecutable * metaExecutable = new MetaExecutable();
+			metaExecutable->codeElement = codeElement;
+			expression->executable[expression->executable_index] = metaExecutable;
+			expression->executable_index++;
+		}
+
+	}
+
+	expressionDEBUG = (Expression*)executable;
+	return executable;
+
+}
+
 void resolveAssignment(char* line){
 
 	CodeLine* codeLine = new CodeLine();
@@ -326,7 +539,7 @@ void resolveAssignment(char* line){
 				if (codeLine->codeElements[i]->type == NAME){
 					assignment->left = codeLine->codeElements[i];
 				}
-				else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(string_var, codeLine->codeElements[i]->keyword)){
+				else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(keyWords->string_var, codeLine->codeElements[i]->keyword)){
 					assignment->isNew = true;
 				}
 			}
@@ -412,7 +625,7 @@ void resolveFunctionCall(char* line){
 			if (codeLine->codeElements[i]->type == NAME){
 				functionCall->functionName = codeLine->codeElements[i];
 			}
-			else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(string_func, codeLine->codeElements[i]->keyword)){
+			else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(keyWords->string_func, codeLine->codeElements[i]->keyword)){
 			}
 		}
 
@@ -470,16 +683,70 @@ void resolveOperators(CodeLine* codeLine){
 
 }
 
+void resolveBracket(CodeLine* codeLine){
+	ExecutableBlock* executableBlock;
+	int index_LEFTSMALLBRACKET = 0;
+	int index_RIGHTSMALLBRACKET = 0;
+
+	CodeElement * codeElement;
+
+	CodeElement * smallBrackets[5];
+	int smallBracketsStackTop = 0;
+
+	for (int ii = 0; ii < codeLine->element_index; ii++){
+		codeElement = codeLine->codeElements[ii];
+		if (codeElement->type != BRACKET){
+			continue;
+		}
+		if (codeElement->bracket == LEFTSMALLBRACKET){
+			smallBrackets[smallBracketsStackTop] = codeElement;
+			codeElement->preBracketIndex = ii;
+			smallBracketsStackTop++;
+		}
+		else if (codeElement->bracket == RIGHTSMALLBRACKET){
+			codeElement->preBracketIndex = smallBrackets[smallBracketsStackTop - 1]->preBracketIndex;
+			codeElement->nextBracketIndex = ii;
+			smallBrackets[smallBracketsStackTop - 1]->nextBracketIndex = ii;
+
+			smallBracketsStackTop--;
+			if (smallBracketsStackTop < 0){
+				break;
+				//report error
+			}
+		}//todo many bracket
+		else if (codeElement->bracket == LEFTBIGBRACKET){
+			funtionLevel++;
+			executableBlock = new ExecutableBlock();
+			currentExecutableBlock = executableBlock;
+		}
+		else if (codeElement->bracket == RIGHTBIGBRACKET){
+			funtionLevel--;
+			if (funtionLevel == 0){
+				currentExecutableBlock = NULL;
+			}
+			else if (funtionLevel < 0){
+				break;
+				//report error
+			}
+		}
+	}
+
+}
+
 void resolveCodeLine(char* line){
-	//CodeLine* codeLine = new CodeLine();
-	//codeLine->element_index = 0;
-	//int string_length = strlen(line);
+	CodeLine* codeLine = new CodeLine();
+	codeLine->element_index = 0;
+	int string_length = strlen(line);
 
-	//int result = resolveElement(line, string_length, codeLine);
+	int result = resolveElement(line, string_length, codeLine);
 
-	//resolveOperators(codeLine);
-	resolveAssignment(line);
-	resolveFunctionCall(line);
+	resolveOperators(codeLine);
+	resolveBracket(codeLine);
+
+	analyzeCodeLine(codeLine, 0, codeLine->element_index);
+
+	//resolveAssignment(line);
+	//resolveFunctionCall(line);
 }
 
 

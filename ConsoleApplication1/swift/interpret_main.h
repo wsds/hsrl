@@ -13,9 +13,37 @@ void interpret_main();
 
 class KeyWords{
 public:
-	KeyWords();
-	char* string_func;
 
+	static KeyWords *instance;
+
+	static KeyWords * getInstance()
+	{
+		if (instance == NULL) {
+			instance = new KeyWords();
+		}
+		return instance;
+	}
+
+	KeyWords();
+	char* string_var;
+	char* string_func;
+	char* string_if;
+	char* string_else;
+
+	char* string_for;
+	char* string_in;
+	char* string_while;
+	char* string_do;
+
+
+	char* string_return;
+
+	char* string_class;
+	char* string_instance;
+	char* string_this;
+	char* string_self;
+
+	HashTable * keyWordMap;
 
 };
 
@@ -42,6 +70,13 @@ public:
 	char * jsonstr;
 
 	int index;
+
+	char bracket;
+	int nextBracketIndex;
+	int preBracketIndex;
+
+	//char * delimiter;
+	bool isResolvedDelimiter;
 };
 
 
@@ -51,7 +86,7 @@ public:
 	CodeElement* codeElements[20];
 	int element_index;
 };
-
+#define META 0
 #define ASSIGNMENT 1
 #define FUNCTIONCALL 2
 #define FUNCTIONDEFINITION 3
@@ -59,9 +94,40 @@ public:
 #define CONDITION 4
 #define IFBLOCK 5
 
+#define EXPRESSION 9
+#define EXCUTEABLEBLOCK 10
+
 class Executable{
 public:
 	int type;
+};
+
+class MetaExecutable : public Executable{
+public:
+	MetaExecutable();
+	CodeElement* codeElement;
+};
+
+class Operator{
+public:
+	char code_operator;
+	char code_operator2;
+};
+class Expression : public Executable{
+public:
+	Expression();
+	Executable* executable[10];
+	int executable_index;
+	Operator * code_operator[10];
+	int code_operator_index;
+};
+
+class FunctionCall1 : public Executable{
+public:
+	FunctionCall1();
+	CodeElement* functionName;
+	Executable* variables[5];
+	int variable_index;
 };
 
 class Assignment : public Executable{
@@ -91,6 +157,16 @@ public:
 	int executable_index;
 };
 
+class ExecutableBlock : public Executable{
+public:
+	ExecutableBlock();
+
+	bool isHolded;
+
+	Executable* executables[10];
+	int executable_index;
+};
+
 
 class Condition : public Executable{
 public:
@@ -103,7 +179,7 @@ public:
 class IfBlock : public Executable{
 public:
 	IfBlock();
-	Condition * conditions[5]; 
+	Condition * conditions[5];
 	int conditions_index;
 
 	Executable * executables[10];
