@@ -17,7 +17,9 @@ FunctionCall1::FunctionCall1(){
 	this->type = FUNCTIONCALL;
 	this->variable_index = 0;
 }
-
+FunctionDefinition1::FunctionDefinition1(){
+	this->type = FUNCTIONDEFINITION;
+}
 Assignment::Assignment(){
 	this->type = ASSIGNMENT;
 }
@@ -352,6 +354,9 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 	CodeElement* codeElement = NULL;
 	Expression* expressionDEBUG;
 
+	FunctionCall1 * functionCall = NULL;
+	FunctionDefinition1 * functionDefinition = NULL;
+
 	int skipToIndex = -1;
 	for (int i = from; i < end; i++){
 		if (i < skipToIndex){
@@ -362,6 +367,18 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 
 			if (0 == strcmp(keyWords->string_func, codeElement->keyword)){
 
+				functionDefinition = new FunctionDefinition1();
+				executable = functionDefinition;
+				if (currentExecutableBlock->isHolded == false){
+					functionDefinition->executableBlock = currentExecutableBlock;
+					currentExecutableBlock->isHolded = false;
+					if (i + 1 < end && codeLine->codeElements[i + 1]->type == NAME){
+						functionDefinition->functionName = codeLine->codeElements[i + 1]->variable_name;
+					}
+				}
+				else{
+					//report error
+				}
 			}
 			else if (0 == strcmp(keyWords->string_class, codeElement->keyword)){
 
@@ -378,10 +395,10 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			else if (codeElement->bracket == RIGHTSMALLBRACKET){
 				CodeElement * preBracket = codeLine->codeElements[codeElement->preBracketIndex];
 				if (codeElement->preBracketIndex - 1 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME){
-					FunctionCall1 * functionCall = new FunctionCall1();
+					functionCall = new FunctionCall1();
 					//executable = functionCall;
 
-					functionCall->functionName = codeLine->codeElements[i - 1];
+					functionCall->functionName = codeLine->codeElements[i - 1]->variable_name;
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
 					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
 						CodeElement * innerElement = codeLine->codeElements[ii];
@@ -504,6 +521,15 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			expression->executable_index++;
 		}
 
+	}
+	if (functionDefinition != NULL){
+		if (0 != strcmp(functionCall->functionName, functionDefinition->functionName)){
+			//report error;
+		}
+		for (int i = 0; i < functionCall->variable_index; i++){
+			functionDefinition->variables[i] = functionCall->variables[i];
+		}
+		executable = functionDefinition;
 	}
 
 	expressionDEBUG = (Expression*)executable;
@@ -743,13 +769,92 @@ void resolveCodeLine(char* line){
 	resolveOperators(codeLine);
 	resolveBracket(codeLine);
 
-	analyzeCodeLine(codeLine, 0, codeLine->element_index);
-
+	Executable * executable = analyzeCodeLine(codeLine, 0, codeLine->element_index);
+	excute(executable);
 	//resolveAssignment(line);
 	//resolveFunctionCall(line);
 }
 
 
+
+
+
+class DEBUGExecutable{
+public:
+	MetaExecutable* metaExecutable;
+	Expression* expression;
+	FunctionCall1* functionCall;
+	FunctionDefinition1* functionDefinition;
+	ExecutableBlock* executableBlock;
+
+	DEBUGExecutable * children[10];
+	int children_index;
+};
+
+
+DEBUGExecutable * debugExecutable(Executable * executable){
+
+	DEBUGExecutable * iDEBUGExecutable = new DEBUGExecutable();
+
+	if (executable->type == EXPRESSION){
+		iDEBUGExecutable->expression = (Expression*)executable;
+		for (int i = 0; i < iDEBUGExecutable->expression->executable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->expression->executable[i]);
+			iDEBUGExecutable->children_index++;
+		}
+	}
+	else if (executable->type == FUNCTIONCALL){
+		iDEBUGExecutable->functionCall = (FunctionCall1*)executable;
+		for (int i = 0; i < iDEBUGExecutable->functionCall->variable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->functionCall->variables[i]);
+			iDEBUGExecutable->children_index++;
+		}
+	}
+	else if (executable->type == FUNCTIONDEFINITION){
+		iDEBUGExecutable->functionDefinition = (FunctionDefinition1*)executable;
+		for (int i = 0; i < iDEBUGExecutable->functionDefinition->variable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->functionDefinition->variables[i]);
+			iDEBUGExecutable->children_index++;
+		}
+		iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->functionDefinition->executableBlock);
+	}
+	else if (executable->type == EXCUTEABLEBLOCK){
+		iDEBUGExecutable->executableBlock = (ExecutableBlock*)executable;
+		for (int i = 0; i < iDEBUGExecutable->executableBlock->executable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->executableBlock->executables[i]);
+			iDEBUGExecutable->children_index++;
+		}
+	}
+	else if (executable->type == META){
+		iDEBUGExecutable->metaExecutable = (MetaExecutable*)executable;
+	}
+
+	return iDEBUGExecutable;
+
+}
+void excute(Executable * executable){//runtime polymorphism
+	if (executable->type == EXPRESSION){
+		excute((Expression*)executable);
+	}
+	else if (executable->type == FUNCTIONCALL){
+		excute((FunctionCall*)executable);
+	}
+	else if (executable->type == FUNCTIONDEFINITION){
+		excute((FunctionDefinition*)executable);
+	}
+	else if (executable->type == EXCUTEABLEBLOCK){
+		excute((ExecutableBlock*)executable);
+	}
+}
+
+
+void excute(ExecutableBlock * executableBlock){
+
+}
+
+void excute(Expression * expression){
+
+}
 void excute(FunctionDefinition * functionDefinition){
 	JSFunction * jsFunction = new JSFunction();
 	jsFunction->function_name = functionDefinition->functionName->variable_name;

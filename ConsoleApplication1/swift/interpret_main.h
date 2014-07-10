@@ -101,7 +101,15 @@ class Executable{
 public:
 	int type;
 };
+class ExecutableBlock : public Executable{
+public:
+	ExecutableBlock();
 
+	bool isHolded;
+
+	Executable* executables[10];
+	int executable_index;
+};
 class MetaExecutable : public Executable{
 public:
 	MetaExecutable();
@@ -125,9 +133,18 @@ public:
 class FunctionCall1 : public Executable{
 public:
 	FunctionCall1();
-	CodeElement* functionName;
+	char* functionName;
 	Executable* variables[5];
 	int variable_index;
+};
+class FunctionDefinition1 : public Executable{
+public:
+	FunctionDefinition1();
+	char* functionName;
+	Executable* variables[5];
+	int variable_index;
+
+	ExecutableBlock* executableBlock;
 };
 
 class Assignment : public Executable{
@@ -147,6 +164,8 @@ public:
 	CodeElement* variables;
 };
 
+
+
 class FunctionDefinition : public Executable{
 public:
 	FunctionDefinition();
@@ -157,15 +176,7 @@ public:
 	int executable_index;
 };
 
-class ExecutableBlock : public Executable{
-public:
-	ExecutableBlock();
 
-	bool isHolded;
-
-	Executable* executables[10];
-	int executable_index;
-};
 
 
 class Condition : public Executable{
@@ -223,6 +234,12 @@ public:
 
 void interpret_main();
 void resolveCodeLine(char* line);
+
+void excute(Executable * executable);
+void excute(ExecutableBlock * executableBlock);
+
+void excute(Expression * expression);
+
 void excute(Assignment * assignment);
 void excute(FunctionCall * functionCall);
 void excute(FunctionDefinition * functionDefinition);
