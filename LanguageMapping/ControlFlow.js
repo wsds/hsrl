@@ -74,7 +74,7 @@ var interestingNumbers = [
     "Square": [1, 4, 9, 16, 25],
 ]
 var largest = 0
-for (kind, numbers) in interestingNumbers {
+for (kind, numbers) in interestingNumbers.b.c(asda) {
     for number in numbers {
         if number > largest {
             largest = number

@@ -52,6 +52,11 @@ IfBlock::IfBlock(){
 	this->next = NULL;
 }
 
+ForInBlock::ForInBlock(){
+	this->type = FORINBLOCK;
+	this->executable_index = 0;
+}
+
 KeyWords * keyWords;
 Closure * rootClosure;
 Closure * currentClosure;
@@ -69,6 +74,8 @@ void interpret_main(){
 	import->regiditFunctions();
 	rootClosure = import->rootClosure;
 	currentClosure = rootClosure;
+
+	currentExecutableBlock = new ExecutableBlock();
 }
 KeyWords * KeyWords::instance = NULL;
 KeyWords::KeyWords(){
@@ -341,13 +348,6 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 	return 1;
 }
 
-Expression*  analyzeExpression(CodeLine * codeLine, int from, int end){
-	Expression * expression;
-
-
-	return NULL;
-
-}
 
 Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 	Executable* executable = NULL;
@@ -356,6 +356,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 
 	FunctionCall1 * functionCall = NULL;
 	FunctionDefinition1 * functionDefinition = NULL;
+	ForInBlock * forInBlock = NULL;
 
 	int skipToIndex = -1;
 	for (int i = from; i < end; i++){
@@ -368,7 +369,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			if (0 == strcmp(keyWords->string_func, codeElement->keyword)){
 
 				functionDefinition = new FunctionDefinition1();
-				executable = functionDefinition;
+				//executable = functionDefinition;
 				if (currentExecutableBlock->isHolded == false){
 					functionDefinition->executableBlock = currentExecutableBlock;
 					currentExecutableBlock->isHolded = false;
@@ -386,6 +387,20 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			else if (0 == strcmp(keyWords->string_instance, codeElement->keyword)){
 
 			}
+			else if (0 == strcmp(keyWords->string_for, codeElement->keyword)){
+				bool isForIn = false;
+				for (int ii = i + 1; ii < end; ii++){
+					CodeElement * innerElement = codeLine->codeElements[ii];
+					if (innerElement->type == KEYWORD && 0 == strcmp(keyWords->string_in, innerElement->keyword)){
+						isForIn = true;
+					}
+				}
+
+				if (isForIn == true){
+					forInBlock = new ForInBlock();
+				}
+
+			}
 		}
 		else if (codeElement->type == BRACKET){
 
@@ -398,18 +413,18 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					functionCall = new FunctionCall1();
 					//executable = functionCall;
 
-					functionCall->functionName = codeLine->codeElements[i - 1]->variable_name;
+					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
 					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
 						CodeElement * innerElement = codeLine->codeElements[ii];
-						if (codeElement->type == DELIMITER&&codeElement->isResolvedDelimiter == false){
+						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
 
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
 							functionCall->variables[functionCall->variable_index] = innerExecutable;
 							functionCall->variable_index++;
 
 							lastDelimiterindex = ii + 1;
-							codeElement->isResolvedDelimiter = true;
+							innerElement->isResolvedDelimiter = true;
 						}
 						else if (ii == preBracket->nextBracketIndex - 1){
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii + 1);
@@ -441,14 +456,14 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
 					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
 						CodeElement * innerElement = codeLine->codeElements[ii];
-						if (codeElement->type == DELIMITER&&codeElement->isResolvedDelimiter == false){
+						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
 
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
 							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
 							executableBlock->executable_index++;
 
 							lastDelimiterindex = ii + 1;
-							codeElement->isResolvedDelimiter = true;
+							innerElement->isResolvedDelimiter = true;
 						}
 						else if (ii == preBracket->nextBracketIndex - 1){
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii + 1);
@@ -503,25 +518,36 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		else if (codeElement->type == NAME || codeElement->type == CODE_NUMBER ||
 			codeElement->type == CODE_STRING || codeElement->type == CODE_JSON){
 			if (i + 1 < end && codeLine->codeElements[i + 1]->type == BRACKET){
-				continue;
+				if (codeLine->codeElements[i + 1]->bracket == LEFTSMALLBRACKET){
+					continue;
+				}
 			}
-			if (executable == NULL){
-				executable = new Expression();
-				expressionDEBUG = (Expression*)executable;
-			}
-			else if (executable->type != EXPRESSION){
-				//report error
-			}
-
-			Expression* expression = (Expression*)executable;
 
 			MetaExecutable * metaExecutable = new MetaExecutable();
-			metaExecutable->codeElement = codeElement;
-			expression->executable[expression->executable_index] = metaExecutable;
-			expression->executable_index++;
-		}
 
+			metaExecutable->codeElement = codeElement;
+
+			if (end - from <= 1){
+				executable = metaExecutable;
+			}
+			else{
+				if (executable == NULL){
+					executable = new Expression();
+					expressionDEBUG = (Expression*)executable;
+				}
+				else if (executable->type != EXPRESSION){
+					//report error
+				}
+
+				Expression* expression = (Expression*)executable;
+
+
+				expression->executable[expression->executable_index] = metaExecutable;
+				expression->executable_index++;
+			}
+		}
 	}
+
 	if (functionDefinition != NULL){
 		if (0 != strcmp(functionCall->functionName, functionDefinition->functionName)){
 			//report error;
@@ -529,7 +555,30 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		for (int i = 0; i < functionCall->variable_index; i++){
 			functionDefinition->variables[i] = functionCall->variables[i];
 		}
+		functionDefinition->variable_index = functionCall->variable_index;
 		executable = functionDefinition;
+	}
+	else if (forInBlock != NULL){
+		Expression* expression = (Expression*)executable;
+		if (expression->executable_index == 2){
+			if (expression->executable[0]->type == EXCUTEABLEBLOCK){
+				ExecutableBlock* executableBlock = (ExecutableBlock*)expression->executable[0];
+				if (executableBlock->executable_index == 2){
+					MetaExecutable* keyNameExecutable = (MetaExecutable*)executableBlock->executables[0];
+					MetaExecutable* valueNameExecutable = (MetaExecutable*)executableBlock->executables[1];
+
+					forInBlock->keyName = keyNameExecutable->codeElement;
+					forInBlock->valueName = valueNameExecutable->codeElement;
+				}
+			}
+			if (expression->executable[1]->type == META){
+				MetaExecutable* iteratorNameExecutable = (MetaExecutable*)expression->executable[1];
+				forInBlock->iteratorName = iteratorNameExecutable->codeElement;
+			}
+		}
+		DEBUGExecutable * iDEBUGExecutable = debugExecutable(expression);
+		executable = forInBlock;
+		int i = 1 + 1;
 	}
 
 	expressionDEBUG = (Expression*)executable;
@@ -759,37 +808,11 @@ void resolveBracket(CodeLine* codeLine){
 
 }
 
-void resolveCodeLine(char* line){
-	CodeLine* codeLine = new CodeLine();
-	codeLine->element_index = 0;
-	int string_length = strlen(line);
-
-	int result = resolveElement(line, string_length, codeLine);
-
-	resolveOperators(codeLine);
-	resolveBracket(codeLine);
-
-	Executable * executable = analyzeCodeLine(codeLine, 0, codeLine->element_index);
-	excute(executable);
-	//resolveAssignment(line);
-	//resolveFunctionCall(line);
-}
 
 
 
 
 
-class DEBUGExecutable{
-public:
-	MetaExecutable* metaExecutable;
-	Expression* expression;
-	FunctionCall1* functionCall;
-	FunctionDefinition1* functionDefinition;
-	ExecutableBlock* executableBlock;
-
-	DEBUGExecutable * children[10];
-	int children_index;
-};
 
 
 DEBUGExecutable * debugExecutable(Executable * executable){
@@ -825,6 +848,15 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 			iDEBUGExecutable->children_index++;
 		}
 	}
+
+	else if (executable->type == FORINBLOCK){
+		iDEBUGExecutable->forInBlock = (ForInBlock*)executable;
+		for (int i = 0; i < iDEBUGExecutable->forInBlock->executable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->forInBlock->executables[i]);
+			iDEBUGExecutable->children_index++;
+		}
+	}
+
 	else if (executable->type == META){
 		iDEBUGExecutable->metaExecutable = (MetaExecutable*)executable;
 	}
@@ -832,6 +864,26 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 	return iDEBUGExecutable;
 
 }
+
+
+
+void resolveCodeLine(char* line){
+	CodeLine* codeLine = new CodeLine();
+	codeLine->element_index = 0;
+	int string_length = strlen(line);
+
+	int result = resolveElement(line, string_length, codeLine);
+
+	resolveOperators(codeLine);
+	resolveBracket(codeLine);
+
+	Executable * executable = analyzeCodeLine(codeLine, 0, codeLine->element_index);
+	//excute(executable);
+
+	DEBUGExecutable * iDEBUGExecutable = debugExecutable(executable);
+}
+
+
 void excute(Executable * executable){//runtime polymorphism
 	if (executable->type == EXPRESSION){
 		excute((Expression*)executable);

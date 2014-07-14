@@ -93,6 +93,8 @@ public:
 
 #define CONDITION 4
 #define IFBLOCK 5
+#define FORBLOCK 6
+#define FORINBLOCK 7
 
 #define EXPRESSION 9
 #define EXCUTEABLEBLOCK 10
@@ -224,6 +226,7 @@ public:
 	ForInBlock();
 
 	JSON* iterator;
+	CodeElement* iteratorName;
 	CodeElement* keyName;
 	CodeElement* valueName;
 
@@ -248,5 +251,25 @@ void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
 void getAllVariablesToString();
 
+
+
+
+class DEBUGExecutable{
+public:
+	MetaExecutable* metaExecutable;
+	Expression* expression;
+	FunctionCall1* functionCall;
+	FunctionDefinition1* functionDefinition;
+	ExecutableBlock* executableBlock;
+	ForInBlock* forInBlock;
+
+	DEBUGExecutable * children[10];
+	int children_index;
+};
+
+DEBUGExecutable * debugExecutable(Executable * executable);
+
 #endif /* INTERPRETMAIN_H */
+
+
 
