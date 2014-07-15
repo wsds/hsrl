@@ -99,6 +99,8 @@ public:
 #define EXPRESSION 9
 #define EXCUTEABLEBLOCK 10
 
+#define OPERATOR 11
+#define EXCUTED 20
 class Executable{
 public:
 	int type;
@@ -111,6 +113,8 @@ public:
 
 	Executable* executables[10];
 	int executable_index;
+
+	JSObject* result;
 };
 class MetaExecutable : public Executable{
 public:
@@ -118,18 +122,27 @@ public:
 	CodeElement* codeElement;
 };
 
-class Operator{
+
+class ExcutedExecutable : public Executable{
 public:
+	ExcutedExecutable();
+	JSObject* result;
+};
+
+
+class Operator : public Executable{
+public:
+	Operator();
 	char code_operator;
 	char code_operator2;
 };
 class Expression : public Executable{
 public:
 	Expression();
-	Executable* executable[10];
+	Executable* executable[30];
 	int executable_index;
-	Operator * code_operator[10];
-	int code_operator_index;
+
+	JSObject* result;
 };
 
 class FunctionCall1 : public Executable{
@@ -138,6 +151,8 @@ public:
 	char* functionName;
 	Executable* variables[5];
 	int variable_index;
+
+	JSObject* result;
 };
 class FunctionDefinition1 : public Executable{
 public:
@@ -238,16 +253,16 @@ public:
 void interpret_main();
 void resolveCodeLine(char* line);
 
-void excute(Executable * executable);
-void excute(ExecutableBlock * executableBlock);
+JSObject* excute(Executable * executable);
+JSObject* excute(ExecutableBlock * executableBlock);
 
-void excute(Expression * expression);
+JSObject* excute(Expression * expression);
 
-void excute(Assignment * assignment);
-void excute(FunctionCall * functionCall);
-void excute(FunctionDefinition * functionDefinition);
+JSObject* excute(Assignment * assignment);
+JSObject* excute(FunctionCall * functionCall);
+JSObject* excute(FunctionDefinition * functionDefinition);
 
-void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
+JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
 void getAllVariablesToString();
 
@@ -257,6 +272,7 @@ void getAllVariablesToString();
 class DEBUGExecutable{
 public:
 	MetaExecutable* metaExecutable;
+	Operator* codeOperator;
 	Expression* expression;
 	FunctionCall1* functionCall;
 	FunctionDefinition1* functionDefinition;

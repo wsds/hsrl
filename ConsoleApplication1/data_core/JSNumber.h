@@ -8,7 +8,7 @@
 #define NULL 0
 #endif /* NULL */
 
-class JSNumber : JSObject
+class JSNumber : public JSObject
 {
 
 public:

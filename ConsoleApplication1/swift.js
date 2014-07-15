@@ -22,3 +22,7 @@ greet1(shoppingList)
 a=f(x+1+g(y+12)+23)
 
 f(x+Y,x-y)+g(X,y)
+
+x=(x+Y)/1+(x-y)
+
+5*9+9*(8+6)

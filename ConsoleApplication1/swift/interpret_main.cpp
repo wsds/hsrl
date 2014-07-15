@@ -6,12 +6,19 @@
 MetaExecutable::MetaExecutable(){
 	this->type = META;
 }
+ExcutedExecutable::ExcutedExecutable(){
+	this->type = EXCUTED;
+}
+Operator::Operator(){
+	this->type = OPERATOR;
+	this->code_operator = 0;
+	this->code_operator2 = 0;
+}
 
 Expression::Expression(){
 	this->type = EXPRESSION;
 
 	this->executable_index = 0;
-	this->code_operator_index = 0;
 }
 FunctionCall1::FunctionCall1(){
 	this->type = FUNCTIONCALL;
@@ -520,8 +527,8 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			code_operator->code_operator = codeElement->code_operator;
 			code_operator->code_operator2 = codeElement->code_operator2;
 
-			expression->code_operator[expression->code_operator_index] = code_operator;
-			expression->code_operator_index++;
+			expression->executable[expression->executable_index] = code_operator;
+			expression->executable_index++;
 
 
 			//Executable* innerExecutable = analyzeCodeLine(codeLine, i-1, i);
@@ -897,6 +904,9 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 	else if (executable->type == META){
 		iDEBUGExecutable->metaExecutable = (MetaExecutable*)executable;
 	}
+	else if (executable->type == OPERATOR){
+		iDEBUGExecutable->codeOperator = (Operator*)executable;
+	}
 
 	return iDEBUGExecutable;
 
@@ -915,36 +925,215 @@ void resolveCodeLine(char* line){
 	resolveBracket(codeLine);
 
 	Executable * executable = analyzeCodeLine(codeLine, 0, codeLine->element_index);
-	//excute(executable);
 
 	DEBUGExecutable * iDEBUGExecutable = debugExecutable(executable);
+
+	excute(executable);
 }
 
 
-void excute(Executable * executable){//runtime polymorphism
+JSObject* excute(Executable * executable){//runtime polymorphism
+	JSObject* result = NULL;
 	if (executable->type == EXPRESSION){
-		excute((Expression*)executable);
+		result = excute((Expression*)executable);
 	}
 	else if (executable->type == FUNCTIONCALL){
-		excute((FunctionCall*)executable);
+		//excute((FunctionCall*)executable);
 	}
 	else if (executable->type == FUNCTIONDEFINITION){
-		excute((FunctionDefinition*)executable);
+		//excute((FunctionDefinition*)executable);
 	}
 	else if (executable->type == EXCUTEABLEBLOCK){
-		excute((ExecutableBlock*)executable);
+		result = excute((ExecutableBlock*)executable);
 	}
+	return result;
 }
 
 
-void excute(ExecutableBlock * executableBlock){
-
+JSObject* excute(ExecutableBlock * executableBlock){
+	JSObject* result = NULL;
+	for (int i = 0; i < executableBlock->executable_index; i++){
+		result = excute(executableBlock->executables[i]);
+	}
+	executableBlock->result = result;
+	return result;
 }
 
-void excute(Expression * expression){
+JSObject* executableToJSObject(Executable* executable){
+	JSObject* object = NULL;
 
+	if (executable->type == META){
+		CodeElement* codeElement = ((MetaExecutable*)executable)->codeElement;
+		if (codeElement->type == CODE_NUMBER){
+			object = (JSObject *)(new JSNumber(codeElement->number));
+		}
+		else if (codeElement->type == CODE_STRING){
+			object = (JSObject *)(new JSString(codeElement->char_string));
+		}
+		else if (codeElement->type == CODE_JSON){
+			JSON* json = parseJSON(codeElement->jsonstr);
+			object = (JSObject *)json;
+		}
+		else if (codeElement->type == NAME){
+			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(codeElement->variable_name);
+			if (jsKeyValue == NULL){
+				//report error
+			}
+			else{
+				object = jsKeyValue->value;
+			}
+		}
+	}
+	else if (executable->type == EXCUTEABLEBLOCK){
+		object = ((ExecutableBlock*)executable)->result;
+	}
+	else if (executable->type == EXCUTED){
+		object = ((ExcutedExecutable*)executable)->result;
+	}
+	else if (executable->type == EXPRESSION){
+		object = ((Expression*)executable)->result;
+	}
+	else if (executable->type == FUNCTIONCALL){
+		object = ((FunctionCall1*)executable)->result;
+	}
+	return object;
 }
-void excute(FunctionDefinition * functionDefinition){
+
+JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_operator){
+	JSObject* result = NULL;
+
+	JSObject* leftObject = executableToJSObject(left);
+	JSObject* rightObject = executableToJSObject(right);
+	if (code_operator->code_operator == '*'){
+		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number * rightObject->number;
+		}
+	}
+	else if (code_operator->code_operator == '+'){
+		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number + rightObject->number;
+		}
+	}
+	else if (code_operator->code_operator == '='){
+
+	}
+	return result;
+}
+
+
+JSObject* excute(Expression * expression1){
+	JSObject* result = NULL;
+
+	Executable* executables[30];
+	int executable_index = expression1->executable_index;
+	for (int i = 0; i < executable_index; i++){
+		executables[i] = expression1->executable[i];
+	}
+
+
+	//处理括号
+	for (int i = 0; i < executable_index; i++){
+		if (executables[i]->type == EXCUTEABLEBLOCK){
+			result = excute(executables[i]);
+		}
+		else if (executables[i]->type == FUNCTIONCALL){
+			result = excute(executables[i]);
+		}
+
+	}
+
+	//处理复合运算符
+	for (int i = 0; i < executable_index; i++){
+		if (executables[i]->type == OPERATOR){
+			Operator* codeOperator = (Operator*)executables[i];
+			if (codeOperator->code_operator2 != 0){
+
+			}
+		}
+
+	}
+
+
+	//处理运算符：* / %
+	bool hasCodeOperator = false;
+	do{
+		hasCodeOperator = false;
+
+		ExecutableBlock* executableBlock = new ExecutableBlock();
+		for (int j = 0; j < executable_index; j++){
+			executableBlock->executables[j] = executables[j];
+		}
+		executableBlock->executable_index = executable_index;
+		DEBUGExecutable * iDEBUGExecutable = debugExecutable(executableBlock);
+
+
+
+		for (int i = 0; i < executable_index; i++){
+			if (executables[i]->type == OPERATOR){
+				Operator* codeOperator = (Operator*)executables[i];
+				if (codeOperator->code_operator == '*' || codeOperator->code_operator == '/' || codeOperator->code_operator == '%'){
+					ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
+
+					result = excuteOperator(executables[i - 1], executables[i + 1], codeOperator);
+					excutedExecutable->result = result;
+
+					executables[i - 1] = excutedExecutable;
+					for (int ii = i; ii < executable_index; ii++){
+						executables[ii] = executables[ii + 2];
+					}
+					executable_index = executable_index - 2;
+					hasCodeOperator = true;
+					break;
+				}
+			}
+		}
+	} while (hasCodeOperator == true);
+
+
+
+	//处理运算符：+ -
+	do{
+		hasCodeOperator = false;
+		for (int i = 0; i < executable_index; i++){
+			if (executables[i]->type == OPERATOR){
+				Operator* codeOperator = (Operator*)executables[i];
+				if (codeOperator->code_operator == '+' || codeOperator->code_operator == '-'){
+					ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
+
+					result = excuteOperator(executables[i - 1], executables[i + 1], codeOperator);
+					excutedExecutable->result = result;
+
+					executables[i - 1] = excutedExecutable;
+					for (int ii = i; ii < executable_index; ii++){
+						executables[ii] = executables[ii + 2];
+					}
+					executable_index = executable_index - 2;
+					hasCodeOperator = true;
+					break;
+				}
+			}
+		}
+	} while (hasCodeOperator == true);
+
+
+	//处理运算符：=
+	for (int i = 0; i < executable_index; i++){
+		if (executables[i]->type == OPERATOR){
+			Operator* codeOperator = (Operator*)executables[i];
+			if (codeOperator->code_operator == '='){
+
+			}
+		}
+	}
+	return result;
+}
+
+
+
+
+JSObject* excute(FunctionDefinition * functionDefinition){
 	JSFunction * jsFunction = new JSFunction();
 	jsFunction->function_name = functionDefinition->functionName->variable_name;
 	jsFunction->functionDefinition = functionDefinition;
@@ -954,16 +1143,18 @@ void excute(FunctionDefinition * functionDefinition){
 	JSKeyValue * jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionDefinition->functionName->variable_name);
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
-		return;
+		return NULL;
 	}
+
+	return NULL;
 }
 
 
-void excute(FunctionCall * functionCall){
+JSObject* excute(FunctionCall * functionCall){
 
 	if (functionCall->functionName->type != NAME){
 		//report error
-		return;
+		return NULL;
 	}
 	JSObject * jsVariables;
 	if (functionCall->variables->type == CODE_NUMBER){
@@ -991,12 +1182,12 @@ void excute(FunctionCall * functionCall){
 	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName->variable_name);
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
-		return;
+		return NULL;
 	}
 	JSFunction * jsFunction = (JSFunction *)jsFunctionKeyValue->value;
 	if (jsFunction == NULL || ((JSObject*)jsFunction)->type != JSFUNCTION){
 		//report error
-		return;
+		return NULL;
 	}
 	else{
 		JSON* parameter = new JSON();
@@ -1011,9 +1202,11 @@ void excute(FunctionCall * functionCall){
 
 	}
 
+	return NULL;
+
 }
 
-void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter){
+JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter){
 
 	Closure * closure = new Closure();
 	closure->initialize();
@@ -1040,9 +1233,11 @@ void excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter){
 	}
 
 	currentClosure = currentClosure->previous;
+
+	return NULL;
 }
 
-void excute(Assignment * assignment){
+JSObject* excute(Assignment * assignment){
 	JSObject * rightValue;
 	if (assignment->right->type == CODE_NUMBER){
 		rightValue = (JSObject *)(new JSNumber(assignment->right->number));
@@ -1079,6 +1274,8 @@ void excute(Assignment * assignment){
 			currentClosure->set(assignment->left->variable_name, rightValue);
 		}
 	}
+
+	return NULL;
 }
 
 void getAllVariablesToString(){
