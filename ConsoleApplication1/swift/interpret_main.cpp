@@ -52,6 +52,12 @@ IfBlock::IfBlock(){
 	this->next = NULL;
 }
 
+ForBlock::ForBlock(){
+	this->type = FORBLOCK;
+	this->conditions_index = 0;
+	this->executable_index = 0;
+}
+
 ForInBlock::ForInBlock(){
 	this->type = FORINBLOCK;
 	this->executable_index = 0;
@@ -357,6 +363,8 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 	FunctionCall1 * functionCall = NULL;
 	FunctionDefinition1 * functionDefinition = NULL;
 	ForInBlock * forInBlock = NULL;
+	ForBlock * forBlock = NULL;
+	IfBlock * ifBlock = NULL;
 
 	int skipToIndex = -1;
 	for (int i = from; i < end; i++){
@@ -399,7 +407,12 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				if (isForIn == true){
 					forInBlock = new ForInBlock();
 				}
-
+				else{
+					forBlock = new ForBlock();
+				}
+			}
+			else if (0 == strcmp(keyWords->string_if, codeElement->keyword)){
+				ifBlock = new IfBlock();
 			}
 		}
 		else if (codeElement->type == BRACKET){
@@ -579,6 +592,30 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		DEBUGExecutable * iDEBUGExecutable = debugExecutable(expression);
 		executable = forInBlock;
 		int i = 1 + 1;
+	}
+	else if (forBlock != NULL){
+		Expression* expression = (Expression*)executable;
+		if (expression->executable_index == 2){
+			if (expression->executable[0]->type == EXCUTEABLEBLOCK){
+				ExecutableBlock* executableBlock = (ExecutableBlock*)expression->executable[0];
+				if (executableBlock->executable_index == 2){
+					MetaExecutable* keyNameExecutable = (MetaExecutable*)executableBlock->executables[0];
+					MetaExecutable* valueNameExecutable = (MetaExecutable*)executableBlock->executables[1];
+
+					forInBlock->keyName = keyNameExecutable->codeElement;
+					forInBlock->valueName = valueNameExecutable->codeElement;
+				}
+			}
+			if (expression->executable[1]->type == META){
+				MetaExecutable* iteratorNameExecutable = (MetaExecutable*)expression->executable[1];
+				forInBlock->iteratorName = iteratorNameExecutable->codeElement;
+			}
+		}
+		DEBUGExecutable * iDEBUGExecutable = debugExecutable(expression);
+		executable = forInBlock;
+	}
+	else if (ifBlock != NULL){
+
 	}
 
 	expressionDEBUG = (Expression*)executable;
