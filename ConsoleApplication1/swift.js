@@ -26,3 +26,14 @@ f(x+Y,x-y)+g(X,y)
 x=(x+Y)/1+(x-y)
 
 5*9+9*(8+6)
+
+func add(x, y){
+	var z=x+y
+	return z+1
+}
+
+
+var a=1
+var b=2
+var c=add(a,b)
+

@@ -17,35 +17,28 @@ Operator::Operator(){
 
 Expression::Expression(){
 	this->type = EXPRESSION;
-
+	this->isNew = false;
 	this->executable_index = 0;
 }
-FunctionCall1::FunctionCall1(){
+FunctionCall::FunctionCall(){
 	this->type = FUNCTIONCALL;
 	this->variable_index = 0;
 }
-FunctionDefinition1::FunctionDefinition1(){
-	this->type = FUNCTIONDEFINITION;
+FunctionReturn::FunctionReturn(){
+	this->type = FUNCTIONRETURN;
+	this->variable_index = 0;
 }
-Assignment::Assignment(){
-	this->type = ASSIGNMENT;
-}
-
-FunctionCall::FunctionCall(){
-	this->type = FUNCTIONCALL;
-}
-
 FunctionDefinition::FunctionDefinition(){
-	this->executable_index = 0;
 	this->type = FUNCTIONDEFINITION;
+	this->executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
 }
-
 ExecutableBlock::ExecutableBlock(){
 	this->isHolded = false;
+	this->holder = NULL;
 	this->executable_index = 0;
 	this->type = EXCUTEABLEBLOCK;
 }
-
 Condition::Condition(){
 	this->type = CONDITION;
 }
@@ -67,7 +60,8 @@ ForBlock::ForBlock(){
 
 ForInBlock::ForInBlock(){
 	this->type = FORINBLOCK;
-	this->executable_index = 0;
+	this->executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
 }
 
 KeyWords * keyWords;
@@ -75,12 +69,21 @@ Closure * rootClosure;
 Closure * currentClosure;
 int funtionLevel;
 FunctionDefinition * currentFunctionDefinition;
+ExecutableBlock * executableBlocks[10];
+int executableBlocksIndex;
 
 ExecutableBlock * currentExecutableBlock;
 
+#define NONE 0
+#define STARTBLOCK 1
+#define ENDBLOCK 2
+int currentExecutableBlockHoldingStatus;
 void interpret_main(){
 	funtionLevel = 0;
 	currentFunctionDefinition = NULL;
+
+	executableBlocksIndex = 0;
+
 	keyWords = KeyWords::getInstance();
 
 	Import* import = Import::getInstance();
@@ -89,6 +92,7 @@ void interpret_main(){
 	currentClosure = rootClosure;
 
 	currentExecutableBlock = new ExecutableBlock();
+	currentExecutableBlockHoldingStatus = NONE;
 }
 KeyWords * KeyWords::instance = NULL;
 KeyWords::KeyWords(){
@@ -363,12 +367,14 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 
 
 Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
-	Executable* executable = NULL;
-	CodeElement* codeElement = NULL;
-	Expression* expressionDEBUG;
+	ExecutableBlock * executableBlock = NULL;
+	MetaExecutable * metaExecutable = NULL;
 
-	FunctionCall1 * functionCall = NULL;
-	FunctionDefinition1 * functionDefinition = NULL;
+	CodeElement * codeElement = NULL;
+	Expression * expression = NULL;
+
+	FunctionCall * functionCall = NULL;
+	FunctionDefinition * functionDefinition = NULL;
 	ForInBlock * forInBlock = NULL;
 	ForBlock * forBlock = NULL;
 	IfBlock * ifBlock = NULL;
@@ -380,20 +386,18 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		}
 		codeElement = codeLine->codeElements[i];
 		if (codeElement->type == KEYWORD){
-
-			if (0 == strcmp(keyWords->string_func, codeElement->keyword)){
-
-				functionDefinition = new FunctionDefinition1();
-				//executable = functionDefinition;
-				if (currentExecutableBlock->isHolded == false){
-					functionDefinition->executableBlock = currentExecutableBlock;
-					currentExecutableBlock->isHolded = false;
-					if (i + 1 < end && codeLine->codeElements[i + 1]->type == NAME){
-						functionDefinition->functionName = codeLine->codeElements[i + 1]->variable_name;
-					}
+			if (0 == strcmp(keyWords->string_var, codeElement->keyword)){
+				if (expression == NULL){
+					expression = new Expression();
+					expression->isNew = true;
 				}
-				else{
-					//report error
+			}
+			else if (0 == strcmp(keyWords->string_func, codeElement->keyword)){
+
+				functionDefinition = new FunctionDefinition();
+				currentExecutableBlock = functionDefinition->executableBlock;
+				if (i + 1 < end && codeLine->codeElements[i + 1]->type == NAME){
+					functionDefinition->functionName = codeLine->codeElements[i + 1]->variable_name;
 				}
 			}
 			else if (0 == strcmp(keyWords->string_class, codeElement->keyword)){
@@ -413,6 +417,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 
 				if (isForIn == true){
 					forInBlock = new ForInBlock();
+					currentExecutableBlock = forInBlock->executableBlock;
 				}
 				else{
 					forBlock = new ForBlock();
@@ -430,7 +435,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			else if (codeElement->bracket == RIGHTSMALLBRACKET){
 				CodeElement * preBracket = codeLine->codeElements[codeElement->preBracketIndex];
 				if (codeElement->preBracketIndex - 1 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME){
-					functionCall = new FunctionCall1();
+					functionCall = new FunctionCall();
 					//executable = functionCall;
 
 					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
@@ -453,17 +458,11 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 						}
 					}
 
-					if (executable == NULL){
-						executable = new Expression();
-						expressionDEBUG = (Expression*)executable;
-					}
-					else if (executable->type != EXPRESSION){
-						//report error
+					if (expression == NULL){
+						expression = new Expression();
 					}
 
-					Expression* expression = (Expression*)executable;
-
-					expression->executable[expression->executable_index] = functionCall;
+					expression->executables[expression->executable_index] = functionCall;
 					expression->executable_index++;
 
 				}
@@ -492,42 +491,56 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 						}
 					}
 
-					if (executable == NULL){
-						executable = new Expression();
-						expressionDEBUG = (Expression*)executable;
-					}
-					else if (executable->type != EXPRESSION){
-						//report error
+					if (expression == NULL){
+						expression = new Expression();
 					}
 
-					Expression* expression = (Expression*)executable;
-
-					expression->executable[expression->executable_index] = executableBlock;
+					expression->executables[expression->executable_index] = executableBlock;
 					expression->executable_index++;
 
 				}
 
+			}
+			else if (codeElement->bracket == LEFTBIGBRACKET){
+				if (currentExecutableBlock->isHolded == false){
+					executableBlocks[executableBlocksIndex] = currentExecutableBlock;
+					executableBlocksIndex++;
+					currentExecutableBlock->isHolded = true;
+					if (currentExecutableBlockHoldingStatus == NONE){
+						currentExecutableBlockHoldingStatus = STARTBLOCK;
+					}
+				}
+				else{
+					//report error
+				}
+
+			}
+			else if (codeElement->bracket == RIGHTBIGBRACKET){
+				if (executableBlocksIndex > 0){
+					executableBlocksIndex--;
+					if (currentExecutableBlockHoldingStatus == NONE){
+						currentExecutableBlockHoldingStatus = ENDBLOCK;
+					}
+					
+				}
+				else{
+					//report error
+				}
 			}
 
 		}
 
 
 		else if (codeElement->type == CODEOPERATOR){
-			if (executable == NULL){
-				executable = new Expression();
-				expressionDEBUG = (Expression*)executable;
+			if (expression == NULL){
+				expression = new Expression();
 			}
-			else if (executable->type != EXPRESSION){
-				//report error
-			}
-
-			Expression* expression = (Expression*)executable;
 
 			Operator * code_operator = new Operator();
 			code_operator->code_operator = codeElement->code_operator;
 			code_operator->code_operator2 = codeElement->code_operator2;
 
-			expression->executable[expression->executable_index] = code_operator;
+			expression->executables[expression->executable_index] = code_operator;
 			expression->executable_index++;
 
 
@@ -543,29 +556,40 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				}
 			}
 
-			MetaExecutable * metaExecutable = new MetaExecutable();
+			metaExecutable = new MetaExecutable();
 
 			metaExecutable->codeElement = codeElement;
 
 			if (end - from <= 1){
-				executable = metaExecutable;
+				//executable = metaExecutable;
 			}
 			else{
-				if (executable == NULL){
-					executable = new Expression();
-					expressionDEBUG = (Expression*)executable;
-				}
-				else if (executable->type != EXPRESSION){
-					//report error
+				if (expression == NULL){
+					expression = new Expression();
 				}
 
-				Expression* expression = (Expression*)executable;
-
-
-				expression->executable[expression->executable_index] = metaExecutable;
+				expression->executables[expression->executable_index] = metaExecutable;
 				expression->executable_index++;
 			}
 		}
+		else if (codeElement->type == DELIMITER){
+			if (i + 1 >= end || expression == NULL){
+				continue;
+			}
+			if (executableBlock == NULL){
+				executableBlock = new ExecutableBlock();
+			}
+			executableBlock->executables[executableBlock->executable_index] = expression;
+			executableBlock->executable_index++;
+			expression = NULL;
+		}
+	}
+	//end for
+
+	Executable * executable = NULL;
+	if (executableBlock != NULL&&expression != NULL){
+		executableBlock->executables[executableBlock->executable_index] = expression;
+		executableBlock->executable_index++;
 	}
 
 	if (functionDefinition != NULL){
@@ -579,10 +603,9 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		executable = functionDefinition;
 	}
 	else if (forInBlock != NULL){
-		Expression* expression = (Expression*)executable;
 		if (expression->executable_index == 2){
-			if (expression->executable[0]->type == EXCUTEABLEBLOCK){
-				ExecutableBlock* executableBlock = (ExecutableBlock*)expression->executable[0];
+			if (expression->executables[0]->type == EXCUTEABLEBLOCK){
+				ExecutableBlock* executableBlock = (ExecutableBlock*)expression->executables[0];
 				if (executableBlock->executable_index == 2){
 					MetaExecutable* keyNameExecutable = (MetaExecutable*)executableBlock->executables[0];
 					MetaExecutable* valueNameExecutable = (MetaExecutable*)executableBlock->executables[1];
@@ -591,8 +614,8 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					forInBlock->valueName = valueNameExecutable->codeElement;
 				}
 			}
-			if (expression->executable[1]->type == META){
-				MetaExecutable* iteratorNameExecutable = (MetaExecutable*)expression->executable[1];
+			if (expression->executables[1]->type == META){
+				MetaExecutable* iteratorNameExecutable = (MetaExecutable*)expression->executables[1];
 				forInBlock->iteratorName = iteratorNameExecutable->codeElement;
 			}
 		}
@@ -601,195 +624,29 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		int i = 1 + 1;
 	}
 	else if (forBlock != NULL){
-		Expression* expression = (Expression*)executable;
-		if (expression->executable_index == 2){
-			if (expression->executable[0]->type == EXCUTEABLEBLOCK){
-				ExecutableBlock* executableBlock = (ExecutableBlock*)expression->executable[0];
-				if (executableBlock->executable_index == 2){
-					MetaExecutable* keyNameExecutable = (MetaExecutable*)executableBlock->executables[0];
-					MetaExecutable* valueNameExecutable = (MetaExecutable*)executableBlock->executables[1];
-
-					forInBlock->keyName = keyNameExecutable->codeElement;
-					forInBlock->valueName = valueNameExecutable->codeElement;
-				}
-			}
-			if (expression->executable[1]->type == META){
-				MetaExecutable* iteratorNameExecutable = (MetaExecutable*)expression->executable[1];
-				forInBlock->iteratorName = iteratorNameExecutable->codeElement;
-			}
+		DEBUGExecutable * iDEBUGExecutable;
+		if (executableBlock != NULL){
+			iDEBUGExecutable = debugExecutable(executableBlock);
 		}
-		DEBUGExecutable * iDEBUGExecutable = debugExecutable(expression);
-		executable = forInBlock;
+
+		executable = forBlock;
 	}
 	else if (ifBlock != NULL){
 
 	}
+	else if (executable == NULL){
+		if (end - from <= 1){
+			executable = metaExecutable;
+		}
+		else{
+			executable = expression;
+		}
+	}
 
-	expressionDEBUG = (Expression*)executable;
 	return executable;
 
 }
 
-void resolveAssignment(char* line){
-
-	CodeLine* codeLine = new CodeLine();
-	Assignment * assignment = NULL;
-
-	char localChar;
-	int string_length = strlen(line);
-
-	for (int ii = 0; ii < string_length; ii++){
-		localChar = line[ii];
-		if (localChar == EQUALITY){
-			assignment = new Assignment();
-			assignment->isNew = false;
-
-			//"="
-			CodeElement * equality = new CodeElement();
-			codeLine->codeElements[codeLine->element_index] = equality;
-			codeLine->element_index++;
-			equality->type = CODEOPERATOR;
-			equality->code_operator = localChar;
-			assignment->codeOperator = equality;
-
-			//resolve the left code
-			int elementCount = resolveElement(line, ii, codeLine);
-			for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
-				if (codeLine->codeElements[i]->type == NAME){
-					assignment->left = codeLine->codeElements[i];
-				}
-				else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(keyWords->string_var, codeLine->codeElements[i]->keyword)){
-					assignment->isNew = true;
-				}
-			}
-
-			//resolve the right code
-			elementCount = resolveElement(line + ii + 1, string_length - ii - 1, codeLine);
-			for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
-				if (codeLine->codeElements[i]->type == NAME){
-					assignment->right = codeLine->codeElements[i];
-				}
-				else if (codeLine->codeElements[i]->type == CODE_NUMBER){
-					assignment->right = codeLine->codeElements[i];
-				}
-				else if (codeLine->codeElements[i]->type == CODE_STRING){
-					assignment->right = codeLine->codeElements[i];
-				}
-				else if (codeLine->codeElements[i]->type == CODE_JSON){
-					assignment->right = codeLine->codeElements[i];
-				}
-			}
-
-		}
-	}
-
-	//std::cout << "element_index: " << codeLine->element_index << std::endl;
-	if (assignment != NULL){
-		if (funtionLevel == 0){
-			excute(assignment);
-		}
-		else if (currentFunctionDefinition != NULL){
-			currentFunctionDefinition->executables[currentFunctionDefinition->executable_index] = assignment;
-			currentFunctionDefinition->executable_index++;
-		}
-		else{
-			//report error
-		}
-	}
-
-}
-
-void resolveFunctionCall(char* line){
-	CodeLine* codeLine = new CodeLine();
-	FunctionCall * functionCall = NULL;
-	FunctionDefinition * functionDefinition = NULL;
-
-	char localChar;
-	int string_length = strlen(line);
-
-	int index_LEFTSMALLBRACKET = 0;
-	int index_RIGHTSMALLBRACKET = 0;
-
-	for (int ii = 0; ii < string_length; ii++){
-		localChar = line[ii];
-		if (localChar == LEFTSMALLBRACKET){
-			index_LEFTSMALLBRACKET = ii;
-		}
-		else if (localChar == RIGHTSMALLBRACKET){
-			index_RIGHTSMALLBRACKET = ii;
-		}
-		else if (localChar == LEFTBIGBRACKET){
-			funtionLevel++;
-			functionDefinition = new FunctionDefinition();
-			currentFunctionDefinition = functionDefinition;
-		}
-		else if (localChar == RIGHTBIGBRACKET){
-			funtionLevel--;
-			if (funtionLevel == 0){
-				currentFunctionDefinition = NULL;
-			}
-			else if (funtionLevel < 0){
-				//report error
-			}
-		}
-	}
-
-	if (index_RIGHTSMALLBRACKET > index_LEFTSMALLBRACKET && index_LEFTSMALLBRACKET != 0){
-
-		functionCall = new FunctionCall();
-
-		//resolve the small brackt outer code
-		int elementCount = resolveElement(line, index_LEFTSMALLBRACKET, codeLine);
-		for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
-			if (codeLine->codeElements[i]->type == NAME){
-				functionCall->functionName = codeLine->codeElements[i];
-			}
-			else if (codeLine->codeElements[i]->type == KEYWORD && 0 == strcmp(keyWords->string_func, codeLine->codeElements[i]->keyword)){
-			}
-		}
-
-		//resolve the small brackt inner code
-		elementCount = resolveElement(line + index_LEFTSMALLBRACKET + 1, index_RIGHTSMALLBRACKET - index_LEFTSMALLBRACKET - 1, codeLine);
-		for (int i = codeLine->element_index - elementCount; i < codeLine->element_index; i++){
-			if (codeLine->codeElements[i]->type == NAME){
-				functionCall->variables = codeLine->codeElements[i];
-			}
-			else if (codeLine->codeElements[i]->type == CODE_NUMBER){
-				functionCall->variables = codeLine->codeElements[i];
-			}
-			else if (codeLine->codeElements[i]->type == CODE_STRING){
-				functionCall->variables = codeLine->codeElements[i];
-			}
-			else if (codeLine->codeElements[i]->type == CODE_JSON){
-				functionCall->variables = codeLine->codeElements[i];
-			}
-		}
-	}
-
-	//std::cout << "element_index: " << codeLine->element_index << std::endl;
-	if (functionDefinition != NULL){
-		functionDefinition->functionName = functionCall->functionName;
-		functionDefinition->variables = functionCall->variables;
-		std::cout << "excute functionDefinition: " << functionDefinition->functionName->variable_name << std::endl;
-		excute(functionDefinition);
-	}
-	else if (functionCall != NULL){
-
-		if (funtionLevel == 0){
-			std::cout << "excute functionCall: " << functionCall->functionName->variable_name << std::endl;
-			excute(functionCall);
-		}
-		else if (currentFunctionDefinition != NULL){
-			currentFunctionDefinition->executables[currentFunctionDefinition->executable_index] = functionCall;
-			currentFunctionDefinition->executable_index++;
-		}
-		else{
-			//report error
-		}
-
-	}
-
-}
 
 void resolveOperators(CodeLine* codeLine){
 
@@ -853,32 +710,28 @@ void resolveBracket(CodeLine* codeLine){
 }
 
 
-
-
-
-
-
-
 DEBUGExecutable * debugExecutable(Executable * executable){
-
+	if (executable == NULL){
+		return NULL;
+	}
 	DEBUGExecutable * iDEBUGExecutable = new DEBUGExecutable();
 
 	if (executable->type == EXPRESSION){
 		iDEBUGExecutable->expression = (Expression*)executable;
 		for (int i = 0; i < iDEBUGExecutable->expression->executable_index; i++){
-			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->expression->executable[i]);
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->expression->executables[i]);
 			iDEBUGExecutable->children_index++;
 		}
 	}
 	else if (executable->type == FUNCTIONCALL){
-		iDEBUGExecutable->functionCall = (FunctionCall1*)executable;
+		iDEBUGExecutable->functionCall = (FunctionCall*)executable;
 		for (int i = 0; i < iDEBUGExecutable->functionCall->variable_index; i++){
 			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->functionCall->variables[i]);
 			iDEBUGExecutable->children_index++;
 		}
 	}
 	else if (executable->type == FUNCTIONDEFINITION){
-		iDEBUGExecutable->functionDefinition = (FunctionDefinition1*)executable;
+		iDEBUGExecutable->functionDefinition = (FunctionDefinition*)executable;
 		for (int i = 0; i < iDEBUGExecutable->functionDefinition->variable_index; i++){
 			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->functionDefinition->variables[i]);
 			iDEBUGExecutable->children_index++;
@@ -895,8 +748,10 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 
 	else if (executable->type == FORINBLOCK){
 		iDEBUGExecutable->forInBlock = (ForInBlock*)executable;
-		for (int i = 0; i < iDEBUGExecutable->forInBlock->executable_index; i++){
-			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(iDEBUGExecutable->forInBlock->executables[i]);
+
+		ExecutableBlock* executableBlock = iDEBUGExecutable->forInBlock->executableBlock;
+		for (int i = 0; i < executableBlock->executable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(executableBlock->executables[i]);
 			iDEBUGExecutable->children_index++;
 		}
 	}
@@ -912,8 +767,6 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 
 }
 
-
-
 void resolveCodeLine(char* line){
 	CodeLine* codeLine = new CodeLine();
 	codeLine->element_index = 0;
@@ -928,7 +781,30 @@ void resolveCodeLine(char* line){
 
 	DEBUGExecutable * iDEBUGExecutable = debugExecutable(executable);
 
-	excute(executable);
+	//currentExecutableBlock->isHolded = true
+	if (currentExecutableBlockHoldingStatus == STARTBLOCK){
+		currentExecutableBlockHoldingStatus = NONE;
+		return;
+	}
+	if (executableBlocksIndex <= 0){
+		
+		if (executable == NULL){
+			if (currentExecutableBlockHoldingStatus == ENDBLOCK){
+				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
+				if (executableBlock != NULL&&executableBlock->holder != NULL){
+					excute(executableBlock->holder);
+				}
+			}
+		}
+		else{
+			excute(executable);
+		}
+	}
+	else{
+		ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex - 1];
+		executableBlock->executables[executableBlock->executable_index] = executable;
+		executableBlock->executable_index++;
+	}
 }
 
 
@@ -938,10 +814,10 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 		result = excute((Expression*)executable);
 	}
 	else if (executable->type == FUNCTIONCALL){
-		//excute((FunctionCall*)executable);
+		excute((FunctionCall*)executable);
 	}
 	else if (executable->type == FUNCTIONDEFINITION){
-		//excute((FunctionDefinition*)executable);
+		excute((FunctionDefinition*)executable);
 	}
 	else if (executable->type == EXCUTEABLEBLOCK){
 		result = excute((ExecutableBlock*)executable);
@@ -994,7 +870,7 @@ JSObject* executableToJSObject(Executable* executable){
 		object = ((Expression*)executable)->result;
 	}
 	else if (executable->type == FUNCTIONCALL){
-		object = ((FunctionCall1*)executable)->result;
+		object = ((FunctionCall*)executable)->result;
 	}
 	return object;
 }
@@ -1025,13 +901,13 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 
 JSObject* excute(Expression * expression1){
 	JSObject* result = NULL;
+	bool isNew = expression1->isNew;
 
 	Executable* executables[30];
 	int executable_index = expression1->executable_index;
 	for (int i = 0; i < executable_index; i++){
-		executables[i] = expression1->executable[i];
+		executables[i] = expression1->executables[i];
 	}
-
 
 	//处理括号
 	for (int i = 0; i < executable_index; i++){
@@ -1041,7 +917,6 @@ JSObject* excute(Expression * expression1){
 		else if (executables[i]->type == FUNCTIONCALL){
 			result = excute(executables[i]);
 		}
-
 	}
 
 	//处理复合运算符
@@ -1052,7 +927,6 @@ JSObject* excute(Expression * expression1){
 
 			}
 		}
-
 	}
 
 
@@ -1123,7 +997,14 @@ JSObject* excute(Expression * expression1){
 		if (executables[i]->type == OPERATOR){
 			Operator* codeOperator = (Operator*)executables[i];
 			if (codeOperator->code_operator == '='){
+				MetaExecutable * target = (MetaExecutable *)executables[i - 1];
+				if (target->type != META){
+					//report error
+					return NULL;
+				}
 
+				Executable * source = executables[i + 1];
+				result = excuteAssignment(source, target, isNew);
 			}
 		}
 	}
@@ -1131,151 +1012,171 @@ JSObject* excute(Expression * expression1){
 }
 
 
-
-
 JSObject* excute(FunctionDefinition * functionDefinition){
 	JSFunction * jsFunction = new JSFunction();
-	jsFunction->function_name = functionDefinition->functionName->variable_name;
+	jsFunction->function_name = functionDefinition->functionName;
 	jsFunction->functionDefinition = functionDefinition;
 
 
-	currentClosure->set(functionDefinition->functionName->variable_name, jsFunction);
-	JSKeyValue * jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionDefinition->functionName->variable_name);
+	currentClosure->set(functionDefinition->functionName, jsFunction);
+
+	JSKeyValue * jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionDefinition->functionName);
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
 		return NULL;
 	}
 
-	return NULL;
+	return jsFunction;
 }
 
 
 JSObject* excute(FunctionCall * functionCall){
+	JSObject* result = NULL;
 
-	if (functionCall->functionName->type != NAME){
+	if (functionCall->functionName == NULL){
 		//report error
 		return NULL;
 	}
-	JSObject * jsVariables;
-	if (functionCall->variables->type == CODE_NUMBER){
-		jsVariables = (JSObject *)(new JSNumber(functionCall->variables->number));
-	}
-	else if (functionCall->variables->type == CODE_STRING){
-		jsVariables = (JSObject *)(new JSString(functionCall->variables->char_string));
-	}
-	else if (functionCall->variables->type == CODE_JSON){
-		JSON* json = parseJSON(functionCall->variables->jsonstr);
-		jsVariables = (JSObject *)json;
-	}
-	else if (functionCall->variables->type == NAME){
-		JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->variables->variable_name);
-		if (jsKeyValue == NULL){
+	JSObject * jsVariables[5];
+	for (int i = 0; i < functionCall->variable_index; i++){
+		MetaExecutable* metaExecutable = (MetaExecutable*)functionCall->variables[i];
+		if (metaExecutable->type = META){
 			//report error
-			//return;
+			return NULL;
 		}
-		else{
-			jsVariables = jsKeyValue->value;
+
+		if (metaExecutable->codeElement->type == CODE_NUMBER){
+			jsVariables[i] = new JSNumber(metaExecutable->codeElement->number);
+		}
+		else if (metaExecutable->codeElement->type == CODE_STRING){
+			jsVariables[i] = new JSString(metaExecutable->codeElement->char_string);
+		}
+		else if (metaExecutable->codeElement->type == CODE_JSON){
+			jsVariables[i] = parseJSON(metaExecutable->codeElement->jsonstr);
+		}
+		else if (metaExecutable->codeElement->type == NAME){
+			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(metaExecutable->codeElement->variable_name);
+			if (jsKeyValue == NULL){
+				//report error
+				//return;
+			}
+			else{
+				jsVariables[i] = jsKeyValue->value;
+			}
 		}
 	}
 
+
 	JSKeyValue * jsFunctionKeyValue;
-	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName->variable_name);
+	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName);
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
 		return NULL;
 	}
 	JSFunction * jsFunction = (JSFunction *)jsFunctionKeyValue->value;
+
+
+
 	if (jsFunction == NULL || ((JSObject*)jsFunction)->type != JSFUNCTION){
 		//report error
 		return NULL;
 	}
 	else{
-		JSON* parameter = new JSON();
-		parameter->initialize();
-		parameter->push(jsVariables);
+
 		if (jsFunction->function != NULL){
-			JSON* result = jsFunction->function(parameter);
+			//JSON* result = jsFunction->function(parameter);
 		}
 		else if (jsFunction->functionDefinition != NULL){
-			excuteFunction(jsFunction->functionDefinition, parameter);
+
+			FunctionDefinition* functionDefinition = jsFunction->functionDefinition;
+
+			JSON* parameter = new JSON();
+			parameter->initialize();
+			MetaExecutable* metaExecutable;
+			for (int i = 0; i < functionDefinition->variable_index; i++){
+				metaExecutable = (MetaExecutable*)functionDefinition->variables[i];
+				parameter->set(metaExecutable->codeElement->variable_name, jsVariables[i]);
+			}
+
+
+			result = excuteFunction(jsFunction->functionDefinition, parameter);
 		}
 
 	}
 
-	return NULL;
+	return result;
 
 }
 
 JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter){
-
+	JSObject* result = NULL;
 	Closure * closure = new Closure();
 	closure->initialize();
 	currentClosure->next = closure;
 	closure->previous = currentClosure;
 
-	closure->set(functionDefinition->variables->variable_name, parameter->pop());
-
+	for (int i = 0; i < parameter->length; i++){
+		JSKeyValue* jsKeyValue = (JSKeyValue*)parameter->list->find(i);
+		closure->set(jsKeyValue->key, jsKeyValue->value);
+	}
 
 	currentClosure = currentClosure->next;
 
-	Executable * executable;
-	for (int i = 0; i < functionDefinition->executable_index; i++){
-		executable = functionDefinition->executables[i];
-		if (executable->type == ASSIGNMENT){
-			excute((Assignment*)executable);
-		}
-		else if (executable->type == FUNCTIONCALL){
-			excute((FunctionCall*)executable);
-		}
-		else if (executable->type == FUNCTIONDEFINITION){
-			excute((FunctionDefinition*)executable);
-		}
-	}
+
+	ExecutableBlock* executableBlock = functionDefinition->executableBlock;
+	result = excute(executableBlock);
 
 	currentClosure = currentClosure->previous;
 
-	return NULL;
+	return result;
 }
 
-JSObject* excute(Assignment * assignment){
-	JSObject * rightValue;
-	if (assignment->right->type == CODE_NUMBER){
-		rightValue = (JSObject *)(new JSNumber(assignment->right->number));
-	}
-	else if (assignment->right->type == CODE_STRING){
-		rightValue = (JSObject *)(new JSString(assignment->right->char_string));
-	}
-	else if (assignment->right->type == CODE_JSON){
-		JSON* json = parseJSON(assignment->right->jsonstr);
-		rightValue = (JSObject *)json;
-		//log((JSObject*)json);
-	}
-	else if (assignment->right->type == NAME){
-		JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(assignment->right->variable_name);
-		if (jsKeyValue == NULL){
-			//report error
+JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool isNew){
+	JSObject * rightValue = NULL;
+	if (source->type == META){
+		MetaExecutable * metaExecutable = (MetaExecutable*)source;
+		if (metaExecutable->codeElement->type == CODE_NUMBER){
+			rightValue = (JSObject *)(new JSNumber(metaExecutable->codeElement->number));
 		}
-		else{
-			rightValue = jsKeyValue->value;
+		else if (metaExecutable->codeElement->type == CODE_STRING){
+			rightValue = (JSObject *)(new JSString(metaExecutable->codeElement->char_string));
+		}
+		else if (metaExecutable->codeElement->type == CODE_JSON){
+			JSON* json = parseJSON(metaExecutable->codeElement->jsonstr);
+			rightValue = (JSObject *)json;
+			//log((JSObject*)json);
+		}
+		else if (metaExecutable->codeElement->type == NAME){
+			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(metaExecutable->codeElement->variable_name);
+			if (jsKeyValue == NULL){
+				//report error
+			}
+			else{
+				rightValue = jsKeyValue->value;
+			}
 		}
 	}
-	JSObject * leftVariable;
-	if (assignment->isNew){
+	else if (source->type == EXCUTED){
+		ExcutedExecutable * excutedExecutable = (ExcutedExecutable*)source;
+		rightValue = excutedExecutable->result;
+	}
 
-		currentClosure->set(assignment->left->variable_name, rightValue);
+	JSObject * leftVariable = NULL;
+	if (isNew){
+		currentClosure->set(target->codeElement->variable_name, rightValue);
 	}
 	else{
-		leftVariable = currentClosure->lookup(assignment->right->variable_name);
+		leftVariable = currentClosure->lookup(target->codeElement->variable_name);
 		if (leftVariable == NULL){
 			//report error
 		}
 		else{
 			//replace or modify???
-			currentClosure->set(assignment->left->variable_name, rightValue);
+			currentClosure->set(target->codeElement->variable_name, rightValue);
 		}
 	}
 
-	return NULL;
+	return rightValue;
 }
 
 void getAllVariablesToString(){

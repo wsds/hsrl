@@ -52,7 +52,7 @@ public:
 	JSObject* json;
 };
 
-class JSON : JSObject
+class JSON : public JSObject
 {
 public:
 	JSON();

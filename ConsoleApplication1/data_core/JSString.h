@@ -10,7 +10,7 @@
 #define NULL 0
 #endif /* NULL */
 
-class JSString : JSObject
+class JSString : public JSObject
 {
 public:
 	//char* char_string; 

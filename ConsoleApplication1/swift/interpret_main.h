@@ -100,6 +100,7 @@ public:
 #define EXCUTEABLEBLOCK 10
 
 #define OPERATOR 11
+#define FUNCTIONRETURN 12
 #define EXCUTED 20
 class Executable{
 public:
@@ -109,6 +110,7 @@ class ExecutableBlock : public Executable{
 public:
 	ExecutableBlock();
 
+	Executable * holder;
 	bool isHolded;
 
 	Executable* executables[10];
@@ -139,61 +141,40 @@ public:
 class Expression : public Executable{
 public:
 	Expression();
-	Executable* executable[30];
+	bool isNew;
+	Executable* executables[30];
 	int executable_index;
 
 	JSObject* result;
 };
 
-class FunctionCall1 : public Executable{
+class FunctionCall : public Executable{
 public:
-	FunctionCall1();
+	FunctionCall();
 	char* functionName;
 	Executable* variables[5];
 	int variable_index;
 
 	JSObject* result;
 };
-class FunctionDefinition1 : public Executable{
+
+class FunctionReturn : public Executable{
 public:
-	FunctionDefinition1();
+	FunctionReturn();
+	Executable* variables[5];
+	int variable_index;
+
+	JSObject* result;
+};
+class FunctionDefinition : public Executable{
+public:
+	FunctionDefinition();
 	char* functionName;
 	Executable* variables[5];
 	int variable_index;
 
 	ExecutableBlock* executableBlock;
 };
-
-class Assignment : public Executable{
-public:
-	Assignment();
-	bool isNew;
-	CodeElement* left;
-	CodeElement* codeOperator;
-	CodeElement* right;
-};
-
-
-class FunctionCall : public Executable{
-public:
-	FunctionCall();
-	CodeElement* functionName;
-	CodeElement* variables;
-};
-
-
-
-class FunctionDefinition : public Executable{
-public:
-	FunctionDefinition();
-	CodeElement* functionName;
-	CodeElement* variables;
-
-	Executable* executables[10];
-	int executable_index;
-};
-
-
 
 
 class Condition : public Executable{
@@ -245,9 +226,7 @@ public:
 	CodeElement* keyName;
 	CodeElement* valueName;
 
-	Executable * executables[10];
-	int executable_index;
-
+	ExecutableBlock* executableBlock;
 };
 
 void interpret_main();
@@ -258,10 +237,10 @@ JSObject* excute(ExecutableBlock * executableBlock);
 
 JSObject* excute(Expression * expression);
 
-JSObject* excute(Assignment * assignment);
 JSObject* excute(FunctionCall * functionCall);
 JSObject* excute(FunctionDefinition * functionDefinition);
 
+JSObject* excuteAssignment(Executable * target, MetaExecutable * source, bool isNew);
 JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
 void getAllVariablesToString();
@@ -274,8 +253,8 @@ public:
 	MetaExecutable* metaExecutable;
 	Operator* codeOperator;
 	Expression* expression;
-	FunctionCall1* functionCall;
-	FunctionDefinition1* functionDefinition;
+	FunctionCall* functionCall;
+	FunctionDefinition* functionDefinition;
 	ExecutableBlock* executableBlock;
 	ForInBlock* forInBlock;
 
