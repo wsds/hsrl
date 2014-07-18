@@ -41,9 +41,9 @@ function processLog(log){
 	var type = log.substring(0,2);
 	var content = log.substring(2);
 	if(type=="1."){
-		log_area.html($(".div2").html()+"<p>"+content+"</p>");
+		log_area.html(log_area.html()+"<p>"+content+"</p>");
 	}else if(type=="2."){
-		variables_area.html($(".div3").html()+"<p>"+content+"</p>");
+		variables_area.html(variables_area.html()+"<p>"+content+"</p>");
 	}
 }
 
