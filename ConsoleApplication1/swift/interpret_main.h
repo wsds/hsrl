@@ -240,6 +240,8 @@ JSObject* excute(Expression * expression);
 JSObject* excute(FunctionCall * functionCall);
 JSObject* excute(FunctionDefinition * functionDefinition);
 
+JSObject* excute(FunctionReturn* functionReturn);
+
 JSObject* excuteAssignment(Executable * target, MetaExecutable * source, bool isNew);
 JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
