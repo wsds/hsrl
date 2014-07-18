@@ -144,6 +144,7 @@ void initializeKeyWordMap(KeyWords * keyWords){
 	number->number = 888006;
 
 	keyWordMap->set(keyWords->string_var, number);
+	keyWordMap->set(keyWords->string_new, number);
 
 	keyWordMap->set(keyWords->string_if, number);
 	keyWordMap->set(keyWords->string_else, number);
@@ -468,7 +469,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
 
 					if (codeElement->preBracketIndex - 2 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 2]->type == KEYWORD){
-						if (0 == strcmp(keyWords->string_new, codeElement->keyword)){
+						if (0 == strcmp(keyWords->string_new, codeLine->codeElements[codeElement->preBracketIndex - 2]->keyword)){
 							functionCall->isNew = true;
 						}
 					}
@@ -871,7 +872,6 @@ void resolveCodeLine(char* line){
 				}
 			}
 		}
-		result = excute(executable);
 
 		ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex - 1];
 		executableBlock->executables[executableBlock->executable_index] = executable;
@@ -1248,11 +1248,11 @@ JSObject* excute(FunctionCall * functionCall){
 
 
 
-	if (jsFunctionOrClass == NULL || jsFunctionOrClass->type != JSFUNCTION){
+	if (jsFunctionOrClass == NULL){
 		//report error
 		return NULL;
 	}
-	else if (jsFunctionOrClass->type != JSFUNCTION){
+	else if (jsFunctionOrClass->type == JSFUNCTION){
 		JSFunction* jsFunction = (JSFunction*)jsFunctionOrClass;
 
 		if (jsFunction->function != NULL){
@@ -1280,7 +1280,7 @@ JSObject* excute(FunctionCall * functionCall){
 		}
 
 	}
-	else if (jsFunctionOrClass->type != JSCLASS){
+	else if (jsFunctionOrClass->type == JSCLASS){
 		JSClass* jsClass = (JSClass*)jsFunctionOrClass;
 		if (functionCall->isNew == true){
 			JSClass* newJSClass = new JSClass();
@@ -1349,6 +1349,10 @@ JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool is
 	else if (source->type == EXCUTED){
 		ExcutedExecutable * excutedExecutable = (ExcutedExecutable*)source;
 		rightValue = excutedExecutable->result;
+	}
+	else if (source->type == FUNCTIONCALL){
+		FunctionCall * functionCall = (FunctionCall*)source;
+		rightValue = functionCall->result;
 	}
 
 	JSObject * leftVariable = NULL;
