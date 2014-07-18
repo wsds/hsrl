@@ -891,6 +891,9 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 	else if (executable->type == EXCUTEABLEBLOCK){
 		result = excute((ExecutableBlock*)executable);
 	}
+	else if (executable->type == FUNCTIONRETURN){
+		result = excute((FunctionReturn*)executable);
+	}
 	else if (executable->type == CLASSDEFINITION){
 		result = excute((ClassDefinition*)executable);
 	}
