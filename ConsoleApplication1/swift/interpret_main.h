@@ -83,7 +83,7 @@ public:
 class CodeLine{
 public:
 	//CodeElement** codeElements;
-	CodeElement* codeElements[20];
+	CodeElement* codeElements[30];
 	int element_index;
 };
 #define META 0
@@ -113,7 +113,7 @@ public:
 	Executable * holder;
 	bool isHolded;
 
-	Executable* executables[10];
+	Executable* executables[20];
 	int executable_index;
 
 	JSObject* result;
@@ -142,7 +142,7 @@ class Expression : public Executable{
 public:
 	Expression();
 	bool isNew;
-	Executable* executables[30];
+	Executable* executables[40];
 	int executable_index;
 
 	JSObject* result;
@@ -258,7 +258,7 @@ public:
 	ExecutableBlock* executableBlock;
 	ForInBlock* forInBlock;
 
-	DEBUGExecutable * children[10];
+	DEBUGExecutable * children[20];
 	int children_index;
 };
 

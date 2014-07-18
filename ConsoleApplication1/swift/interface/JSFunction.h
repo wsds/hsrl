@@ -17,7 +17,7 @@ public:
 
 	char* function_name;
 
-	JSON* (*function)(JSON* parameter);
+	JSObject* (*function)(JSON* parameter);
 
 	FunctionDefinition * functionDefinition;
 };

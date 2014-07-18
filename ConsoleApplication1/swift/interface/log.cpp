@@ -12,7 +12,7 @@ void log(JSObject* object){
 	else if (object->type == JSNUMBER){
 		std::cout << ((JSObject*)object)->number;
 		char num[12];
-		parseNubmerToString(((JSObject*)object)->number,num);
+		parseNubmerToString(((JSObject*)object)->number, num);
 		open::logBuf("1.");
 		open::logBuf(num);
 		open::logBufFlush();
@@ -33,21 +33,30 @@ int add(int x, int y){
 	return z;
 }
 
-JSON*  frame_log(JSON* parameter){
+JSObject*  frame_log(JSON* parameter){
 	JSON* result = NULL;
 	log(parameter->pop());
 	return result;
 };
 
-JSON* frame_add(JSON* parameter){
-	JSON* result = new JSON();
-	result->initialize();
+JSObject* frame_add(JSON* parameter){
 
-	JSObject * resultNumber = new JSObject();
+	JSObject * resultNumber = new JSNumber();
 	resultNumber->number = add(parameter->pop()->number, parameter->pop()->number);
-	return result;
+	return resultNumber;
 }
 
+int add3(int x, int y, int z){
+	int r = x + y + z;
+	return r;
+}
+
+JSObject* frame_add3(JSON* parameter){
+
+	JSObject * resultNumber = new JSNumber();
+	resultNumber->number = add3(parameter->pop()->number, parameter->pop()->number, parameter->pop()->number);
+	return resultNumber;
+}
 
 void regeditFunction_log(){
 

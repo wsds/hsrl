@@ -9,7 +9,7 @@
 void pause();
 void continueRun();
 
-JSON* frame_pause(JSON* parameter);
+JSObject* frame_pause(JSON* parameter);
 
 #endif /* PAUSE_H */
 

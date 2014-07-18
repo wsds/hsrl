@@ -521,7 +521,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					if (currentExecutableBlockHoldingStatus == NONE){
 						currentExecutableBlockHoldingStatus = ENDBLOCK;
 					}
-					
+
 				}
 				else{
 					//report error
@@ -786,11 +786,13 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 }
 
 void resolveCodeLine(char* line){
+	JSObject* result = NULL;
+
 	CodeLine* codeLine = new CodeLine();
 	codeLine->element_index = 0;
 	int string_length = strlen(line);
 
-	int result = resolveElement(line, string_length, codeLine);
+	int resolveResult = resolveElement(line, string_length, codeLine);
 
 	resolveOperators(codeLine);
 	resolveBracket(codeLine);
@@ -805,23 +807,27 @@ void resolveCodeLine(char* line){
 		return;
 	}
 	if (executableBlocksIndex <= 0){
-		
+
 		if (executable == NULL){
 			if (currentExecutableBlockHoldingStatus == ENDBLOCK){
 				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
 				if (executableBlock != NULL&&executableBlock->holder != NULL){
-					excute(executableBlock->holder);
+					result = excute(executableBlock->holder);
 				}
 			}
 		}
 		else{
-			excute(executable);
+			result = excute(executable);
 		}
 	}
 	else{
 		ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex - 1];
 		executableBlock->executables[executableBlock->executable_index] = executable;
 		executableBlock->executable_index++;
+	}
+
+	if (result != NULL){
+		log(result);
 	}
 }
 
@@ -832,7 +838,7 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 		result = excute((Expression*)executable);
 	}
 	else if (executable->type == FUNCTIONCALL){
-		excute((FunctionCall*)executable);
+		result = excute((FunctionCall*)executable);
 	}
 	else if (executable->type == FUNCTIONDEFINITION){
 		excute((FunctionDefinition*)executable);
@@ -904,14 +910,30 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 			result->number = leftObject->number * rightObject->number;
 		}
 	}
+	else if (code_operator->code_operator == '/'){
+		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number / rightObject->number;
+		}
+	}
+	else if (code_operator->code_operator == '%'){
+		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number % rightObject->number;
+		}
+	}
+
 	else if (code_operator->code_operator == '+'){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = leftObject->number + rightObject->number;
 		}
 	}
-	else if (code_operator->code_operator == '='){
-
+	else if (code_operator->code_operator == '-'){
+		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number - rightObject->number;
+		}
 	}
 	return result;
 }
@@ -928,7 +950,7 @@ JSObject* excute(Expression * expression1){
 		executables[i] = expression1->executables[i];
 	}
 
-	
+
 	//¥¶¿Ì¿®∫≈
 	for (int i = 0; i < executable_index; i++){
 		if (executables[i]->type == EXCUTEABLEBLOCK){
@@ -954,16 +976,6 @@ JSObject* excute(Expression * expression1){
 	bool hasCodeOperator = false;
 	do{
 		hasCodeOperator = false;
-
-		ExecutableBlock* executableBlock = new ExecutableBlock();
-		for (int j = 0; j < executable_index; j++){
-			executableBlock->executables[j] = executables[j];
-		}
-		executableBlock->executable_index = executable_index;
-		DEBUGExecutable * iDEBUGExecutable = debugExecutable(executableBlock);
-
-
-
 		for (int i = 0; i < executable_index; i++){
 			if (executables[i]->type == OPERATOR){
 				Operator* codeOperator = (Operator*)executables[i];
@@ -1111,7 +1123,12 @@ JSObject* excute(FunctionCall * functionCall){
 	else{
 
 		if (jsFunction->function != NULL){
-			//JSON* result = jsFunction->function(parameter);
+			JSON* parameter = new JSON();
+			parameter->initialize();
+			for (int i = functionCall->variable_index - 1; i >= 0; i--){
+				parameter->push(jsVariables[i]);
+			}
+			result = jsFunction->function(parameter);
 		}
 		else if (jsFunction->functionDefinition != NULL){
 

@@ -36,7 +36,7 @@ public:
 
 	Closure * rootClosure;
 
-	void regedit(char * function_name, JSON* (*function)(JSON* parameter));
+	void regedit(char * function_name, JSObject* (*function)(JSON* parameter));
 
 	void regiditFunctions();
 

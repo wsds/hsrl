@@ -14,7 +14,7 @@ void continueRun(){
 }
 
 
-JSON* frame_pause(JSON* parameter){
+JSObject* frame_pause(JSON* parameter){
 	pause();
 	return NULL;
 }

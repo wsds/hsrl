@@ -14,7 +14,8 @@ void log(JSObject* object);
 
 int add(int x, int y);
 
-JSON*  frame_log(JSON* parameter);
-JSON* frame_add(JSON* parameter);
+JSObject*  frame_log(JSON* parameter);
+JSObject* frame_add(JSON* parameter);
+JSObject* frame_add3(JSON* parameter);
 #endif /* LOG_H */
 

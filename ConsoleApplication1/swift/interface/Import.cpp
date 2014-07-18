@@ -10,7 +10,7 @@ void Import::free(){
 
 }
 
-void Import::regedit(char * function_name, JSON* (*function)(JSON* parameter)){
+void Import::regedit(char * function_name, JSObject* (*function)(JSON* parameter)){
 
 	JSFunction* jsFunction = new JSFunction();
 	jsFunction->function_name = function_name;
@@ -25,5 +25,7 @@ void Import::regiditFunctions(){
 	import->regedit("log", frame_log);
 	import->regedit("add", frame_add);
 	import->regedit("pause", frame_pause);
+
+	import->regedit("add3", frame_add3);
 }
 
