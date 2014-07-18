@@ -395,6 +395,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 	ForInBlock * forInBlock = NULL;
 	ForBlock * forBlock = NULL;
 	IfBlock * ifBlock = NULL;
+	FunctionReturn * functionReturn = NULL;
 
 	int skipToIndex = -1;
 	for (int i = from; i < end; i++){
@@ -449,6 +450,9 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			}
 			else if (0 == strcmp(keyWords->string_if, codeElement->keyword)){
 				ifBlock = new IfBlock();
+			}
+			else if (0 == strcmp(keyWords->string_return, codeElement->keyword)){
+				functionReturn = new FunctionReturn();
 			}
 		}
 		else if (codeElement->type == BRACKET){
@@ -681,6 +685,17 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			executable = ifBlock;
 		}
 	}
+	else if (functionReturn != NULL){
+		DEBUGExecutable * iDEBUGExecutable;
+		if (expression != NULL){
+			iDEBUGExecutable = debugExecutable(expression);
+			for (int i = 0; i < expression->executable_index; i++){
+				functionReturn->variables[i] = expression->executables[i];
+			}
+			functionReturn->variable_index = expression->executable_index;
+			executable = functionReturn;
+		}
+	}
 	else if (executable == NULL){
 		if (end - from <= 1){
 			executable = metaExecutable;
@@ -883,17 +898,58 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 	else if (executable->type == EXCUTEABLEBLOCK){
 		result = excute((ExecutableBlock*)executable);
 	}
+	else if (executable->type == FUNCTIONRETURN){
+		result = excute((FunctionReturn*)executable);
+	}
 	else if (executable->type == CLASSDEFINITION){
 		result = excute((ClassDefinition*)executable);
 	}
 	return result;
 }
 
+JSObject* excute(FunctionReturn* functionReturn){
+	JSObject* result = NULL;
+	if (functionReturn->variable_index == 1){
+		Executable * executable = functionReturn->variables[0];
+		
+		DEBUGExecutable * iDEBUGExecutable = debugExecutable(executable);
+		if (executable->type == META){
+			MetaExecutable* metaExecutable = (MetaExecutable*)executable;
+			if (metaExecutable->codeElement->type == NAME){
+				result = ((JSKeyValue*)currentClosure->lookup(metaExecutable->codeElement->variable_name))->value;
+			}
+			else if (metaExecutable->codeElement->type == CODE_NUMBER){
+				JSNumber * jsNumber = new JSNumber();
+				jsNumber->number = metaExecutable->codeElement->number;
+				result = jsNumber;
+			}
+			else if (metaExecutable->codeElement->type == CODE_STRING){
+				JSString * jsString = new JSString();
+				jsString->char_string = metaExecutable->codeElement->char_string;
+				jsString->length = strlen(jsString->char_string);
+				result = jsString;
+			}
+			else if (metaExecutable->codeElement->type == CODE_JSON){
+				JSON * json = new JSON();
+				json = parseJSON(metaExecutable->codeElement->jsonstr);
+				result = json;
+			}
+
+		}
+	}
+	else if (functionReturn->variable_index > 1){
+		
+	}
+	return result;
+}
 
 JSObject* excute(ExecutableBlock * executableBlock){
 	JSObject* result = NULL;
 	for (int i = 0; i < executableBlock->executable_index; i++){
 		result = excute(executableBlock->executables[i]);
+		if (executableBlock->executables[i]->type == FUNCTIONRETURN){
+			break;
+		}
 	}
 	executableBlock->result = result;
 	return result;
@@ -1009,6 +1065,7 @@ JSObject* excute(Expression * expression1){
 		}
 		else if (executables[i]->type == FUNCTIONCALL){
 			result = excute(executables[i]);
+			((FunctionCall*)executables[i])->result = result;
 		}
 	}
 
