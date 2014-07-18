@@ -48,3 +48,15 @@ add(14,5)
 add3(14,5,1)
 var a=12+3*(99+2)*2+21-1
 10%6*9/2
+
+
+class NamedShape {
+    var numberOfSides = 123
+    var name
+    func init(name) {
+        a=1
+    }
+    func simpleDescription() {
+        a=1+1
+    }
+}

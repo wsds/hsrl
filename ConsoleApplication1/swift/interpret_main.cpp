@@ -834,15 +834,23 @@ void resolveCodeLine(char* line){
 			if (currentExecutableBlockHoldingStatus == ENDBLOCK){
 				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
 				if (executableBlock != NULL&&executableBlock->holder != NULL){
-					result = excute(executableBlock->holder);
+					executable = executableBlock->holder;
 				}
 			}
 		}
-		else{
-			result = excute(executable);
-		}
+		result = excute(executable);
 	}
 	else{
+		if (executable == NULL){
+			if (currentExecutableBlockHoldingStatus == ENDBLOCK){
+				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
+				if (executableBlock != NULL&&executableBlock->holder != NULL){
+					executable = executableBlock->holder;
+				}
+			}
+		}
+		result = excute(executable);
+
 		ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex - 1];
 		executableBlock->executables[executableBlock->executable_index] = executable;
 		executableBlock->executable_index++;
@@ -867,6 +875,9 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 	}
 	else if (executable->type == EXCUTEABLEBLOCK){
 		result = excute((ExecutableBlock*)executable);
+	}
+	else if (executable->type == CLASSDEFINITION){
+		result = excute((ClassDefinition*)executable);
 	}
 	return result;
 }
@@ -1116,9 +1127,12 @@ JSObject* excute(ClassDefinition * classDefinition){
 	ExecutableBlock* executableBlock = classDefinition->executableBlock;
 	JSObject* result = excute(executableBlock);
 
-
+	jsClass->children = currentClosure->variables;
+	char * test = stringifyJSON(jsClass->children);
 
 	currentClosure = currentClosure->previous;
+
+	currentClosure->set(classDefinition->className, jsClass);
 	return jsClass;
 }
 
@@ -1267,13 +1281,15 @@ JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool is
 		currentClosure->set(target->codeElement->variable_name, rightValue);
 	}
 	else{
-		leftVariable = currentClosure->lookup(target->codeElement->variable_name);
-		if (leftVariable == NULL){
+		JSKeyValue * leftVariableJSKeyValue = (JSKeyValue*)currentClosure->lookup(target->codeElement->variable_name);
+		if (leftVariableJSKeyValue == NULL || leftVariableJSKeyValue->type != JSKEYVALUE){
 			//report error
 		}
 		else{
 			//replace or modify???
-			currentClosure->set(target->codeElement->variable_name, rightValue);
+			//free the old value
+			leftVariableJSKeyValue->value = rightValue;
+			//currentClosure->set(target->codeElement->variable_name, rightValue);
 		}
 	}
 
@@ -1334,10 +1350,20 @@ void getAllVariablesToString(){
 				open::logBufFlush();
 			}
 			else if (value->type == JSFUNCTION){
+				JSFunction* jsFunction = (JSFunction*)value;
+				if (((JSFunction*)value)->functionDefinition != NULL){
+					open::logBuf("2.");
+					open::logBuf(((JSFunction*)object)->function_name);
+					open::logBuf(" = ");
+					open::logBuf("func");
+					open::logBufFlush();
+				}
+			}
+			else if (value->type == JSCLASS){
 				open::logBuf("2.");
-				open::logBuf(((JSFunction*)object)->function_name);
+				open::logBuf(((JSClass*)value)->className);
 				open::logBuf(" = ");
-				open::logBuf("func");
+				open::logBuf("class");
 				open::logBufFlush();
 			}
 		}
