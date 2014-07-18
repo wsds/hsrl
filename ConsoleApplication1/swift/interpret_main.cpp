@@ -144,6 +144,7 @@ void initializeKeyWordMap(KeyWords * keyWords){
 	number->number = 888006;
 
 	keyWordMap->set(keyWords->string_var, number);
+	keyWordMap->set(keyWords->string_new, number);
 
 	keyWordMap->set(keyWords->string_if, number);
 	keyWordMap->set(keyWords->string_else, number);
@@ -468,7 +469,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
 
 					if (codeElement->preBracketIndex - 2 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 2]->type == KEYWORD){
-						if (0 == strcmp(keyWords->string_new, codeElement->keyword)){
+						if (0 == strcmp(keyWords->string_new, codeLine->codeElements[codeElement->preBracketIndex - 2]->keyword)){
 							functionCall->isNew = true;
 						}
 					}
@@ -871,7 +872,6 @@ void resolveCodeLine(char* line){
 				}
 			}
 		}
-		result = excute(executable);
 
 		ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex - 1];
 		executableBlock->executables[executableBlock->executable_index] = executable;

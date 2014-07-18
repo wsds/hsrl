@@ -30,7 +30,7 @@ x=(x+Y)/1+(x-y)
 func add_test(x, y){
 	var z=x+y
 	log(z)
-	return z+1
+	return z
 }
 var a=1
 func test2(){
