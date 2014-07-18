@@ -20,37 +20,65 @@
 	width:1250px;
 }
 .div1{
-	width:220px;
+	width:415px;
+	height:415px;
 	float:left;
 }
+
+.shell_text {
+	width:400px;
+	height:400px;
+	overflow:hidden;
+	resize:none;
+	border-color:red;
+}
+
 .div2{
-	background-color:#CCC;
-	width:500px;
-	height:500px;
+	width:210px;
 	float:left;
 	overflow:hidden;
-	overflow-y:scroll;
 	color:#000;
 	word-break:break-all;
 }
 .div3{
-	background-color:#CCC;
+	float:left;
+	overflow:hidden;
+}
+.div4{
 	width:500px;
 	height:500px;
+	float:left;
+	overflow:hidden;
+	color:#000;
+	word-break:break-all;
+}
+
+.shell_button {
+	width: 200px;
+	height: 25px;
+}
+
+.log_area{
+	width: 400px;
+	height: 200px;
+}
+
+.variables_area{
+	width: 400px;
+	height: 350px;
+}
+
+.log_area,.variables_area{
+	background-color:#CCC;
 	float:left;
 	overflow:hidden;
 	overflow-y:scroll;
 	color:#000;
 	word-break:break-all;
 }
-.shell_text {
-	height: 200px;
-	width: 200px;
-	overflow:hidden;
-	resize:none;
-}
-.shell_button,.clear_button {
-	width: 200px;
+
+.title{
+	background-color:#EEE;
 }
 </style>
 </head>
@@ -58,17 +86,25 @@
   <h2>web shell</h2>
   <div class="main">
   <div class="div1">
-  <textarea id="shell_text" class="shell_text"></textarea><br />
-  <input type="button" value="shell" class="shell_button" onclick="shell()"/><br /><br />
-  <input type="button" value="clear" class="shell_button" onclick="clear_rec()"/><br /><br />
-  <input type="button" value="show variables" class="shell_button" onclick="show_variables()"/><br /><br />
-  <input type="button" value="clear variables" class="shell_button" onclick="clear_variables()"/><br /><br />
-  <input type="button" value="continue" class="shell_button" onclick="continue_run()"/><br /><br />
+	<textarea id="shell_text" class="shell_text"></textarea>
   </div>
   <div class="div2">
+	<input type="button" value="shell" class="shell_button" onclick="shell()"/><br /><br />
+	<input type="button" value="clear log" class="shell_button" onclick="clear_rec()"/><br /><br />
+	<input type="button" value="show variables" class="shell_button" onclick="show_variables()"/><br /><br />
+	<input type="button" value="clear variables" class="shell_button" onclick="clear_variables()"/><br /><br />
+	<input type="button" value="continue" class="shell_button" onclick="continue_run()"/><br /><br /><br />
+	<input type="button" value="connect" class="shell_button" onclick="connect()"/><br /><br />
+	<input type="button" value="previous execute" class="shell_button" onclick="previous_execute()"/><br /><br />
+	<input type="button" value="next execute" class="shell_button" onclick="next_execute()"/><br /><br />
   </div>
+
   <div class="div3">
+	<div class="title">log:</div>
+	<div class="log_area"></div>
+	<div class="title">variables:</div>
+	<div class="variables_area"></div>
   </div>
-  </div>
+ 
 </body>
 </html>
