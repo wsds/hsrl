@@ -627,12 +627,30 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		DEBUGExecutable * iDEBUGExecutable;
 		if (executableBlock != NULL){
 			iDEBUGExecutable = debugExecutable(executableBlock);
+			if (executableBlock->executable_index >= 3){
+				forBlock->pre_executable = executableBlock->executables[0];
+				forBlock->conditions[forBlock->conditions_index] = (Condition *)executableBlock->executables[1];
+				forBlock->conditions_index++;
+				forBlock->last_executable = executableBlock->executables[2];
+
+				executable = forBlock;
+			}
+			else{
+				//report error
+
+			}
 		}
 
 		executable = forBlock;
 	}
 	else if (ifBlock != NULL){
-
+		DEBUGExecutable * iDEBUGExecutable;
+		if (expression != NULL){
+			iDEBUGExecutable = debugExecutable(expression);
+			ifBlock->conditions[ifBlock->conditions_index] = (Condition *)expression;
+			ifBlock->conditions_index++;
+			executable = ifBlock;
+		}
 	}
 	else if (executable == NULL){
 		if (end - from <= 1){
@@ -905,10 +923,12 @@ JSObject* excute(Expression * expression1){
 
 	Executable* executables[30];
 	int executable_index = expression1->executable_index;
+
 	for (int i = 0; i < executable_index; i++){
 		executables[i] = expression1->executables[i];
 	}
 
+	
 	//¥¶¿Ì¿®∫≈
 	for (int i = 0; i < executable_index; i++){
 		if (executables[i]->type == EXCUTEABLEBLOCK){
@@ -1008,6 +1028,13 @@ JSObject* excute(Expression * expression1){
 			}
 		}
 	}
+
+	if (executable_index == 1 && result == NULL&&
+		executables[0]->type == META){
+		MetaExecutable* metaExecutable = (MetaExecutable*)executables[0];
+		result = ((JSKeyValue*)currentClosure->lookup(metaExecutable->codeElement->variable_name))->value;
+	}
+
 	return result;
 }
 
