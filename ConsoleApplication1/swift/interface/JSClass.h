@@ -8,12 +8,13 @@
 #define NULL 0
 #endif /* NULL */
 
-class JSClass : JSObject
+class JSClass : public JSObject
 {
 public:
 	JSClass();
-	char* key;
-	JSObject* value;
+
+	char* className;
+	JSON* children;
 
 	void free();
 };

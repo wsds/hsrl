@@ -21,7 +21,7 @@ class NamedShape {
     }
 }
 func test() {
-	var namedShape = NamedShape()
+	var namedShape = new NamedShape()
 	shape.numberOfSides = 7
 	var shapeDescription = shape.simpleDescription()
 }

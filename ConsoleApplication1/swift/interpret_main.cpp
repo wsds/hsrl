@@ -33,6 +33,17 @@ FunctionDefinition::FunctionDefinition(){
 	this->executableBlock = new ExecutableBlock();
 	this->executableBlock->holder = this;
 }
+ClassDefinition::ClassDefinition(){
+	this->type = CLASSDEFINITION;
+	this->executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
+}
+InstanceDefinition::InstanceDefinition(){
+	this->type = INSTANCEDEFINITION;
+	this->executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
+}
+
 ExecutableBlock::ExecutableBlock(){
 	this->isHolded = false;
 	this->holder = NULL;
@@ -374,7 +385,11 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 	Expression * expression = NULL;
 
 	FunctionCall * functionCall = NULL;
+
 	FunctionDefinition * functionDefinition = NULL;
+	ClassDefinition * classDefinition = NULL;
+	InstanceDefinition * instanceDefinition = NULL;
+
 	ForInBlock * forInBlock = NULL;
 	ForBlock * forBlock = NULL;
 	IfBlock * ifBlock = NULL;
@@ -394,7 +409,6 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				}
 			}
 			else if (0 == strcmp(keyWords->string_func, codeElement->keyword)){
-
 				functionDefinition = new FunctionDefinition();
 				currentExecutableBlock = functionDefinition->executableBlock;
 				if (i + 1 < end && codeLine->codeElements[i + 1]->type == NAME){
@@ -402,10 +416,18 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				}
 			}
 			else if (0 == strcmp(keyWords->string_class, codeElement->keyword)){
-
+				classDefinition = new ClassDefinition();
+				currentExecutableBlock = classDefinition->executableBlock;
+				if (i + 1 < end && codeLine->codeElements[i + 1]->type == NAME){
+					classDefinition->className = codeLine->codeElements[i + 1]->variable_name;
+				}
 			}
 			else if (0 == strcmp(keyWords->string_instance, codeElement->keyword)){
-
+				instanceDefinition = new InstanceDefinition();
+				currentExecutableBlock = instanceDefinition->executableBlock;
+				if (i + 1 < end && codeLine->codeElements[i + 1]->type == NAME){
+					instanceDefinition->instanceName = codeLine->codeElements[i + 1]->variable_name;
+				}
 			}
 			else if (0 == strcmp(keyWords->string_for, codeElement->keyword)){
 				bool isForIn = false;
@@ -827,15 +849,23 @@ void resolveCodeLine(char* line){
 			if (currentExecutableBlockHoldingStatus == ENDBLOCK){
 				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
 				if (executableBlock != NULL&&executableBlock->holder != NULL){
-					result = excute(executableBlock->holder);
+					executable = executableBlock->holder;
 				}
 			}
 		}
-		else{
-			result = excute(executable);
-		}
+		result = excute(executable);
 	}
 	else{
+		if (executable == NULL){
+			if (currentExecutableBlockHoldingStatus == ENDBLOCK){
+				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
+				if (executableBlock != NULL&&executableBlock->holder != NULL){
+					executable = executableBlock->holder;
+				}
+			}
+		}
+		result = excute(executable);
+
 		ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex - 1];
 		executableBlock->executables[executableBlock->executable_index] = executable;
 		executableBlock->executable_index++;
@@ -861,8 +891,8 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 	else if (executable->type == EXCUTEABLEBLOCK){
 		result = excute((ExecutableBlock*)executable);
 	}
-	else if (executable->type == FUNCTIONRETURN){
-		result = excute((FunctionReturn*)executable);
+	else if (executable->type == CLASSDEFINITION){
+		result = excute((ClassDefinition*)executable);
 	}
 	return result;
 }
@@ -1000,12 +1030,23 @@ JSObject* excute(Expression * expression1){
 	bool isNew = expression1->isNew;
 
 	Executable* executables[30];
-	int executable_index = expression1->executable_index;
 
+	int executable_index = expression1->executable_index;
 	for (int i = 0; i < executable_index; i++){
 		executables[i] = expression1->executables[i];
 	}
 
+	if (isNew == true && executable_index == 1){
+		MetaExecutable * target = (MetaExecutable *)executables[0];
+		if (target->type != META){
+			//report error
+			return NULL;
+		}
+
+		Executable * source = NULL;
+		result = excuteAssignment(source, target, isNew);
+		return result;
+	}
 
 	//¥¶¿Ì¿®∫≈
 	for (int i = 0; i < executable_index; i++){
@@ -1098,11 +1139,11 @@ JSObject* excute(Expression * expression1){
 		}
 	}
 
-	if (executable_index == 1 && result == NULL&&
-		executables[0]->type == META){
-		MetaExecutable* metaExecutable = (MetaExecutable*)executables[0];
-		result = ((JSKeyValue*)currentClosure->lookup(metaExecutable->codeElement->variable_name))->value;
-	}
+	//if (executable_index == 1 && result == NULL&&
+	//	executables[0]->type == META){
+	//	MetaExecutable* metaExecutable = (MetaExecutable*)executables[0];
+	//	result = ((JSKeyValue*)currentClosure->lookup(metaExecutable->codeElement->variable_name))->value;
+	//}
 
 	return result;
 }
@@ -1125,6 +1166,30 @@ JSObject* excute(FunctionDefinition * functionDefinition){
 	return jsFunction;
 }
 
+JSObject* excute(ClassDefinition * classDefinition){
+	JSClass * jsClass = new JSClass();
+	jsClass->className = classDefinition->className;
+
+	Closure * closure = new Closure();
+	closure->initialize();
+	currentClosure->next = closure;
+	closure->previous = currentClosure;
+
+	currentClosure = currentClosure->next;
+
+
+	ExecutableBlock* executableBlock = classDefinition->executableBlock;
+	JSObject* result = excute(executableBlock);
+
+	jsClass->children = currentClosure->variables;
+	char * test = stringifyJSON(jsClass->children);
+
+	currentClosure = currentClosure->previous;
+
+	currentClosure->set(classDefinition->className, jsClass);
+	return jsClass;
+}
+
 
 JSObject* excute(FunctionCall * functionCall){
 	JSObject* result = NULL;
@@ -1136,7 +1201,7 @@ JSObject* excute(FunctionCall * functionCall){
 	JSObject * jsVariables[5];
 	for (int i = 0; i < functionCall->variable_index; i++){
 		MetaExecutable* metaExecutable = (MetaExecutable*)functionCall->variables[i];
-		if (metaExecutable->type = META){
+		if (metaExecutable->type != META){
 			//report error
 			return NULL;
 		}
@@ -1234,7 +1299,10 @@ JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* paramete
 
 JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool isNew){
 	JSObject * rightValue = NULL;
-	if (source->type == META){
+	if (source == NULL){
+		rightValue = NULL;
+	}
+	else if (source->type == META){
 		MetaExecutable * metaExecutable = (MetaExecutable*)source;
 		if (metaExecutable->codeElement->type == CODE_NUMBER){
 			rightValue = (JSObject *)(new JSNumber(metaExecutable->codeElement->number));
@@ -1267,13 +1335,15 @@ JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool is
 		currentClosure->set(target->codeElement->variable_name, rightValue);
 	}
 	else{
-		leftVariable = currentClosure->lookup(target->codeElement->variable_name);
-		if (leftVariable == NULL){
+		JSKeyValue * leftVariableJSKeyValue = (JSKeyValue*)currentClosure->lookup(target->codeElement->variable_name);
+		if (leftVariableJSKeyValue == NULL || leftVariableJSKeyValue->type != JSKEYVALUE){
 			//report error
 		}
 		else{
 			//replace or modify???
-			currentClosure->set(target->codeElement->variable_name, rightValue);
+			//free the old value
+			leftVariableJSKeyValue->value = rightValue;
+			//currentClosure->set(target->codeElement->variable_name, rightValue);
 		}
 	}
 
@@ -1301,11 +1371,19 @@ void getAllVariablesToString(){
 		for (int i = 0; i < currentLen; i++){
 			object = current->variables->find(i);
 			JSObject* value = ((JSKeyValue*)object)->value;
-			if (value->type == JSSTRING){
+			if (value == NULL){
 				open::logBuf("2.");
 				open::logBuf(((JSKeyValue*)object)->key);
-				open::logBuf("=");
+				open::logBuf(" = ");
+				open::logBuf("NULL");
+				open::logBufFlush();
+			}
+			else if (value->type == JSSTRING){
+				open::logBuf("2.");
+				open::logBuf(((JSKeyValue*)object)->key);
+				open::logBuf(" = \"");
 				open::logBuf(((JSObject*)value)->char_string);
+				open::logBuf("\"");
 				open::logBufFlush();
 			}
 			else if (value->type == JSNUMBER){
@@ -1313,7 +1391,7 @@ void getAllVariablesToString(){
 				parseNubmerToString(((JSObject*)value)->number, num);
 				open::logBuf("2.");
 				open::logBuf(((JSKeyValue*)object)->key);
-				open::logBuf("=");
+				open::logBuf(" = ");
 				open::logBuf(num);
 				open::logBufFlush();
 			}
@@ -1321,8 +1399,25 @@ void getAllVariablesToString(){
 				char* jsonStr = stringifyJSON((JSON*)value);
 				open::logBuf("2.");
 				open::logBuf(((JSKeyValue*)object)->key);
-				open::logBuf("=");
+				open::logBuf(" = ");
 				open::logBuf(jsonStr);
+				open::logBufFlush();
+			}
+			else if (value->type == JSFUNCTION){
+				JSFunction* jsFunction = (JSFunction*)value;
+				if (((JSFunction*)value)->functionDefinition != NULL){
+					open::logBuf("2.");
+					open::logBuf(((JSFunction*)object)->function_name);
+					open::logBuf(" = ");
+					open::logBuf("func");
+					open::logBufFlush();
+				}
+			}
+			else if (value->type == JSCLASS){
+				open::logBuf("2.");
+				open::logBuf(((JSClass*)value)->className);
+				open::logBuf(" = ");
+				open::logBuf("class");
 				open::logBufFlush();
 			}
 		}

@@ -1,5 +1,6 @@
 #include "JSON.h"
 #include <iostream>
+#include "../swift/interface/JSFunction.h"
 
 JSON::JSON(){
 	this->type = JSJSON;
@@ -150,11 +151,23 @@ int stringifyJSObject(JSObject* object, char* string, int index);
 
 char* stringifyJSON(JSON* json);
 
+char* funcStr = "func";
+char* nullStr = "NULL";
+
 int stringifyJSObject(JSObject* object, char* string1, int index){
 	//int index = 0;
 	int offset = 0;
+	if (object == NULL){
 
-	if (object->type == JSNUMBER){
+		int i = 0;
+		while (nullStr[i]){
+			string1[index + i] = nullStr[i];
+			i++;
+		}
+		index = index + i;
+		offset = offset + i;
+	}
+	else if (object->type == JSNUMBER){
 		JSNumber * js_number = (JSNumber*)object;
 		offset = parseNubmerToString(((JSObject*)js_number)->number, string1 + index);
 	}
@@ -225,6 +238,32 @@ int stringifyJSObject(JSObject* object, char* string1, int index){
 		offset = 3 + i;
 		//parse value
 		offset = offset + stringifyJSObject(key_value->value, string1, index);
+	}
+	else if (object->type == JSFUNCTION){
+		JSFunction * jsFunction = (JSFunction*)object;
+		//string1[index] = DOUBLEQUOTES;
+		//index++;
+		//char* function_name = jsFunction->function_name;
+		//int i = 0;
+		//while (function_name[i]){
+		//	string1[index + i] = function_name[i];
+		//	i++;
+		//}
+		//index = index + i;
+		//string1[index] = DOUBLEQUOTES;
+
+		//string1[index + 1] = COLON;
+		//index = index + 2;
+
+		//offset = 3 + i;
+
+		int i = 0;
+		while (funcStr[i]){
+			string1[index + i] = funcStr[i];
+			i++;
+		}
+		index = index + i;
+		offset = offset + i;
 	}
 	else if (object->type == JSJSON){
 		string1[index] = LEFTBRACKET;
@@ -446,7 +485,7 @@ JSON* parseJSON(char* string){
 				}
 
 				last_COMMA_index = i + 1;
-				
+
 
 				if (json_indicators_stack_top > 1){
 					//resolve the last element spited by COMMA
@@ -508,7 +547,7 @@ JSON* parseJSON(char* string){
 				json_indicator->quotes_count = 1;
 				parsingStatus = 1;
 				if (localChar == COMMA){
-					if (i>last_COMMA_index){
+					if (i > last_COMMA_index){
 						object_indicator = new JSONIndicator();//get from pool//to do
 						object_indicator->head = last_COMMA_index;
 						object_indicator->tail = i;
