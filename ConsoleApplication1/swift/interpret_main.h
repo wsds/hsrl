@@ -101,6 +101,9 @@ public:
 
 #define OPERATOR 11
 #define FUNCTIONRETURN 12
+#define CLASSDEFINITION 13
+#define INSTANCEDEFINITION 14
+
 #define EXCUTED 20
 class Executable{
 public:
@@ -176,6 +179,26 @@ public:
 	ExecutableBlock* executableBlock;
 };
 
+
+class ClassDefinition : public Executable{
+public:
+	ClassDefinition();
+	char* className;
+	Executable* variables[5];
+	int variable_index;
+
+	ExecutableBlock* executableBlock;
+};
+
+class InstanceDefinition : public Executable{
+public:
+	InstanceDefinition();
+	char* instanceName;
+	Executable* variables[5];
+	int variable_index;
+
+	ExecutableBlock* executableBlock;
+};
 
 class Condition : public Executable{
 public:

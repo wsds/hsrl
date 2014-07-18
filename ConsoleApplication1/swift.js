@@ -27,15 +27,22 @@ x=(x+Y)/1+(x-y)
 
 5*9+9*(8+6)
 
-func add(x, y){
+func add_test(x, y){
 	var z=x+y
+	log(z)
 	return z+1
+}
+var a=1
+func test2(){
+	log("this is test2")
+	log(a)
+	a=a+1
 }
 
 
 var a=1
 var b=2
-var c=add(a,b)
+var c=add_test(a,b)
 
 add(14,5)
 add3(14,5,1)

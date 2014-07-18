@@ -13,6 +13,8 @@
 #include "../FunctionsClosures/Closure.h"
 
 #include "JSFunction.h"
+#include "JSClass.h"
+#include "JSInstance.h"
 
 #ifndef NULL
 #define NULL 0
