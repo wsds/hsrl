@@ -1,6 +1,7 @@
 #include "JSON.h"
 #include <iostream>
 #include "../swift/interface/JSFunction.h"
+#include "../swift/interface/JSClass.h"
 
 JSON::JSON(){
 	this->type = JSJSON;
@@ -149,7 +150,6 @@ JSObject* JSON::del(char* key)
 
 int stringifyJSObject(JSObject* object, char* string, int index);
 
-char* stringifyJSON(JSON* json);
 
 char* funcStr = "func";
 char* nullStr = "NULL";
@@ -241,21 +241,6 @@ int stringifyJSObject(JSObject* object, char* string1, int index){
 	}
 	else if (object->type == JSFUNCTION){
 		JSFunction * jsFunction = (JSFunction*)object;
-		//string1[index] = DOUBLEQUOTES;
-		//index++;
-		//char* function_name = jsFunction->function_name;
-		//int i = 0;
-		//while (function_name[i]){
-		//	string1[index + i] = function_name[i];
-		//	i++;
-		//}
-		//index = index + i;
-		//string1[index] = DOUBLEQUOTES;
-
-		//string1[index + 1] = COLON;
-		//index = index + 2;
-
-		//offset = 3 + i;
 
 		int i = 0;
 		while (funcStr[i]){
@@ -292,6 +277,78 @@ char* stringifyJSON(JSON* json){
 	string[offset] = STREND;
 	return string;
 }
+
+
+
+JSObject * cloneJSObject(JSObject* object){
+	JSObject * clone = NULL;
+	if (object == NULL){
+		return NULL;
+	}
+	else if (object->type == JSNUMBER){
+		JSNumber * js_number = new JSNumber();
+		js_number->number = ((JSNumber *)object)->number;
+		clone = js_number;
+	}
+	else if (object->type == JSSTRING){
+		JSString * js_string = new JSString();
+		js_string->char_string = (char *)JSMalloc(strlen(((JSNumber *)object)->char_string) + 1);
+		strcopy(((JSNumber *)object)->char_string, js_string->char_string);
+
+		clone = js_string;
+	}
+	else if (object->type == JSFUNCTION){
+		clone = object;
+	}
+	else if (object->type == JSCLASS){
+		JSClass * jsClass = new JSClass();
+
+		jsClass->className = (char *)JSMalloc(strlen(((JSClass *)object)->className) + 1);
+		strcopy(((JSClass *)object)->className, jsClass->className);
+
+		jsClass->children = new JSON();
+		jsClass->children->initialize();
+		cloneJSON((JSON *)object, jsClass->children);
+
+		clone = jsClass;
+	}
+	else if (object->type == JSJSON){
+		JSON * json = new JSON();
+		json->initialize();
+		cloneJSON((JSON *)object, json);
+		clone = json;
+	}
+	return clone;
+}
+
+void cloneJSON(JSON * json, JSON * clone){
+
+	JSObject * sub_object = NULL;
+	for (int i = 0; i < json->list->length; i++){
+		sub_object = json->list->find(i);
+		if (sub_object->type == JSKEYVALUE){
+			JSKeyValue * key_value = (JSKeyValue*)sub_object;
+
+			char * key = NULL;
+			key = (char *)JSMalloc(strlen(key_value->key) + 1);
+			JSObject * value = cloneJSObject(key_value->value);
+			clone->set(key, value);
+		}
+		else{
+			JSObject * cloneObject = cloneJSObject(sub_object);
+			clone->push(cloneObject);
+		}
+
+	}
+}
+
+JSON* cloneJSON(JSON * json){
+	JSON * clone = new JSON();
+	clone->initialize();
+	cloneJSON(json, clone);
+	return clone;
+}
+
 
 char* JSON::stringify()
 {

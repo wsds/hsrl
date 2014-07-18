@@ -96,5 +96,8 @@ JSObject*  parseObject(char* string, JSONIndicator* object_indicator, bool isJSK
 
 char* stringifyJSON(JSON* json);
 
+JSON* cloneJSON(JSON* json);
+void cloneJSON(JSON * json, JSON * clone);
+
 #endif /* JSON_H */
 

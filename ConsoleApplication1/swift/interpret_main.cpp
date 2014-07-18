@@ -22,6 +22,7 @@ Expression::Expression(){
 }
 FunctionCall::FunctionCall(){
 	this->type = FUNCTIONCALL;
+	this->isNew = false;
 	this->variable_index = 0;
 }
 FunctionReturn::FunctionReturn(){
@@ -112,6 +113,7 @@ KeyWords::KeyWords(){
 	this->keyWordMap->initialize();
 
 	this->string_var = "var";
+	this->string_new = "new";
 
 	this->string_if = "if";
 	this->string_else = "else";
@@ -458,9 +460,14 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				CodeElement * preBracket = codeLine->codeElements[codeElement->preBracketIndex];
 				if (codeElement->preBracketIndex - 1 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME){
 					functionCall = new FunctionCall();
-					//executable = functionCall;
 
 					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
+
+					if (codeElement->preBracketIndex - 2 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 2]->type == KEYWORD){
+						if (0 == strcmp(keyWords->string_new, codeElement->keyword)){
+							functionCall->isNew = true;
+						}
+					}
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
 					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
 						CodeElement * innerElement = codeLine->codeElements[ii];
@@ -1180,15 +1187,16 @@ JSObject* excute(FunctionCall * functionCall){
 		//report error
 		return NULL;
 	}
-	JSFunction * jsFunction = (JSFunction *)jsFunctionKeyValue->value;
+	JSObject * jsFunctionOrClass = jsFunctionKeyValue->value;
 
 
 
-	if (jsFunction == NULL || ((JSObject*)jsFunction)->type != JSFUNCTION){
+	if (jsFunctionOrClass == NULL || jsFunctionOrClass->type != JSFUNCTION){
 		//report error
 		return NULL;
 	}
-	else{
+	else if (jsFunctionOrClass->type != JSFUNCTION){
+		JSFunction* jsFunction = (JSFunction*)jsFunctionOrClass;
 
 		if (jsFunction->function != NULL){
 			JSON* parameter = new JSON();
@@ -1214,6 +1222,16 @@ JSObject* excute(FunctionCall * functionCall){
 			result = excuteFunction(jsFunction->functionDefinition, parameter);
 		}
 
+	}
+	else if (jsFunctionOrClass->type != JSCLASS){
+		JSClass* jsClass = (JSClass*)jsFunctionOrClass;
+		if (functionCall->isNew == true){
+			JSClass* newJSClass = new JSClass();
+
+			newJSClass->children = cloneJSON(jsClass->children);
+		}
+
+		
 	}
 
 	return result;

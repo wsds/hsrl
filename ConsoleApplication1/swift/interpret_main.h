@@ -26,6 +26,7 @@ public:
 
 	KeyWords();
 	char* string_var;
+	char* string_new;
 	char* string_func;
 	char* string_if;
 	char* string_else;
@@ -155,6 +156,7 @@ class FunctionCall : public Executable{
 public:
 	FunctionCall();
 	char* functionName;
+	bool isNew;
 	Executable* variables[5];
 	int variable_index;
 
