@@ -206,19 +206,10 @@ public:
 	ExecutableBlock* executableBlock;
 };
 
-class Condition : public Executable{
-public:
-	Condition();
-	CodeElement* left;
-	CodeElement* codeOperator;
-	CodeElement* right;
-};
-
 class IfBlock : public Executable{
 public:
 	IfBlock();
-	Condition * conditions[5];
-	int conditions_index;
+	Executable * condition;
 
 	Executable * executables[10];
 	int executable_index;
@@ -240,7 +231,7 @@ public:
 	ForBlock();
 	Executable * pre_executable;
 
-	Condition * conditions[5];
+	Executable * conditions[5];
 	int conditions_index;
 
 	Executable * last_executable;
@@ -276,6 +267,10 @@ JSObject* excute(Expression * expression);
 JSObject* excute(FunctionCall * functionCall);
 JSObject* excute(FunctionDefinition * functionDefinition);
 JSObject* excute(ClassDefinition * classDefinition);
+
+JSObject* excute(IfBlock * ifBlock);
+JSObject* excute(ForBlock * forBlock);
+JSObject* excute(ForInBlock * forInBlock);
 
 JSObject* excute(FunctionReturn* functionReturn);
 
