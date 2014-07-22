@@ -219,10 +219,15 @@ public:
 	Executable * executables[10];
 	int executable_index;
 
+	ExecutableBlock* executableBlock;
+
 	IfBlock* next;
 
 	Executable * else_executables[10];
 	int else_executable_index;
+
+	ExecutableBlock* else_executableBlock;
+
 };
 
 
@@ -238,6 +243,8 @@ public:
 
 	Executable * executables[10];
 	int executable_index;
+
+	ExecutableBlock* executableBlock;
 
 	bool isDo;
 };
@@ -285,6 +292,8 @@ public:
 	FunctionDefinition* functionDefinition;
 	ExecutableBlock* executableBlock;
 	ForInBlock* forInBlock;
+	ForBlock* forBlock;
+	IfBlock* ifBlock;
 
 	DEBUGExecutable * children[20];
 	int children_index;

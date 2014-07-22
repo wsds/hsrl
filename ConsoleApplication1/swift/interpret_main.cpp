@@ -62,12 +62,20 @@ IfBlock::IfBlock(){
 	this->else_executable_index = 0;
 
 	this->next = NULL;
+
+	this->executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
+
+	this->else_executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
 }
 
 ForBlock::ForBlock(){
 	this->type = FORBLOCK;
 	this->conditions_index = 0;
 	this->executable_index = 0;
+	this->executableBlock = new ExecutableBlock();
+	this->executableBlock->holder = this;
 }
 
 ForInBlock::ForInBlock(){
@@ -447,10 +455,12 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				}
 				else{
 					forBlock = new ForBlock();
+					currentExecutableBlock = forBlock->executableBlock;
 				}
 			}
 			else if (0 == strcmp(keyWords->string_if, codeElement->keyword)){
 				ifBlock = new IfBlock();
+				currentExecutableBlock = ifBlock->executableBlock;
 			}
 			else if (0 == strcmp(keyWords->string_return, codeElement->keyword)){
 				functionReturn = new FunctionReturn();
@@ -819,6 +829,25 @@ DEBUGExecutable * debugExecutable(Executable * executable){
 		}
 	}
 
+	else if (executable->type == IFBLOCK){
+		iDEBUGExecutable->ifBlock = (IfBlock*)executable;
+
+		ExecutableBlock* executableBlock = iDEBUGExecutable->ifBlock->executableBlock;
+		for (int i = 0; i < executableBlock->executable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(executableBlock->executables[i]);
+			iDEBUGExecutable->children_index++;
+		}
+	}
+
+	else if (executable->type == FORBLOCK){
+		iDEBUGExecutable->forBlock = (ForBlock*)executable;
+		ExecutableBlock* executableBlock = iDEBUGExecutable->forBlock->executableBlock;
+		for (int i = 0; i < executableBlock->executable_index; i++){
+			iDEBUGExecutable->children[iDEBUGExecutable->children_index] = debugExecutable(executableBlock->executables[i]);
+			iDEBUGExecutable->children_index++;
+		}
+	}
+
 	else if (executable->type == META){
 		iDEBUGExecutable->metaExecutable = (MetaExecutable*)executable;
 	}
@@ -1148,12 +1177,6 @@ JSObject* excute(Expression * expression1){
 			}
 		}
 	}
-
-	//if (executable_index == 1 && result == NULL&&
-	//	executables[0]->type == META){
-	//	MetaExecutable* metaExecutable = (MetaExecutable*)executables[0];
-	//	result = ((JSKeyValue*)currentClosure->lookup(metaExecutable->codeElement->variable_name))->value;
-	//}
 
 	return result;
 }
