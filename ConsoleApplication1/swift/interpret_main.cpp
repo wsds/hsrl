@@ -374,10 +374,9 @@ int resolveElement(char* from, int length, CodeLine* codeLine){
 			//std::cout << name << std::endl;
 		}
 		else{
-			CodeElement * string = new CodeElement();
-
 			element->type = NAME;
 			element->variable_name = name;
+			element->child = NULL;
 
 			//std::cout << "[variable name]: ";
 			//std::cout << name << std::endl;
@@ -732,6 +731,57 @@ void resolveOperators(CodeLine* codeLine){
 
 }
 
+void resolveChild(CodeElement * codeElement){
+	int length = strlen(codeElement->variable_name);
+
+	for (int i = 0; i < length; i++){
+		if (*(codeElement->variable_name + i) == '.'){
+			char* string = (char*)JSMalloc(length - i);
+			strcopy(codeElement->variable_name + i, string, length - i);
+			CodeElement* childElement = new CodeElement();
+			codeElement->child = childElement;
+			childElement->type = NAME;
+			childElement->variable_name = string;
+			childElement->child = NULL;
+
+			resolveChild(codeElement->child);
+		}
+	}
+}
+void resolveChildren(CodeLine* codeLine){
+
+
+	for (int i = 0; i < codeLine->element_index - 1; i++){
+		if (codeLine->codeElements[i]->type == NAME){
+			resolveChild(codeLine->codeElements[i]);
+		}
+	}
+
+	for (int i = 0; i < codeLine->element_index - 1; i++){
+		//if (codeLine->codeElements[i]->type == CODEOPERATOR&&codeLine->codeElements[i + 1]->type == CODEOPERATOR){
+		//	codeLine->codeElements[i]->code_operator2 = codeLine->codeElements[i + 1]->code_operator;
+		//	codeLine->codeElements[i + 1]->type = SKIP;
+		//}
+	}
+
+}
+
+void resolveDot(CodeLine* codeLine){
+
+	for (int i = codeLine->element_index - 1; i >= 0; i--){
+		if (codeLine->codeElements[i]->type == CODEOPERATOR&&codeLine->codeElements[i]->code_operator == '.'){
+			if (codeLine->element_index - 1 > i&&i > 0){
+				if (codeLine->codeElements[i + 1]->type == NAME&&codeLine->codeElements[i - 1]->type == NAME){
+
+					codeLine->codeElements[i - 1]->child = codeLine->codeElements[i + 1];
+					codeLine->codeElements[i + 1]->type = CHILDNAME;
+					codeLine->codeElements[i]->type = CHILDNAME;
+				}
+			}
+		}
+	}
+}
+
 void resolveBracket(CodeLine* codeLine){
 	ExecutableBlock* executableBlock;
 	int index_LEFTSMALLBRACKET = 0;
@@ -870,6 +920,7 @@ void resolveCodeLine(char* line){
 
 	resolveOperators(codeLine);
 	resolveBracket(codeLine);
+	resolveDot(codeLine);
 
 	Executable * executable = analyzeCodeLine(codeLine, 0, codeLine->element_index);
 
@@ -933,6 +984,12 @@ JSObject* excute(Executable * executable){//runtime polymorphism
 	else if (executable->type == CLASSDEFINITION){
 		result = excute((ClassDefinition*)executable);
 	}
+	else if (executable->type == META){
+		JSKeyValue * jsKeyValue = getFromClosure(((MetaExecutable*)executable)->codeElement);
+		if (jsKeyValue != NULL){
+			result = jsKeyValue->value;
+		}
+	}
 	return result;
 }
 
@@ -940,7 +997,7 @@ JSObject* excute(FunctionReturn* functionReturn){
 	JSObject* result = NULL;
 	if (functionReturn->variable_index == 1){
 		Executable * executable = functionReturn->variables[0];
-		
+
 		DEBUGExecutable * iDEBUGExecutable = debugExecutable(executable);
 		if (executable->type == META){
 			MetaExecutable* metaExecutable = (MetaExecutable*)executable;
@@ -967,7 +1024,7 @@ JSObject* excute(FunctionReturn* functionReturn){
 		}
 	}
 	else if (functionReturn->variable_index > 1){
-		
+
 	}
 	return result;
 }
@@ -982,6 +1039,47 @@ JSObject* excute(ExecutableBlock * executableBlock){
 	}
 	executableBlock->result = result;
 	return result;
+}
+
+JSKeyValue * getFromJSON(CodeElement* codeElement, JSON* json){
+	JSKeyValue * jsKeyValue = NULL;
+	if (codeElement->type == NAME || codeElement->type == CHILDNAME){
+		jsKeyValue = (JSKeyValue*)json->get(codeElement->variable_name);
+		char* test = stringifyJSON(json);
+	}
+
+	if (codeElement->child == NULL){
+		return jsKeyValue;
+	}
+	else if (jsKeyValue != NULL){
+		if (jsKeyValue->value->type == JSCLASS){
+			return getFromJSON(codeElement->child, ((JSClass*)(jsKeyValue->value))->children);
+		}
+		else if (jsKeyValue->value->type == JSJSON){
+			return getFromJSON(codeElement->child, (JSON*)(jsKeyValue->value));
+		}
+	}
+	return NULL;
+}
+
+JSKeyValue * getFromClosure(CodeElement* codeElement){
+	JSKeyValue * jsKeyValue = NULL;
+	if (codeElement->type == NAME){
+		jsKeyValue = (JSKeyValue*)currentClosure->lookup(codeElement->variable_name);
+	}
+
+	if (codeElement->child == NULL){
+		return jsKeyValue;
+	}
+	else if (jsKeyValue != NULL){
+		if (jsKeyValue->value->type == JSCLASS){
+			return getFromJSON(codeElement->child, ((JSClass*)(jsKeyValue->value))->children);
+		}
+		else if (jsKeyValue->value->type == JSJSON){
+			return getFromJSON(codeElement->child, (JSON*)(jsKeyValue->value));
+		}
+	}
+	return NULL;
 }
 
 JSObject* executableToJSObject(Executable* executable){
@@ -1000,7 +1098,7 @@ JSObject* executableToJSObject(Executable* executable){
 			object = (JSObject *)json;
 		}
 		else if (codeElement->type == NAME){
-			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(codeElement->variable_name);
+			JSKeyValue *jsKeyValue = getFromClosure(codeElement);
 			if (jsKeyValue == NULL){
 				//report error
 			}
@@ -1066,6 +1164,15 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 
 JSObject* excute(Expression * expression1){
 	JSObject* result = NULL;
+
+	if (expression1->executable_index == 1 && expression1->executables[0]->type == META){
+		JSKeyValue * jsKeyValue = getFromClosure(((MetaExecutable*)expression1->executables[0])->codeElement);
+		if (jsKeyValue != NULL){
+			result = jsKeyValue->value;
+			return result;
+		}
+	}
+
 	bool isNew = expression1->isNew;
 
 	Executable* executables[30];
@@ -1309,9 +1416,16 @@ JSObject* excute(FunctionCall * functionCall){
 			JSClass* newJSClass = new JSClass();
 
 			newJSClass->children = cloneJSON(jsClass->children);
+
+			char* test = stringifyJSON(newJSClass->children);
+
+			newJSClass->className = jsClass->className;
+			result = newJSClass;
+		}
+		else{
+			result = jsClass;
 		}
 
-		
 	}
 
 	return result;
@@ -1360,7 +1474,7 @@ JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool is
 			//log((JSObject*)json);
 		}
 		else if (metaExecutable->codeElement->type == NAME){
-			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(metaExecutable->codeElement->variable_name);
+			JSKeyValue *jsKeyValue = getFromClosure(metaExecutable->codeElement);
 			if (jsKeyValue == NULL){
 				//report error
 			}
@@ -1383,7 +1497,7 @@ JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool is
 		currentClosure->set(target->codeElement->variable_name, rightValue);
 	}
 	else{
-		JSKeyValue * leftVariableJSKeyValue = (JSKeyValue*)currentClosure->lookup(target->codeElement->variable_name);
+		JSKeyValue * leftVariableJSKeyValue = getFromClosure(target->codeElement);
 		if (leftVariableJSKeyValue == NULL || leftVariableJSKeyValue->type != JSKEYVALUE){
 			//report error
 		}
@@ -1397,6 +1511,10 @@ JSObject* excuteAssignment(Executable * source, MetaExecutable * target, bool is
 
 	return rightValue;
 }
+
+
+
+
 
 void getAllVariablesToString(){
 	Closure * current = currentClosure;
@@ -1455,17 +1573,19 @@ void getAllVariablesToString(){
 				JSFunction* jsFunction = (JSFunction*)value;
 				if (((JSFunction*)value)->functionDefinition != NULL){
 					open::logBuf("2.");
-					open::logBuf(((JSFunction*)object)->function_name);
+					open::logBuf(((JSKeyValue*)object)->key);
 					open::logBuf(" = ");
-					open::logBuf("func");
+					open::logBuf("func ");
+					open::logBuf(((JSFunction*)object)->function_name);
 					open::logBufFlush();
 				}
 			}
 			else if (value->type == JSCLASS){
 				open::logBuf("2.");
-				open::logBuf(((JSClass*)value)->className);
+				open::logBuf(((JSKeyValue*)object)->key);
 				open::logBuf(" = ");
-				open::logBuf("class");
+				open::logBuf("class ");
+				open::logBuf(((JSClass*)value)->className);
 				open::logBufFlush();
 			}
 		}

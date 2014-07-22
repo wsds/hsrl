@@ -58,6 +58,7 @@ public:
 #define BRACKET 7
 
 #define SKIP 10;
+#define CHILDNAME 11
 class CodeElement{
 public:
 	int type;
@@ -78,6 +79,9 @@ public:
 
 	//char * delimiter;
 	bool isResolvedDelimiter;
+
+	CodeElement * child;
+	bool hasChild;
 };
 
 
@@ -279,7 +283,7 @@ JSObject* excuteAssignment(Executable * target, MetaExecutable * source, bool is
 JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* parameter);
 
 void getAllVariablesToString();
-
+JSKeyValue * getFromClosure(CodeElement* codeElement);
 
 
 

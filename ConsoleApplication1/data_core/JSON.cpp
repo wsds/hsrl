@@ -292,9 +292,9 @@ JSObject * cloneJSObject(JSObject* object){
 	}
 	else if (object->type == JSSTRING){
 		JSString * js_string = new JSString();
-		js_string->char_string = (char *)JSMalloc(strlen(((JSNumber *)object)->char_string) + 1);
-		strcopy(((JSNumber *)object)->char_string, js_string->char_string);
-
+		js_string->char_string = (char *)JSMalloc(strlen(((JSString *)object)->char_string) + 1);
+		strcopy(((JSString *)object)->char_string, js_string->char_string);
+		js_string->length = ((JSString *)object)->length;
 		clone = js_string;
 	}
 	else if (object->type == JSFUNCTION){
@@ -331,6 +331,7 @@ void cloneJSON(JSON * json, JSON * clone){
 
 			char * key = NULL;
 			key = (char *)JSMalloc(strlen(key_value->key) + 1);
+			strcopy(key_value->key, key);
 			JSObject * value = cloneJSObject(key_value->value);
 			clone->set(key, value);
 		}

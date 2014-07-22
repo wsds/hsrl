@@ -61,3 +61,16 @@ class NamedShape {
         a=1+1
     }
 }
+
+var a=NamedShape()
+class A{
+
+    var a1=123
+	var b1="abc"
+
+
+}
+
+
+
+a.b.c=1
