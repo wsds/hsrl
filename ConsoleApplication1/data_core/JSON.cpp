@@ -280,7 +280,7 @@ char* stringifyJSON(JSON* json){
 
 
 
-JSObject * cloneJSObject(JSObject* object){
+JSObject * cloneJSObject(JSObject* object, JSON * parent){
 	JSObject * clone = NULL;
 	if (object == NULL){
 		return NULL;
@@ -298,7 +298,15 @@ JSObject * cloneJSObject(JSObject* object){
 		clone = js_string;
 	}
 	else if (object->type == JSFUNCTION){
-		clone = object;
+		JSFunction * jsFunction = new JSFunction();
+
+		jsFunction->function_name = ((JSFunction *)object)->function_name;
+		jsFunction->function = ((JSFunction *)object)->function;
+		jsFunction->functionDefinition = ((JSFunction *)object)->functionDefinition;
+		jsFunction->closure = new Closure();
+		jsFunction->closure->variables = parent;
+
+		clone = jsFunction;
 	}
 	else if (object->type == JSCLASS){
 		JSClass * jsClass = new JSClass();
@@ -332,11 +340,11 @@ void cloneJSON(JSON * json, JSON * clone){
 			char * key = NULL;
 			key = (char *)JSMalloc(strlen(key_value->key) + 1);
 			strcopy(key_value->key, key);
-			JSObject * value = cloneJSObject(key_value->value);
+			JSObject * value = cloneJSObject(key_value->value, clone);
 			clone->set(key, value);
 		}
 		else{
-			JSObject * cloneObject = cloneJSObject(sub_object);
+			JSObject * cloneObject = cloneJSObject(sub_object, clone);
 			clone->push(cloneObject);
 		}
 

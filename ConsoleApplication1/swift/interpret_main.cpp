@@ -26,6 +26,8 @@ FunctionCall::FunctionCall(){
 	this->type = FUNCTIONCALL;
 	this->isNew = false;
 	this->variable_index = 0;
+	this->functionNameChain = NULL;
+	this->functionName = NULL;
 }
 FunctionReturn::FunctionReturn(){
 	this->type = FUNCTIONRETURN;
@@ -479,10 +481,22 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			}
 			else if (codeElement->bracket == RIGHTSMALLBRACKET){
 				CodeElement * preBracket = codeLine->codeElements[codeElement->preBracketIndex];
-				if (codeElement->preBracketIndex - 1 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME){
+				if (codeElement->preBracketIndex - 1 >= 0 && (codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME || codeLine->codeElements[codeElement->preBracketIndex - 1]->type == CHILDNAME)){
 					functionCall = new FunctionCall();
-
-					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
+					if (codeLine->codeElements[codeElement->preBracketIndex - 1]->type == CHILDNAME){
+						for (int ii = codeElement->preBracketIndex - 1; ii >= 0; ii--){
+							if (codeLine->codeElements[ii]->type == CHILDNAME){
+								continue;
+							}
+							else if (codeLine->codeElements[ii]->type == NAME){
+								functionCall->functionNameChain = codeLine->codeElements[ii];
+								break;
+							}
+						}
+					}
+					else{
+						functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
+					}
 
 					if (codeElement->preBracketIndex - 2 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 2]->type == KEYWORD){
 						if (0 == strcmp(keyWords->string_new, codeLine->codeElements[codeElement->preBracketIndex - 2]->keyword)){
@@ -1559,7 +1573,7 @@ JSObject* excute(FunctionDefinition * functionDefinition){
 	JSFunction * jsFunction = new JSFunction();
 	jsFunction->function_name = functionDefinition->functionName;
 	jsFunction->functionDefinition = functionDefinition;
-
+	jsFunction->closure = currentClosure;
 
 	currentClosure->set(functionDefinition->functionName, jsFunction);
 
@@ -1575,6 +1589,7 @@ JSObject* excute(FunctionDefinition * functionDefinition){
 JSObject* excute(ClassDefinition * classDefinition){
 	JSClass * jsClass = new JSClass();
 	jsClass->className = classDefinition->className;
+	jsClass->closure = currentClosure;
 
 	Closure * closure = new Closure();
 	closure->initialize();
@@ -1597,19 +1612,13 @@ JSObject* excute(ClassDefinition * classDefinition){
 }
 
 
-JSObject* excute(FunctionCall * functionCall){
-	JSObject* result = NULL;
+void resolveVariables(FunctionCall * functionCall, JSObject * jsVariables[]){
 
-	if (functionCall->functionName == NULL){
-		//report error
-		return NULL;
-	}
-	JSObject * jsVariables[5];
 	for (int i = 0; i < functionCall->variable_index; i++){
 		MetaExecutable* metaExecutable = (MetaExecutable*)functionCall->variables[i];
 		if (metaExecutable->type != META){
 			//report error
-			return NULL;
+			return;
 		}
 
 		if (metaExecutable->codeElement->type == CODE_NUMBER){
@@ -1625,17 +1634,32 @@ JSObject* excute(FunctionCall * functionCall){
 			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(metaExecutable->codeElement->variable_name);
 			if (jsKeyValue == NULL){
 				//report error
-				//return;
+				return;
 			}
 			else{
 				jsVariables[i] = jsKeyValue->value;
 			}
 		}
 	}
+}
 
+
+JSObject* excute(FunctionCall * functionCall){
+	JSObject* result = NULL;
+
+	if (functionCall->functionName == NULL&&functionCall->functionNameChain == NULL){
+		//report error
+		return NULL;
+	}
 
 	JSKeyValue * jsFunctionKeyValue;
-	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName);
+	if (functionCall->functionName != NULL){
+		jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName);
+	}
+	else{
+		jsFunctionKeyValue = getFromClosure(functionCall->functionNameChain);
+	}
+
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
 		return NULL;
@@ -1650,6 +1674,17 @@ JSObject* excute(FunctionCall * functionCall){
 	}
 	else if (jsFunctionOrClass->type == JSFUNCTION){
 		JSFunction* jsFunction = (JSFunction*)jsFunctionOrClass;
+
+		if (jsFunction->closure != NULL){
+			currentClosure->next = jsFunction->closure;
+			jsFunction->closure->previous = currentClosure;
+
+			currentClosure = currentClosure->next;
+		}
+
+
+		JSObject * jsVariables[5];
+		resolveVariables(functionCall, jsVariables);
 
 		if (jsFunction->function != NULL){
 			JSON* parameter = new JSON();
@@ -1675,6 +1710,10 @@ JSObject* excute(FunctionCall * functionCall){
 			result = excuteFunction(jsFunction->functionDefinition, parameter);
 		}
 
+		if (jsFunction->closure != NULL){
+			currentClosure = currentClosure->previous;
+		}
+
 	}
 	else if (jsFunctionOrClass->type == JSCLASS){
 		JSClass* jsClass = (JSClass*)jsFunctionOrClass;
@@ -1686,12 +1725,28 @@ JSObject* excute(FunctionCall * functionCall){
 			char* test = stringifyJSON(newJSClass->children);
 
 			newJSClass->className = jsClass->className;
+			newJSClass->closure = jsClass->closure;
+
+			if (newJSClass->closure != NULL){
+				currentClosure->next = newJSClass->closure;
+				newJSClass->closure->previous = currentClosure;
+
+				currentClosure = currentClosure->next;
+			}
+
+
+			JSObject * jsVariables[5];
+			resolveVariables(functionCall, jsVariables);
+
+
 			result = newJSClass;
+			if (newJSClass->closure != NULL){
+				currentClosure = currentClosure->previous;
+			}
 		}
 		else{
 			result = jsClass;
 		}
-
 	}
 
 	return result;
