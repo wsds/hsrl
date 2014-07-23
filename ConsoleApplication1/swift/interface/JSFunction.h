@@ -4,6 +4,7 @@
 
 #include "../../data_core/data_core.h"
 #include "../interpret_main.h"
+#include "../FunctionsClosures/Closure.h"
 #ifndef NULL
 #define NULL 0
 #endif /* NULL */
@@ -20,6 +21,8 @@ public:
 	JSObject* (*function)(JSON* parameter);
 
 	FunctionDefinition * functionDefinition;
+
+	Closure* closure;
 };
 
 

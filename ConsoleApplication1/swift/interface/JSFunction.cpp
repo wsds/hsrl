@@ -6,6 +6,7 @@ JSFunction::JSFunction(){
 	this->char_string = NULL;
 	this->function = NULL;
 	this->functionDefinition = NULL;
+	this->closure = NULL;
 }
 
 void JSFunction::free(){

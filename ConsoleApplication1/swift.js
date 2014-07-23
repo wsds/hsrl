@@ -84,8 +84,15 @@ class A{
 	}
 	func test2(){
 		log(b1)
+		log(a1)
+		a1=a1+1
 	}
 }
+
+A.test2()
+
+var a=new A()
+a.test2()
 
 
 
@@ -93,3 +100,5 @@ a.b.c=1
 
 
 var b=["b1":22,"b2":33]
+
+var a=[b:[c1:2131,c2:"hello"]]

@@ -3,6 +3,7 @@
 
 
 #include "../../data_core/data_core.h"
+#include "../FunctionsClosures/Closure.h"
 
 #ifndef NULL
 #define NULL 0
@@ -17,6 +18,7 @@ public:
 	JSON* children;
 
 	void free();
+	Closure* closure;
 };
 
 
