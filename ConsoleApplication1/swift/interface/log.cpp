@@ -24,6 +24,13 @@ void log(JSObject* object){
 		open::logBuf(json_str);
 		open::logBufFlush();
 	}
+	else if (object->type == JSCLASS){
+		char* json_str = stringifyJSON(((JSClass*)object)->children);
+		std::cout << json_str;
+		open::logBuf("1.");
+		open::logBuf(json_str);
+		open::logBufFlush();
+	}
 
 	std::cout << std::endl;
 }

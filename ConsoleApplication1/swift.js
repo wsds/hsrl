@@ -64,13 +64,32 @@ class NamedShape {
 
 var a=NamedShape()
 class A{
-
+#instance#readonly#data#strict
     var a1=123
 	var b1="abc"
+	func test1(){
+		log("hello, this is test1")
+	}
+	func test2(){
+		log(b1)
+	}
+}
 
 
+class A{
+    var a1=123
+	var b1="abc"
+	func test1(){
+		log("hello, this is test1")
+	}
+	func test2(){
+		log(b1)
+	}
 }
 
 
 
 a.b.c=1
+
+
+var b=["b1":22,"b2":33]

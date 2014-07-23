@@ -24,6 +24,8 @@ FunctionCall::FunctionCall(){
 	this->type = FUNCTIONCALL;
 	this->isNew = false;
 	this->variable_index = 0;
+	this->functionNameChain = NULL;
+	this->functionName = NULL;
 }
 FunctionReturn::FunctionReturn(){
 	this->type = FUNCTIONRETURN;
@@ -480,10 +482,22 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			}
 			else if (codeElement->bracket == RIGHTSMALLBRACKET){
 				CodeElement * preBracket = codeLine->codeElements[codeElement->preBracketIndex];
-				if (codeElement->preBracketIndex - 1 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME){
+				if (codeElement->preBracketIndex - 1 >= 0 && (codeLine->codeElements[codeElement->preBracketIndex - 1]->type == NAME || codeLine->codeElements[codeElement->preBracketIndex - 1]->type == CHILDNAME)){
 					functionCall = new FunctionCall();
-
-					functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
+					if (codeLine->codeElements[codeElement->preBracketIndex - 1]->type == CHILDNAME){
+						for (int ii = codeElement->preBracketIndex - 1; ii >= 0; ii--){
+							if (codeLine->codeElements[ii]->type == CHILDNAME){
+								continue;
+							}
+							else if (codeLine->codeElements[ii]->type == NAME){
+								functionCall->functionNameChain = codeLine->codeElements[ii];
+								break;
+							}
+						}
+					}
+					else{
+						functionCall->functionName = codeLine->codeElements[codeElement->preBracketIndex - 1]->variable_name;
+					}
 
 					if (codeElement->preBracketIndex - 2 >= 0 && codeLine->codeElements[codeElement->preBracketIndex - 2]->type == KEYWORD){
 						if (0 == strcmp(keyWords->string_new, codeLine->codeElements[codeElement->preBracketIndex - 2]->keyword)){
@@ -1479,7 +1493,7 @@ JSObject* excute(ClassDefinition * classDefinition){
 JSObject* excute(FunctionCall * functionCall){
 	JSObject* result = NULL;
 
-	if (functionCall->functionName == NULL){
+	if (functionCall->functionName == NULL&&functionCall->functionNameChain == NULL){
 		//report error
 		return NULL;
 	}
@@ -1514,7 +1528,13 @@ JSObject* excute(FunctionCall * functionCall){
 
 
 	JSKeyValue * jsFunctionKeyValue;
-	jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName);
+	if (functionCall->functionName != NULL){
+		jsFunctionKeyValue = (JSKeyValue *)currentClosure->lookup(functionCall->functionName);
+	}
+	else{
+		jsFunctionKeyValue = getFromClosure(functionCall->functionNameChain);
+	}
+
 	if (jsFunctionKeyValue == NULL || ((JSObject*)jsFunctionKeyValue)->type != JSKEYVALUE){
 		//report error
 		return NULL;

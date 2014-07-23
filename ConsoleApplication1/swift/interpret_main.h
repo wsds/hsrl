@@ -81,7 +81,6 @@ public:
 	bool isResolvedDelimiter;
 
 	CodeElement * child;
-	bool hasChild;
 };
 
 
@@ -160,6 +159,8 @@ class FunctionCall : public Executable{
 public:
 	FunctionCall();
 	char* functionName;
+
+	CodeElement* functionNameChain;
 	bool isNew;
 	Executable* variables[5];
 	int variable_index;
