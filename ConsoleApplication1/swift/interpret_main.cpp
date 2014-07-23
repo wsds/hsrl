@@ -13,6 +13,8 @@ Operator::Operator(){
 	this->type = OPERATOR;
 	this->code_operator = 0;
 	this->code_operator2 = 0;
+	this->left = NULL;
+	this->right = NULL;
 }
 
 Expression::Expression(){
@@ -54,8 +56,6 @@ ExecutableBlock::ExecutableBlock(){
 
 IfBlock::IfBlock(){
 	this->type = IFBLOCK;
-	this->executable_index = 0;
-	this->else_executable_index = 0;
 
 	this->next = NULL;
 
@@ -69,7 +69,6 @@ IfBlock::IfBlock(){
 ForBlock::ForBlock(){
 	this->type = FORBLOCK;
 	this->conditions_index = 0;
-	this->executable_index = 0;
 	this->executableBlock = new ExecutableBlock();
 	this->executableBlock->holder = this;
 }
@@ -665,6 +664,11 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					forInBlock->valueName = valueNameExecutable->codeElement;
 				}
 			}
+			else if (expression->executables[0]->type == META){
+				MetaExecutable* valueNameExecutable = (MetaExecutable*)expression->executables[0];
+				forInBlock->keyName = NULL;
+				forInBlock->valueName = valueNameExecutable->codeElement;
+			}
 			if (expression->executables[1]->type == META){
 				MetaExecutable* iteratorNameExecutable = (MetaExecutable*)expression->executables[1];
 				forInBlock->iteratorName = iteratorNameExecutable->codeElement;
@@ -731,8 +735,21 @@ void resolveOperators(CodeLine* codeLine){
 
 	for (int i = 0; i < codeLine->element_index - 1; i++){
 		if (codeLine->codeElements[i]->type == CODEOPERATOR&&codeLine->codeElements[i + 1]->type == CODEOPERATOR){
-			codeLine->codeElements[i]->code_operator2 = codeLine->codeElements[i + 1]->code_operator;
-			codeLine->codeElements[i + 1]->type = SKIP;
+			if ((codeLine->codeElements[i]->code_operator == '='&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '+'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '-'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '*'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '/'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '%'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '>'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '<'&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '&'&&codeLine->codeElements[i + 1]->code_operator == '&')
+				|| (codeLine->codeElements[i]->code_operator == '|'&&codeLine->codeElements[i + 1]->code_operator == '|')
+				|| (codeLine->codeElements[i]->code_operator == '+'&&codeLine->codeElements[i + 1]->code_operator == '+')
+				|| (codeLine->codeElements[i]->code_operator == '-'&&codeLine->codeElements[i + 1]->code_operator == '-')){
+				codeLine->codeElements[i]->code_operator2 = codeLine->codeElements[i + 1]->code_operator;
+				codeLine->codeElements[i + 1]->type = SKIP;
+			}
 		}
 	}
 
@@ -1104,39 +1121,42 @@ JSKeyValue * getFromClosure(CodeElement* codeElement){
 JSObject* executableToJSObject(Executable* executable){
 	JSObject* object = NULL;
 
-	if (executable->type == META){
-		CodeElement* codeElement = ((MetaExecutable*)executable)->codeElement;
-		if (codeElement->type == CODE_NUMBER){
-			object = (JSObject *)(new JSNumber(codeElement->number));
-		}
-		else if (codeElement->type == CODE_STRING){
-			object = (JSObject *)(new JSString(codeElement->char_string));
-		}
-		else if (codeElement->type == CODE_JSON){
-			JSON* json = parseJSON(codeElement->jsonstr);
-			object = (JSObject *)json;
-		}
-		else if (codeElement->type == NAME){
-			JSKeyValue *jsKeyValue = getFromClosure(codeElement);
-			if (jsKeyValue == NULL){
-				//report error
+	if (executable != NULL){
+
+		if (executable->type == META){
+			CodeElement* codeElement = ((MetaExecutable*)executable)->codeElement;
+			if (codeElement->type == CODE_NUMBER){
+				object = (JSObject *)(new JSNumber(codeElement->number));
 			}
-			else{
-				object = jsKeyValue->value;
+			else if (codeElement->type == CODE_STRING){
+				object = (JSObject *)(new JSString(codeElement->char_string));
+			}
+			else if (codeElement->type == CODE_JSON){
+				JSON* json = parseJSON(codeElement->jsonstr);
+				object = (JSObject *)json;
+			}
+			else if (codeElement->type == NAME){
+				JSKeyValue *jsKeyValue = getFromClosure(codeElement);
+				if (jsKeyValue == NULL){
+					//report error
+				}
+				else{
+					object = jsKeyValue->value;
+				}
 			}
 		}
-	}
-	else if (executable->type == EXCUTEABLEBLOCK){
-		object = ((ExecutableBlock*)executable)->result;
-	}
-	else if (executable->type == EXCUTED){
-		object = ((ExcutedExecutable*)executable)->result;
-	}
-	else if (executable->type == EXPRESSION){
-		object = ((Expression*)executable)->result;
-	}
-	else if (executable->type == FUNCTIONCALL){
-		object = ((FunctionCall*)executable)->result;
+		else if (executable->type == EXCUTEABLEBLOCK){
+			object = ((ExecutableBlock*)executable)->result;
+		}
+		else if (executable->type == EXCUTED){
+			object = ((ExcutedExecutable*)executable)->result;
+		}
+		else if (executable->type == EXPRESSION){
+			object = ((Expression*)executable)->result;
+		}
+		else if (executable->type == FUNCTIONCALL){
+			object = ((FunctionCall*)executable)->result;
+		}
 	}
 	return object;
 }
@@ -1146,32 +1166,32 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 
 	JSObject* leftObject = executableToJSObject(left);
 	JSObject* rightObject = executableToJSObject(right);
-	if (code_operator->code_operator == '*'){
+	if (code_operator->code_operator == '*'&&code_operator->code_operator2 == NULL){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = leftObject->number * rightObject->number;
 		}
 	}
-	else if (code_operator->code_operator == '/'){
+	else if (code_operator->code_operator == '/'&&code_operator->code_operator2 == NULL){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = leftObject->number / rightObject->number;
 		}
 	}
-	else if (code_operator->code_operator == '%'){
+	else if (code_operator->code_operator == '%'&&code_operator->code_operator2 == NULL){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = leftObject->number % rightObject->number;
 		}
 	}
 
-	else if (code_operator->code_operator == '+'){
+	else if (code_operator->code_operator == '+'&&code_operator->code_operator2 == NULL){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = leftObject->number + rightObject->number;
 		}
 	}
-	else if (code_operator->code_operator == '-'){
+	else if (code_operator->code_operator == '-'&&code_operator->code_operator2 == NULL){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = leftObject->number - rightObject->number;
@@ -1219,10 +1239,34 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 			result->number = leftObject->number || rightObject->number;
 		}
 	}
-	else if (code_operator->code_operator == '！'&&code_operator->code_operator2 == NULL){
-		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+	else if (code_operator->code_operator == '！'&&code_operator->code_operator2 == NULL && rightObject != NULL){
+		if (rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = !rightObject->number;
+		}
+	}
+	else if (code_operator->code_operator == '+'&&code_operator->code_operator2 == '+' &&leftObject != NULL){
+		if (leftObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number + 1;
+		}
+	}
+	else if (code_operator->code_operator == '+'&&code_operator->code_operator2 == '+' &&rightObject != NULL){
+		if (rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = rightObject->number + 1;
+		}
+	}
+	else if (code_operator->code_operator == '-'&&code_operator->code_operator2 == '-' &&leftObject != NULL){
+		if (leftObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number - 1;
+		}
+	}
+	else if (code_operator->code_operator == '-'&&code_operator->code_operator2 == '-' &&rightObject != NULL){
+		if (rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = rightObject->number - 1;
 		}
 	}
 	return result;
@@ -1299,16 +1343,47 @@ JSObject* excute(Expression * expression1){
 	} while (hasCodeOperator == true);
 
 	//处理复合运算符
-	for (int i = 0; i < executable_index; i++){
-		if (executables[i]->type == OPERATOR){
-			Operator* codeOperator = (Operator*)executables[i];
-			if (codeOperator->code_operator2 != 0){
+	//for (int i = 0; i < executable_index; i++){
+	//	if (executables[i]->type == OPERATOR){
+	//		Operator* codeOperator = (Operator*)executables[i];
+	//		if (codeOperator->code_operator2 != 0){
 
+	//		}
+	//	}
+	//}
+
+	//处理 前置++ --   预处理 后置++ --
+	do{
+		hasCodeOperator = false;
+		for (int i = 0; i < executable_index; i++){
+			if (executables[i]->type == OPERATOR){
+				Operator* codeOperator = (Operator*)executables[i];
+				if ((codeOperator->code_operator == '+'&&codeOperator->code_operator2 == '+')
+					|| (codeOperator->code_operator == '-'&&codeOperator->code_operator2 == '-')){
+					if (i + 1 < executable_index && executables[i + 1]->type == META){
+						ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
+
+						result = excuteOperator(NULL, executables[i + 1], codeOperator);
+						excutedExecutable->result = result;
+
+						MetaExecutable * target = (MetaExecutable*)executables[i + 1];
+						excuteAssignment(excutedExecutable, target, false);
+
+						executables[i] = excutedExecutable;
+						for (int ii = i + 1; ii < executable_index; ii++){
+							executables[ii] = executables[ii + 1];
+						}
+						executable_index = executable_index - 1;
+						hasCodeOperator = true;
+						break;
+					}
+					else if (executables[i - 1]->type == META){
+						codeOperator->left = executables[i - 1];
+					}
+				}
 			}
 		}
-	}
-
-
+	} while (hasCodeOperator == true);
 
 	//处理运算符：* / %
 	do{
@@ -1316,7 +1391,9 @@ JSObject* excute(Expression * expression1){
 		for (int i = 0; i < executable_index; i++){
 			if (executables[i]->type == OPERATOR){
 				Operator* codeOperator = (Operator*)executables[i];
-				if (codeOperator->code_operator == '*' || codeOperator->code_operator == '/' || codeOperator->code_operator == '%'){
+				if ((codeOperator->code_operator == '*'&&codeOperator->code_operator2 == NULL)
+					|| (codeOperator->code_operator == '/' &&codeOperator->code_operator2 == NULL)
+					|| (codeOperator->code_operator == '%'&&codeOperator->code_operator2 == NULL)){
 					ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
 
 					result = excuteOperator(executables[i - 1], executables[i + 1], codeOperator);
@@ -1342,7 +1419,8 @@ JSObject* excute(Expression * expression1){
 		for (int i = 0; i < executable_index; i++){
 			if (executables[i]->type == OPERATOR){
 				Operator* codeOperator = (Operator*)executables[i];
-				if (codeOperator->code_operator == '+' || codeOperator->code_operator == '-'){
+				if ((codeOperator->code_operator == '+'&&codeOperator->code_operator2 == NULL)
+					|| (codeOperator->code_operator == '-'&&codeOperator->code_operator2 == NULL)){
 					ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
 
 					result = excuteOperator(executables[i - 1], executables[i + 1], codeOperator);
@@ -1413,19 +1491,62 @@ JSObject* excute(Expression * expression1){
 		}
 	} while (hasCodeOperator == true);
 
-	//处理运算符：=
-	for (int i = 0; i < executable_index; i++){
+	//处理运算符：= += -= *= /= %=
+	for (int i = executable_index - 1; i >= 0; i--){
 		if (executables[i]->type == OPERATOR){
 			Operator* codeOperator = (Operator*)executables[i];
-			if (codeOperator->code_operator == '='){
+			if ((codeOperator->code_operator == '='&&codeOperator->code_operator2 == NULL)
+				|| (codeOperator->code_operator == '+'&&codeOperator->code_operator2 == '=')
+				|| (codeOperator->code_operator == '-'&&codeOperator->code_operator2 == '=')
+				|| (codeOperator->code_operator == '*'&&codeOperator->code_operator2 == '=')
+				|| (codeOperator->code_operator == '/'&&codeOperator->code_operator2 == '=')
+				|| (codeOperator->code_operator == '%'&&codeOperator->code_operator2 == '=')){
+
 				MetaExecutable * target = (MetaExecutable *)executables[i - 1];
 				if (target->type != META){
 					//report error
 					return NULL;
 				}
 
-				Executable * source = executables[i + 1];
-				result = excuteAssignment(source, target, isNew);
+				ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
+				if (codeOperator->code_operator != '='){
+					Operator* operator1 = new Operator();
+					operator1->code_operator = codeOperator->code_operator;
+					excutedExecutable->result = excuteOperator(executables[i - 1], executables[i + 1], operator1);
+					result = excuteAssignment(excutedExecutable, target, isNew);
+				}
+				else{
+					Executable * source = executables[i + 1];
+					result = excuteAssignment(source, target, isNew);
+					excutedExecutable->result = result;
+				}
+
+				executables[i - 1] = excutedExecutable;
+				for (int ii = i; ii < executable_index; ii++){
+					executables[ii] = executables[ii + 2];
+				}
+				executable_index = executable_index - 2;
+
+			}
+		}
+	}
+
+	//处理 后置++ --
+	for (int i = 0; i < executable_index; i++){
+		if (executables[i]->type == OPERATOR){
+			Operator* codeOperator = (Operator*)executables[i];
+			if (((codeOperator->code_operator == '+'&&codeOperator->code_operator2 == '+')
+				|| (codeOperator->code_operator == '-'&&codeOperator->code_operator2 == '-'))){
+				ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
+
+				result = excuteOperator(codeOperator->left, NULL, codeOperator);
+				excutedExecutable->result = result;
+
+				MetaExecutable * target = (MetaExecutable*)codeOperator->left;
+				excuteAssignment(excutedExecutable, target, false);
+
+				hasCodeOperator = true;
+				break;
 			}
 		}
 	}
@@ -1590,9 +1711,6 @@ JSObject* excute(IfBlock * ifBlock){
 
 			currentClosure = currentClosure->next;
 
-
-			DEBUGExecutable * iDEBUGExecutable = debugExecutable(ifBlock->executableBlock);
-
 			result = excute(ifBlock->executableBlock);
 
 			currentClosure = currentClosure->previous;
@@ -1618,11 +1736,84 @@ JSObject* excute(IfBlock * ifBlock){
 
 JSObject* excute(ForBlock * forBlock){
 	JSObject* result = NULL;
+
+	Closure * closure = new Closure();
+	closure->initialize();
+	currentClosure->next = closure;
+	closure->previous = currentClosure;
+
+	currentClosure = currentClosure->next;
+
+
+	DEBUGExecutable * iDEBUGExecutable = debugExecutable(forBlock->pre_executable);
+
+	excute(forBlock->pre_executable);
+
+	int i = 0;
+	while (true){
+		for (i = 0; i < forBlock->conditions_index; i++){
+			JSNumber* conditionResult = (JSNumber*)excute(forBlock->conditions[i]);
+			if (conditionResult->number == 0){
+				return result;
+			}
+		}
+
+		result = excute(forBlock->executableBlock);
+
+		excute(forBlock->last_executable);
+	}
+
+	currentClosure = currentClosure->previous;
+
 	return result;
 }
 
 JSObject* excute(ForInBlock * forInBlock){
 	JSObject* result = NULL;
+	JSKeyValue* iterator = (JSKeyValue*)getFromClosure(forInBlock->iteratorName);
+
+	if (iterator != NULL&&iterator->type==JSKEYVALUE&&iterator->value->type == JSJSON){
+		Closure * closure = new Closure();
+		closure->initialize();
+		currentClosure->next = closure;
+		closure->previous = currentClosure;
+
+		currentClosure = currentClosure->next;
+
+		forInBlock->iterator = (JSON*)iterator->value;
+		if (forInBlock->keyName == NULL){
+			for (int i = 0; i < forInBlock->iterator->list->length; i++){
+				JSObject * value = forInBlock->iterator->list->find(i);
+				if (value->type == JSKEYVALUE){
+					currentClosure->set(forInBlock->valueName->variable_name, ((JSKeyValue*)value)->value);
+				}
+				else{
+					currentClosure->set(forInBlock->valueName->variable_name, value);
+				}
+				result = excute(forInBlock->executableBlock);
+			}
+		}
+		else{
+			for (int i = 0; i < forInBlock->iterator->list->length; i++){
+				JSObject * value = forInBlock->iterator->list->find(i);
+				if (value->type == JSKEYVALUE){
+					JSKeyValue* jsKeyValue = (JSKeyValue*)value;
+					JSString* keyString = new JSString();
+					keyString->char_string = jsKeyValue->key;
+					keyString->length = strlen(jsKeyValue->key);
+					currentClosure->set(forInBlock->keyName->variable_name, keyString);
+					currentClosure->set(forInBlock->valueName->variable_name, jsKeyValue->value);
+					result = excute(forInBlock->executableBlock);
+				}
+			}
+		}
+
+		currentClosure = currentClosure->previous;
+	}
+	else{
+		//report error
+	}
+
 	return result;
 }
 

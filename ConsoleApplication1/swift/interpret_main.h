@@ -145,6 +145,9 @@ public:
 	Operator();
 	char code_operator;
 	char code_operator2;
+	
+	Executable* left;
+	Executable* right;
 };
 class Expression : public Executable{
 public:
@@ -211,15 +214,9 @@ public:
 	IfBlock();
 	Executable * condition;
 
-	Executable * executables[10];
-	int executable_index;
-
 	ExecutableBlock* executableBlock;
 
 	IfBlock* next;
-
-	Executable * else_executables[10];
-	int else_executable_index;
 
 	ExecutableBlock* else_executableBlock;
 
@@ -235,9 +232,6 @@ public:
 	int conditions_index;
 
 	Executable * last_executable;
-
-	Executable * executables[10];
-	int executable_index;
 
 	ExecutableBlock* executableBlock;
 
