@@ -61,6 +61,8 @@ IfBlock::IfBlock(){
 
 	this->next = NULL;
 
+	this->isElse = false;
+
 	this->executableBlock = new ExecutableBlock();
 	this->executableBlock->holder = this;
 
@@ -86,7 +88,7 @@ Closure * rootClosure;
 Closure * currentClosure;
 int funtionLevel;
 FunctionDefinition * currentFunctionDefinition;
-ExecutableBlock * executableBlocks[10];
+ExecutableBlock * executableBlocks[20];
 int executableBlocksIndex;
 
 ExecutableBlock * currentExecutableBlock;
@@ -460,11 +462,20 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			}
 			else if (0 == strcmp(keyWords->string_else, codeElement->keyword)){
 				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
-				if (executableBlock->holder->type == IFBLOCK && codeLine->codeElements[i + 1]->type == BRACKET){
-					IfBlock * ifBlock = (IfBlock*)executableBlock->holder;
-					ifBlock->else_executableBlock = new ExecutableBlock();
-					ifBlock->else_executableBlock->holder = ifBlock;
-					currentExecutableBlock = ifBlock->else_executableBlock;
+				if (executableBlock->holder->type == IFBLOCK && i + 1<end){
+					IfBlock * parentIfBlock = (IfBlock*)executableBlock->holder;
+					if (codeLine->codeElements[i + 1]->type == BRACKET){
+						parentIfBlock->else_executableBlock = new ExecutableBlock();
+						parentIfBlock->else_executableBlock->holder = parentIfBlock;
+						currentExecutableBlock = parentIfBlock->else_executableBlock;
+					}
+					else if (codeLine->codeElements[i + 1]->type == KEYWORD && 0 == strcmp(keyWords->string_if, codeLine->codeElements[i + 1]->keyword)){
+						ifBlock = new IfBlock();
+						ifBlock->isElse = true;
+						currentExecutableBlock = ifBlock->executableBlock;
+						parentIfBlock->next = ifBlock;
+						codeLine->codeElements[i + 1]->type = SKIP;
+					}
 				}
 				else{
 					//report error
@@ -717,7 +728,9 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 		if (expression != NULL){
 			iDEBUGExecutable = debugExecutable(expression);
 			ifBlock->condition = expression;
-			executable = ifBlock;
+			if (ifBlock->isElse == false){
+				executable = ifBlock;
+			}
 		}
 	}
 	else if (functionReturn != NULL){
@@ -750,6 +763,7 @@ void resolveOperators(CodeLine* codeLine){
 	for (int i = 0; i < codeLine->element_index - 1; i++){
 		if (codeLine->codeElements[i]->type == CODEOPERATOR&&codeLine->codeElements[i + 1]->type == CODEOPERATOR){
 			if ((codeLine->codeElements[i]->code_operator == '='&&codeLine->codeElements[i + 1]->code_operator == '=')
+				|| (codeLine->codeElements[i]->code_operator == '!'&&codeLine->codeElements[i + 1]->code_operator == '=')
 				|| (codeLine->codeElements[i]->code_operator == '+'&&codeLine->codeElements[i + 1]->code_operator == '=')
 				|| (codeLine->codeElements[i]->code_operator == '-'&&codeLine->codeElements[i + 1]->code_operator == '=')
 				|| (codeLine->codeElements[i]->code_operator == '*'&&codeLine->codeElements[i + 1]->code_operator == '=')
@@ -1241,6 +1255,12 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 			result->number = leftObject->number == rightObject->number;
 		}
 	}
+	else if (code_operator->code_operator == '!'&&code_operator->code_operator2 == '='){
+		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
+			result = new JSNumber();
+			result->number = leftObject->number != rightObject->number;
+		}
+	}
 	else if (code_operator->code_operator == '&'&&code_operator->code_operator2 == '&'){
 		if (leftObject->type == JSNUMBER&&rightObject->type == JSNUMBER){
 			result = new JSNumber();
@@ -1253,7 +1273,7 @@ JSObject* excuteOperator(Executable* left, Executable* right, Operator* code_ope
 			result->number = leftObject->number || rightObject->number;
 		}
 	}
-	else if (code_operator->code_operator == '！'&&code_operator->code_operator2 == NULL && rightObject != NULL){
+	else if (code_operator->code_operator == '!'&&code_operator->code_operator2 == NULL && rightObject != NULL){
 		if (rightObject->type == JSNUMBER){
 			result = new JSNumber();
 			result->number = !rightObject->number;
@@ -1452,7 +1472,7 @@ JSObject* excute(Expression * expression1){
 		}
 	} while (hasCodeOperator == true);
 
-	//处理运算符 > < >= <= ==
+	//处理运算符 > < >= <= == !=
 	do{
 		hasCodeOperator = false;
 		for (int i = 0; i < executable_index; i++){
@@ -1462,7 +1482,8 @@ JSObject* excute(Expression * expression1){
 					|| (codeOperator->code_operator == '<'&&codeOperator->code_operator2 == NULL)
 					|| (codeOperator->code_operator == '>'&&codeOperator->code_operator2 == '=')
 					|| (codeOperator->code_operator == '<'&&codeOperator->code_operator2 == '=')
-					|| (codeOperator->code_operator == '='&&codeOperator->code_operator2 == '=')){
+					|| (codeOperator->code_operator == '='&&codeOperator->code_operator2 == '=')
+					|| (codeOperator->code_operator == '!'&&codeOperator->code_operator2 == '=')){
 					ExcutedExecutable* excutedExecutable = new ExcutedExecutable();
 
 					result = excuteOperator(executables[i - 1], executables[i + 1], codeOperator);
@@ -1675,7 +1696,7 @@ JSObject* excute(FunctionCall * functionCall){
 	else if (jsFunctionOrClass->type == JSFUNCTION){
 		JSFunction* jsFunction = (JSFunction*)jsFunctionOrClass;
 
-		if (jsFunction->closure != NULL){
+		if (jsFunction->closure != NULL && currentClosure != jsFunction->closure){
 			currentClosure->next = jsFunction->closure;
 			jsFunction->closure->previous = currentClosure;
 
@@ -1710,7 +1731,7 @@ JSObject* excute(FunctionCall * functionCall){
 			result = excuteFunction(jsFunction->functionDefinition, parameter);
 		}
 
-		if (jsFunction->closure != NULL){
+		if (jsFunction->closure != NULL  &&  currentClosure != jsFunction->closure){
 			currentClosure = currentClosure->previous;
 		}
 
@@ -1727,7 +1748,7 @@ JSObject* excute(FunctionCall * functionCall){
 			newJSClass->className = jsClass->className;
 			newJSClass->closure = jsClass->closure;
 
-			if (newJSClass->closure != NULL){
+			if (newJSClass->closure != NULL &&  currentClosure != newJSClass->closure){
 				currentClosure->next = newJSClass->closure;
 				newJSClass->closure->previous = currentClosure;
 
@@ -1740,7 +1761,7 @@ JSObject* excute(FunctionCall * functionCall){
 
 
 			result = newJSClass;
-			if (newJSClass->closure != NULL){
+			if (newJSClass->closure != NULL  &&  currentClosure != newJSClass->closure){
 				currentClosure = currentClosure->previous;
 			}
 		}
@@ -1881,7 +1902,7 @@ JSObject* excuteFunction(FunctionDefinition * functionDefinition, JSON* paramete
 
 	for (int i = 0; i < parameter->length; i++){
 		JSKeyValue* jsKeyValue = (JSKeyValue*)parameter->list->find(i);
-		closure->set(jsKeyValue->key, jsKeyValue->value);
+		currentClosure->set(jsKeyValue->key, jsKeyValue->value);
 	}
 
 	currentClosure = currentClosure->next;

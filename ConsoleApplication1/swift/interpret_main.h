@@ -213,6 +213,9 @@ public:
 class IfBlock : public Executable{
 public:
 	IfBlock();
+
+	bool isElse;
+
 	Executable * condition;
 
 	ExecutableBlock* executableBlock;
