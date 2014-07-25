@@ -1636,29 +1636,35 @@ JSObject* excute(ClassDefinition * classDefinition){
 void resolveVariables(FunctionCall * functionCall, JSObject * jsVariables[]){
 
 	for (int i = 0; i < functionCall->variable_index; i++){
-		MetaExecutable* metaExecutable = (MetaExecutable*)functionCall->variables[i];
-		if (metaExecutable->type != META){
-			//report error
-			return;
+		Executable * executable = functionCall->variables[i];
+		if (executable->type == EXPRESSION){
+			JSObject * result = excute(executable);
+			jsVariables[i] = result;
 		}
-
-		if (metaExecutable->codeElement->type == CODE_NUMBER){
-			jsVariables[i] = new JSNumber(metaExecutable->codeElement->number);
-		}
-		else if (metaExecutable->codeElement->type == CODE_STRING){
-			jsVariables[i] = new JSString(metaExecutable->codeElement->char_string);
-		}
-		else if (metaExecutable->codeElement->type == CODE_JSON){
-			jsVariables[i] = parseJSON(metaExecutable->codeElement->jsonstr);
-		}
-		else if (metaExecutable->codeElement->type == NAME){
-			JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(metaExecutable->codeElement->variable_name);
-			if (jsKeyValue == NULL){
+		else if (executable->type == META){
+			MetaExecutable* metaExecutable = (MetaExecutable*)executable;
+			if (metaExecutable->type != META){
 				//report error
 				return;
 			}
-			else{
-				jsVariables[i] = jsKeyValue->value;
+			if (metaExecutable->codeElement->type == CODE_NUMBER){
+				jsVariables[i] = new JSNumber(metaExecutable->codeElement->number);
+			}
+			else if (metaExecutable->codeElement->type == CODE_STRING){
+				jsVariables[i] = new JSString(metaExecutable->codeElement->char_string);
+			}
+			else if (metaExecutable->codeElement->type == CODE_JSON){
+				jsVariables[i] = parseJSON(metaExecutable->codeElement->jsonstr);
+			}
+			else if (metaExecutable->codeElement->type == NAME){
+				JSKeyValue *jsKeyValue = (JSKeyValue *)currentClosure->lookup(metaExecutable->codeElement->variable_name);
+				if (jsKeyValue == NULL){
+					//report error
+					return;
+				}
+				else{
+					jsVariables[i] = jsKeyValue->value;
+				}
 			}
 		}
 	}
