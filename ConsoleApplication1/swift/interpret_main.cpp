@@ -462,7 +462,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 			}
 			else if (0 == strcmp(keyWords->string_else, codeElement->keyword)){
 				ExecutableBlock* executableBlock = executableBlocks[executableBlocksIndex];
-				if (executableBlock->holder->type == IFBLOCK && i + 1<end){
+				if (executableBlock->holder->type == IFBLOCK && i + 1 < end){
 					IfBlock * parentIfBlock = (IfBlock*)executableBlock->holder;
 					if (codeLine->codeElements[i + 1]->type == BRACKET){
 						parentIfBlock->else_executableBlock = new ExecutableBlock();
@@ -517,6 +517,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
 					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
 						CodeElement * innerElement = codeLine->codeElements[ii];
+
 						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
 
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
@@ -543,33 +544,17 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 				}
 				else{
 
-
 					ExecutableBlock * executableBlock = new ExecutableBlock();
-					//executable = executableBlock;
 
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
-					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
-						CodeElement * innerElement = codeLine->codeElements[ii];
-						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
 
-							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
-							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
-							executableBlock->executable_index++;
-
-							lastDelimiterindex = ii + 1;
-							innerElement->isResolvedDelimiter = true;
-						}
-						else if (ii == preBracket->nextBracketIndex - 1){
-							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii + 1);
-							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
-							executableBlock->executable_index++;
-						}
-					}
+					Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, preBracket->nextBracketIndex);
+					executableBlock->executables[executableBlock->executable_index] = innerExecutable;
+					executableBlock->executable_index++;
 
 					if (expression == NULL){
-						expression = new Expression();
+						expression = new Expression;
 					}
-
 					expression->executables[expression->executable_index] = executableBlock;
 					expression->executable_index++;
 
@@ -1854,7 +1839,7 @@ JSObject* excute(ForInBlock * forInBlock){
 	JSObject* result = NULL;
 	JSKeyValue* iterator = (JSKeyValue*)getFromClosure(forInBlock->iteratorName);
 
-	if (iterator != NULL&&iterator->type==JSKEYVALUE&&iterator->value->type == JSJSON){
+	if (iterator != NULL&&iterator->type == JSKEYVALUE&&iterator->value->type == JSJSON){
 		Closure * closure = new Closure();
 		closure->initialize();
 		currentClosure->next = closure;
