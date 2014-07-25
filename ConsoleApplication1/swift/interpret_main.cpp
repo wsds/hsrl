@@ -527,7 +527,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 						else if (innerElement->type == BRACKET&&innerElement->bracket == RIGHTSMALLBRACKET){
 							backetIndex--;
 						}
-						else if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false && backetIndex==0){
+						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false && backetIndex==0){
 
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
 							functionCall->variables[functionCall->variable_index] = innerExecutable;
@@ -574,7 +574,7 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 						else if (innerElement->type == BRACKET&&innerElement->bracket == RIGHTSMALLBRACKET){
 							backetIndex--;
 						}
-						else if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
+						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
 
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
 							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
@@ -1663,6 +1663,10 @@ void resolveVariables(FunctionCall * functionCall, JSObject * jsVariables[]){
 	for (int i = 0; i < functionCall->variable_index; i++){
 		Executable * executable = functionCall->variables[i];
 		if (executable->type == EXPRESSION){
+			JSObject * result = excute(executable);
+			jsVariables[i] = result;
+		}
+		else if (executable->type == EXCUTEABLEBLOCK){
 			JSObject * result = excute(executable);
 			jsVariables[i] = result;
 		}
