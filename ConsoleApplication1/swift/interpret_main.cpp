@@ -515,10 +515,19 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 						}
 					}
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
-					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
-						CodeElement * innerElement = codeLine->codeElements[ii];
 
-						if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
+					int backetIndex = 0;
+
+					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
+		
+						CodeElement * innerElement = codeLine->codeElements[ii];
+						if (innerElement->type == BRACKET&&innerElement->bracket==LEFTSMALLBRACKET){
+							backetIndex++;
+						}
+						else if (innerElement->type == BRACKET&&innerElement->bracket == RIGHTSMALLBRACKET){
+							backetIndex--;
+						}
+						else if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false && backetIndex==0){
 
 							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
 							functionCall->variables[functionCall->variable_index] = innerExecutable;
@@ -539,24 +548,55 @@ Executable*  analyzeCodeLine(CodeLine * codeLine, int from, int end){
 					}
 
 					expression->executables[expression->executable_index] = functionCall;
+
+
+					DEBUGExecutable * iDEBUGExecutable = debugExecutable(expression);
+					
 					expression->executable_index++;
+
+
 
 				}
 				else{
 
+
+
 					ExecutableBlock * executableBlock = new ExecutableBlock();
+					//executable = executableBlock;
 
+					int backetIndex = 0;
 					int lastDelimiterindex = preBracket->preBracketIndex + 1;
+					for (int ii = lastDelimiterindex; ii < preBracket->nextBracketIndex; ii++){
+						CodeElement * innerElement = codeLine->codeElements[ii];
+						if (innerElement->type == BRACKET&&innerElement->bracket == LEFTSMALLBRACKET){
+							backetIndex++;
+						}
+						else if (innerElement->type == BRACKET&&innerElement->bracket == RIGHTSMALLBRACKET){
+							backetIndex--;
+						}
+						else if (innerElement->type == DELIMITER&&innerElement->isResolvedDelimiter == false){
 
-					Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, preBracket->nextBracketIndex);
-					executableBlock->executables[executableBlock->executable_index] = innerExecutable;
-					executableBlock->executable_index++;
+							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii);
+							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
+							executableBlock->executable_index++;
+
+							lastDelimiterindex = ii + 1;
+							innerElement->isResolvedDelimiter = true;
+						}
+						else if (ii == preBracket->nextBracketIndex - 1){
+							Executable* innerExecutable = analyzeCodeLine(codeLine, lastDelimiterindex, ii + 1);
+							executableBlock->executables[executableBlock->executable_index] = innerExecutable;
+							executableBlock->executable_index++;
+						}
+					}
 
 					if (expression == NULL){
-						expression = new Expression;
+						expression = new Expression();
 					}
+
 					expression->executables[expression->executable_index] = executableBlock;
 					expression->executable_index++;
+
 
 				}
 
